@@ -8,10 +8,13 @@ from ldlinkpython.endpoints.ldproxy import ldproxy
 from ldlinkpython.endpoints.ldtrait import ldtrait
 from ldlinkpython.endpoints.ldmatrix import ldmatrix
 from ldlinkpython.endpoints.ldexpress import ldexpress
+from ldlinkpython.endpoints.ldhap import ldhap
 
 __all__ = [
     "DEFAULT_API_ROOT",
     "__version__",
     "LDlinkClient",
     "ldproxy",
+    "ldexpress",
+    "ldhap",
 ]

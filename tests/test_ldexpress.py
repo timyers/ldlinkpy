@@ -9,27 +9,28 @@ def test_ldexpress_posts_expected_body_and_parses_tsv(monkeypatch: pytest.Monkey
     captured: dict[str, object] = {}
 
     def fake_request(  # type: ignore[no-untyped-def]
-        method: str,
         endpoint: str,
-        api_root: str,
-        token: str | None = None,
+        *,
         params: dict | None = None,
-        data: dict | None = None,
+        json_body: dict | None = None,
         headers: dict | None = None,
-        timeout: float | None = None,
+        token: str | None = None,
+        api_root: str,
+        method: str = "GET",
+        timeout: float = 180.0,
     ) -> str:
         captured["method"] = method
         captured["endpoint"] = endpoint
         captured["api_root"] = api_root
         captured["token"] = token
         captured["params"] = params
-        captured["data"] = data
+        captured["json_body"] = json_body
         captured["headers"] = headers
         captured["timeout"] = timeout
 
         return (
-            "Query\tRS_Number\tPosition\tR2\tD.\tGene\tP\n"
-            "rs429358\trs429358\t45411941\t1.0\t1.0\tAPOE\t0.001\n"
+            "Query\tRS ID\tPosition\tR2\tD.\tGene Symbol\tGencode ID\tTissue\tNon-effect Allele Freq\tEffect Allele Freq\tEffect Size\tP-value\n"
+            "rs429358\trs429358\tchr19:45411941\t1.0\t1.0\tAPOE\tENSG00000130203.10\tWhole Blood\tC=0.9\tT=0.1\t0.2\t0.001\n"
         )
 
     monkeypatch.setattr("ldlinkpython.endpoints.ldexpress.request", fake_request)
@@ -51,7 +52,7 @@ def test_ldexpress_posts_expected_body_and_parses_tsv(monkeypatch: pytest.Monkey
     assert captured["endpoint"] == "/ldexpress"
     assert captured["params"] == {"token": "TESTTOKEN"}
 
-    body = captured["data"]
+    body = captured["json_body"]
     assert isinstance(body, dict)
 
     assert body["snps"] == "rs429358\nchr7:24966446"
@@ -66,24 +67,24 @@ def test_ldexpress_posts_expected_body_and_parses_tsv(monkeypatch: pytest.Monkey
     assert df.shape[0] == 1
     assert "D'" in df.columns
     assert "Position_grch37" in df.columns
-    assert df.loc[0, "RS_Number"] == "rs429358"
-    assert df.loc[0, "Position_grch37"] == "45411941"
+    assert df.loc[0, "Query"] == "rs429358"
 
 
 def test_ldexpress_all_tissue_expands(monkeypatch: pytest.MonkeyPatch) -> None:
     captured: dict[str, object] = {}
 
     def fake_request(  # type: ignore[no-untyped-def]
-        method: str,
         endpoint: str,
-        api_root: str,
-        token: str | None = None,
+        *,
         params: dict | None = None,
-        data: dict | None = None,
+        json_body: dict | None = None,
         headers: dict | None = None,
-        timeout: float | None = None,
+        token: str | None = None,
+        api_root: str,
+        method: str = "GET",
+        timeout: float = 180.0,
     ) -> str:
-        captured["data"] = data
+        captured["json_body"] = json_body
         return "A\tB\n1\t2\n"
 
     monkeypatch.setattr("ldlinkpython.endpoints.ldexpress.request", fake_request)
@@ -91,8 +92,7 @@ def test_ldexpress_all_tissue_expands(monkeypatch: pytest.MonkeyPatch) -> None:
 
     _ = ldexpress(snps="rs429358", tissue="ALL")
 
-    body = captured["data"]
+    body = captured["json_body"]
     assert isinstance(body, dict)
     assert body["tissues"] != "ALL"
     assert "+" in body["tissues"]
-    
