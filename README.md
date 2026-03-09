@@ -44,6 +44,8 @@ PYTHONPATH=. python -c "from ldlinkpython import ldhap; out=ldhap(snps=['rs3','r
 PYTHONPATH=. python -c "from ldlinkpython import ldhap; df=ldhap(snps=['rs3','rs4'], pop=['CEU','YRI'], table_type='merged', genome_build='grch37', token=None); print(df.head().to_string(index=False))"
 ```
 
+```
+
 Notes:
 
 - `snps` supports 1–30 variants (rsID or chromosome coordinate like `chr7:24966446`).
