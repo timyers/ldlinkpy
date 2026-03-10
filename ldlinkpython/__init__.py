@@ -11,6 +11,7 @@ from ldlinkpython.endpoints.ldexpress import ldexpress
 from ldlinkpython.endpoints.ldhap import ldhap
 from ldlinkpython.endpoints.ldpop import ldpop
 from ldlinkpython.endpoints.snpclip import snpclip
+from ldlinkpython.endpoints.snpchip import snpchip
 
 __all__ = [
     "DEFAULT_API_ROOT",
@@ -21,4 +22,5 @@ __all__ = [
     "ldhap",
     "ldpop",
     "snpclip",
+    "snpchip",
 ]
