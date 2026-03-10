@@ -5,13 +5,6 @@
 - **Recommended:** use `request_method="auto"` (POST). This is the default and is the most reliable.
 - **Optional:** `request_method="get"` uses the `ldtraitget` endpoint. In some environments this may fail due to network/TLS issues. If you hit errors with GET, switch back to POST.
 
-### Project: LDlinkPython (in progress...)
-
-### LDtrait notes
-
-- **Recommended:** use `request_method="auto"` (POST). This is the default and is the most reliable.
-- **Optional:** `request_method="get"` uses the `ldtraitget` endpoint. In some environments this may fail due to network/TLS issues. If you hit errors with GET, switch back to POST.
-
 ### `ldhap` command-line examples (1–4)
 
 Set your token once in your shell:
@@ -42,8 +35,6 @@ PYTHONPATH=. python -c "from ldlinkpython import ldhap; out=ldhap(snps=['rs3','r
 
 ```bash
 PYTHONPATH=. python -c "from ldlinkpython import ldhap; df=ldhap(snps=['rs3','rs4'], pop=['CEU','YRI'], table_type='merged', genome_build='grch37', token=None); print(df.head().to_string(index=False))"
-```
-
 ```
 
 Notes:
