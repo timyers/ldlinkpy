@@ -202,3 +202,49 @@ PYTHONPATH=. python -c "from ldlinkpython import snpchip; df=snpchip(['rs4'], to
 PYTHONPATH=. python -c "from ldlinkpython import snpchip; df=snpchip(['rs3','rs4']); df.to_csv('tmp/snpchip_output.tsv', sep='\t', index=False); print('wrote tmp/snpchip_output.tsv')"
 ```
 
+### `list_chip_platforms` / `list_chips` command-line examples
+
+Provides a data frame listing the names and abbreviation codes for available commercial SNP Chip Arrays from Illumina and Affymetrix.
+These lookup helpers are local, packaged-data utilities (no network calls).
+
+1) Show first 10 chip mappings via `list_chip_platforms`:
+
+```bash
+PYTHONPATH=. python -c "from ldlinkpython import list_chip_platforms; df=list_chip_platforms(); print(df.head(10).to_string(index=False))"
+```
+
+2) Show first 10 chip mappings via `list_chips`:
+
+```bash
+PYTHONPATH=. python -c "from ldlinkpython import list_chips; df=list_chips(); print(df.head(10).to_string(index=False))"
+```
+
+3) Confirm row count and column order:
+
+```bash
+PYTHONPATH=. python -c "from ldlinkpython import list_chip_platforms; df=list_chip_platforms(); print('rows=', len(df)); print('columns=', df.columns.tolist())"
+```
+
+4) Find one specific platform code (`I_GSA-v1`):
+
+```bash
+PYTHONPATH=. python -c "from ldlinkpython import list_chip_platforms; df=list_chip_platforms(); print(df.loc[df['chip_code']=='I_GSA-v1'].to_string(index=False))"
+```
+
+5) Verify the alias `list_chips` returns the same table:
+
+```bash
+PYTHONPATH=. python -c "from ldlinkpython import list_chip_platforms, list_chips; import pandas.testing as pdt; pdt.assert_frame_equal(list_chip_platforms(), list_chips()); print('list_chips alias matches list_chip_platforms')"
+```
+
+6) Export packaged lookup data to CSV:
+
+```bash
+PYTHONPATH=. python -c "from ldlinkpython import list_chips; df=list_chips(); df.to_csv('tmp/chip_platforms.csv', index=False); print('wrote tmp/chip_platforms.csv with', len(df), 'rows')"
+```
+
+7) Build a quick code->name dictionary and print selected entries:
+
+```bash
+PYTHONPATH=. python -c "from ldlinkpython import list_chips; df=list_chips(); d=dict(zip(df['chip_code'], df['chip_name'])); print('I_100 =>', d['I_100']); print('A_PMRA =>', d['A_PMRA']); print('A_UKBA =>', d['A_UKBA'])"
+```
