@@ -15,7 +15,11 @@ from ldlinkpython.exceptions import ParseError
 
 _EXPECTED_COLUMNS: list[str] = ["chip_code", "chip_name"]
 _EXPECTED_POP_COLUMNS: list[str] = ["pop_code", "super_pop_code", "pop_name"]
-
+_EXPECTED_GTEX_TISSUE_COLUMNS: list[str] = [
+    "tissue_name_gtex",
+    "tissue_name_ldexpress",
+    "tissue_abbrev_ldexpress",
+]
 
 def list_chip_platforms() -> pd.DataFrame:
     """Return LDlink SNP chip platforms from packaged lookup data."""
@@ -55,6 +59,25 @@ def list_pop() -> pd.DataFrame:
         raise ParseError(
             "Invalid packaged population lookup table columns. "
             f"Expected {_EXPECTED_POP_COLUMNS} in order, got {columns}."
+        )
+
+    return dataframe
+    
+
+def list_gtex_tissues() -> pd.DataFrame:
+    """Return LDlink GTEx tissues from packaged lookup data."""
+    try:
+        csv_path = resources.files("ldlinkpython").joinpath("data/gtex_tissues.csv")
+        with csv_path.open("r", encoding="utf-8", newline="") as handle:
+            dataframe = pd.read_csv(handle, dtype=str)
+    except Exception as exc:  # pragma: no cover - exception path validated by behavior
+        raise ParseError(f"Failed to load packaged GTEx tissue lookup table: {exc}") from exc
+
+    columns: list[str] = list(dataframe.columns)
+    if columns != _EXPECTED_GTEX_TISSUE_COLUMNS:
+        raise ParseError(
+            "Invalid packaged GTEx tissue lookup table columns. "
+            f"Expected {_EXPECTED_GTEX_TISSUE_COLUMNS} in order, got {columns}."
         )
 
     return dataframe

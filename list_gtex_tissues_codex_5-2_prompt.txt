@@ -1,0 +1,148 @@
+# codex 5.2
+# list_gtex_tissues
+
+TASK: Add a third lookup helper to lookups.py: list_gtex_tissues() for acceptable GTEx tissue codes used by LDlink.
+
+IMPORTANT CONTEXT:
+- `lookups.py` is intentionally the home for non-endpoint lookup helpers (packaged reference tables).
+- We are adding these lookup helpers one-by-one in separate steps:
+  - list_chip_platforms() / list_chips()  (already added)
+  - list_pop()                            (already added)
+  - list_gtex_tissues()                   (this task)
+- Keep endpoint wrappers in /ldlinkpython/ldlinkpython/endpoints focused only on LDlink REST calls.
+- This task must not modify anything in /ldlinkpython/ldlinkpython/endpoints.
+
+REPO STRUCTURE (IMPORTANT):
+- Python package root: /ldlinkpython/ldlinkpython
+- Endpoint wrappers live in: /ldlinkpython/ldlinkpython/endpoints (DO NOT modify in this task)
+- Tests live in: /ldlinkpython/tests
+
+DO NOT:
+- Do not fetch anything from the network.
+- Do not sort or reorder tissues. Preserve the exact order provided below.
+- Do not change existing chip or pop lookup behavior.
+
+OUTPUT REQUIREMENT:
+- Output a unified diff (git patch) ONLY. No explanations.
+
+FEATURE REQUIREMENTS:
+
+1) Update module:
+   - /ldlinkpython/ldlinkpython/lookups.py
+
+2) Add a new public function:
+   - `list_gtex_tissues() -> pandas.DataFrame`
+     - This must load a packaged CSV from /ldlinkpython/ldlinkpython/data/gtex_tissues.csv
+     - Use importlib.resources to load so it works from editable installs and wheels.
+     - Return a pandas DataFrame with EXACTLY these three columns, in this exact order:
+       1) tissue_name_gtex
+       2) tissue_name_ldexpress
+       3) tissue_abbrev_ldexpress
+     - Read all values as strings.
+     - Preserve row order exactly as stored in the CSV.
+     - If the CSV cannot be loaded, raise ParseError with a helpful message.
+     - If required columns are missing OR column order is wrong, raise ParseError with a helpful message.
+   - Add docstring and type hints.
+
+3) Packaged data:
+   - Create directory if needed:
+     - /ldlinkpython/ldlinkpython/data/
+   - Add file:
+     - /ldlinkpython/ldlinkpython/data/gtex_tissues.csv
+   - Header must be exactly:
+     tissue_name_gtex,tissue_name_ldexpress,tissue_abbrev_ldexpress
+   - Populate rows using the exact values below, in this exact order (keep spelling exactly as shown).
+
+4) Exceptions:
+   - Reuse existing ldlinkpython.exceptions.ParseError if it exists.
+   - If ParseError does not exist in this repo, add it minimally to /ldlinkpython/ldlinkpython/exceptions.py.
+   - Do not do broader exception refactors.
+
+5) Packaging:
+   - Update packaging config as needed so `ldlinkpython/data/gtex_tissues.csv` is included in wheel/sdist/install.
+   - Use whatever packaging files already exist in this repo (pyproject.toml/setup.cfg/setup.py/MANIFEST.in).
+   - Make the smallest possible change.
+
+6) Package exports:
+   - Update /ldlinkpython/ldlinkpython/__init__.py to export `list_gtex_tissues` (keep existing exports intact).
+
+7) Tests:
+   - Add /ldlinkpython/tests/test_list_gtex_tissues.py
+   - No network.
+   - Tests must verify:
+     - list_gtex_tissues() returns a pandas DataFrame
+     - column order is exactly ["tissue_name_gtex","tissue_name_ldexpress","tissue_abbrev_ldexpress"]
+     - row count is exactly 55
+     - preserve order: first row tissue_name_gtex must be "Adipose - Subcutaneous"
+     - preserve order: last row tissue_name_gtex must be "Select All Tissues"
+     - it contains at least these known mappings:
+       - "Whole Blood" -> ("Whole_Blood", "WHO_BLO")
+       - "Adipose - Visceral (Omentum)" -> ("Adipose_Visceral_Omentum", "ADI_VIS_OME")
+       - "Brain - Frontal Cortex (BA9)" -> ("Brain_Frontal_Cortex_BA9", "BRA_FRO_COR_BA9")
+       - "Select All Tissues" -> ("ALL", "ALL")
+
+CSV CONTENT (EXACT, IN THIS ORDER):
+
+tissue_name_gtex,tissue_name_ldexpress,tissue_abbrev_ldexpress
+Adipose - Subcutaneous,Adipose_Subcutaneous,ADI_SUB
+Adipose - Visceral (Omentum),Adipose_Visceral_Omentum,ADI_VIS_OME
+Adrenal Gland,Adrenal_Gland,ADR_GLA
+Artery - Aorta,Artery_Aorta,ART_AOR
+Artery - Coronary,Artery_Coronary,ART_COR
+Artery - Tibial,Artery_Tibial,ART_TIB
+Bladder,Bladder,BLA
+Brain - Amygdala,Brain_Amygdala,BRA_AMY
+Brain - Anterior cingulate cortex (BA24),Brain_Anterior_cingulate_cortex_BA24,BRA_ANT_CIN_COR_BA2
+Brain - Caudate (basal ganglia),Brain_Caudate_basal_ganglia,BRA_CAU_BAS_GAN
+Brain - Cerebellar Hemisphere,Brain_Cerebellar_Hemisphere,BRA_CER_HEM
+Brain - Cerebellum,Brain_Cerebellum,BRA_CER
+Brain - Cortex,Brain_Cortex,BRA_COR
+Brain - Frontal Cortex (BA9),Brain_Frontal_Cortex_BA9,BRA_FRO_COR_BA9
+Brain - Hippocampus,Brain_Hippocampus,BRA_HIP
+Brain - Hypothalamus,Brain_Hypothalamus,BRA_HYP
+Brain - Nucleus accumbens (basal ganglia),Brain_Nucleus_accumbens_basal_ganglia,BRA_NUC_ACC_BAS_GAN
+Brain - Putamen (basal ganglia),Brain_Putamen_basal_ganglia,BRA_PUT_BAS_GAN
+Brain - Spinal cord (cervical c-1),Brain_Spinal_cord_cervical_c-1,BRA_SPI_COR_CER_C-1
+Brain - Substantia nigra,Brain_Substantia_nigra,BRA_SUB_NIG
+Breast - Mammary Tissue,Breast_Mammary_Tissue,BRE_MAM_MAM_TIS
+Cells - Cultured fibroblasts,Cells_Cultured_fibroblasts,CEL_CUL_FIB
+Cells - EBV-transformed lymphocytes,Cells_EBV_transformed_lymphocytes,CEL_EBV_TRA_LYN
+Cervix - Ectocervix,Cervix_Ectocervix,CER_ECT
+Cervix - Endocervix,Cervix_Endocervix,CER_END
+Colon - Sigmoid,Colon_Sigmoid,COL_SIG
+Colon - Transverse,Colon_Transverse,COL_TRA
+Esophagus - Gastroesophageal Junction,Esophagus_Gastroesophageal_Junction,ESO_GAS_JUN
+Esophagus - Mucosa,Esophagus_Mucosa,ESO_MUC
+Esophagus - Muscularis,Esophagus_Muscularis,ESO_MUS
+Fallopian Tube,Fallopian_Tube,FAL_TUB
+Heart - Atrial Appendage,Heart_Atrial_Appendage,HEA_ATR
+Heart - Left Ventricle,Heart_Left_Ventricle,HEA_LEF
+Kidney - Cortex,Kidney_Cortex,KID_COR
+Kidney - Medulla,Kidney_Medulla,KID_MED
+Liver,Liver,LIV
+Lung,Lung,LUN
+Minor Salivary Gland,Minor_Salivary_Gland,MIN_SAL_GLA
+Muscle - Skeletal,Muscle_Skeletal,MUS_SKE
+Nerve - Tibial,Nerve_Tibial,NER_TIB
+Ovary,Ovary,OVA
+Pancreas,Pancreas,PAN
+Pituitary,Pituitary,PIT
+Prostate,Prostate,PRO
+Skin - Not Sun Exposed (Suprapubic),Skin_Not_Sun_Exposed_Suprapubic,SKI_NOT_SUN_EXP_SUP
+Skin - Sun Exposed (Lower leg),Skin_Sun_Exposed_Lower_leg,SKI_SUN_EXP_LOW_LEG
+Small Intestine - Terminal Ileum,Small_Intestine_Terminal_Ileum,SMA_INT_TER_ILE
+Spleen,Spleen,SPL
+Stomach,Stomach,STO
+Testis,Testis,TES
+Thyroid,Thyroid,THY
+Uterus,Uterus,UTE
+Vagina,Vagina,VAG
+Whole Blood,Whole_Blood,WHO_BLO
+Select All Tissues,ALL,ALL
+
+STYLE:
+- Type hints everywhere for new code.
+- Docstring on list_gtex_tissues.
+- Keep code boring and consistent with existing lookups.py.
+
+Return unified diff only.

@@ -295,3 +295,44 @@ PYTHONPATH=. python -c "from ldlinkpython import list_pop; df=list_pop(); print(
 ```bash
 PYTHONPATH=. python -c "from ldlinkpython import list_pop; df=list_pop(); df.to_csv('tmp/populations.csv', index=False); print('wrote tmp/populations.csv with', len(df), 'rows')"
 ```
+
+### `list_gtex_tissues` command-line examples
+
+Provides a data frame listing the GTEx full names, LDexpress full names (without spaces) and acceptable abbreviation codes of the 54 non-diseased tissue sites collected for the GTEx Portal and used as input for the LDexpress.
+These lookup helpers are local, packaged-data utilities (no network calls).
+
+1) Show first 10 GTEx tissue mappings:
+
+```bash
+PYTHONPATH=. python -c "from ldlinkpython import list_gtex_tissues; df=list_gtex_tissues(); print(df.head(10).to_string(index=False))"
+```
+
+2) Confirm row count and column order:
+
+```bash
+PYTHONPATH=. python -c "from ldlinkpython import list_gtex_tissues; df=list_gtex_tissues(); print('rows=', len(df)); print('columns=', df.columns.tolist())"
+```
+
+3) Find one specific tissue code (`Whole Blood`):
+
+```bash
+PYTHONPATH=. python -c "from ldlinkpython import list_gtex_tissues; df=list_gtex_tissues(); print(df.loc[df['tissue_name_gtex']=='Whole Blood'].to_string(index=False))"
+```
+
+4) Build a quick GTEx -> (LDexpress name, abbreviation) mapping and print selected entries:
+
+```bash
+PYTHONPATH=. python -c "from ldlinkpython import list_gtex_tissues; df=list_gtex_tissues(); d={r.tissue_name_gtex:(r.tissue_name_ldexpress, r.tissue_abbrev_ldexpress) for r in df.itertuples(index=False)}; print('Whole Blood =>', d['Whole Blood']); print('Adipose - Visceral (Omentum) =>', d['Adipose - Visceral (Omentum)']); print('Select All Tissues =>', d['Select All Tissues'])"
+```
+
+5) List only tissues with names starting with `Brain -`:
+
+```bash
+PYTHONPATH=. python -c "from ldlinkpython import list_gtex_tissues; df=list_gtex_tissues(); print(df[df['tissue_name_gtex'].str.startswith('Brain -')].to_string(index=False))"
+```
+
+6) Export packaged GTEx lookup data to CSV:
+
+```bash
+PYTHONPATH=. python -c "from ldlinkpython import list_gtex_tissues; df=list_gtex_tissues(); df.to_csv('tmp/gtex_tissues.csv', index=False); print('wrote tmp/gtex_tissues.csv with', len(df), 'rows')"
+```
