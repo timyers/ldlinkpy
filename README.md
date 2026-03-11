@@ -213,10 +213,10 @@ These lookup helpers are local, packaged-data utilities (no network calls).
 PYTHONPATH=. python -c "from ldlinkpython import list_chip_platforms; df=list_chip_platforms(); print(df.head(10).to_string(index=False))"
 ```
 
-2) Show first 10 chip mappings via `list_chips`:
+2) Show chip mappings via `list_chips`:
 
 ```bash
-PYTHONPATH=. python -c "from ldlinkpython import list_chips; df=list_chips(); print(df.head(10).to_string(index=False))"
+PYTHONPATH=. python -c "from ldlinkpython import list_chips; df=list_chips(); print(df)"
 ```
 
 3) Confirm row count and column order:
