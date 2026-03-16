@@ -86,3 +86,4 @@ def test_ldpop_writes_file(tmp_path, monkeypatch: pytest.MonkeyPatch) -> None:
     written = out_file.read_text()
     assert "A\tB" in written
     assert isinstance(out, pd.DataFrame)
+    
