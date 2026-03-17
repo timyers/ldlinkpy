@@ -1,4 +1,6 @@
 ## LDlinkPython (in progress...)
+Project Status: Work in Progress (WIP)
+This project is currently a work in progress. Feedback and contributions are welcome.
 
 ### Calculating Linkage Disequilibrium in Human Populations of Interest
 
