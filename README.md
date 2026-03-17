@@ -8,6 +8,27 @@ LDlink is an interactive and powerful suite of web-based tools for querying germ
 
 Please see the online LDlink documentation for more information about understanding linkage disequilibrium (LD) and additional details about how LDlink calculates patterns of LD across a variety of ancestral human populations.
 
+## Install
+
+LDlinkPython is currently installed from GitHub (not PyPI yet).
+
+### Requirements
+- Python 3.10 or newer
+- Git
+
+### macOS
+
+```bash
+python3 -m venv .venv
+./.venv/bin/python -m pip install --upgrade pip
+./.venv/bin/python -m pip install "git+https://github.com/timyers/LDlinkPython.git"
+
+### Windows (Powershell)
+py -m venv .venv
+.\.venv\Scripts\python -m pip install --upgrade pip
+.\.venv\Scripts\python -m pip install "git+https://github.com/timyers/LDlinkPython.git"
+
+## Examples
 ### LDtrait notes
 
 - **Recommended:** use `request_method="auto"` (POST). This is the default and is the most reliable.
