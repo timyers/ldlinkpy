@@ -86,7 +86,7 @@ list_pop()
 ```
 
 <p align="center">
-  <img src="docs/images/list_pop_example.png" alt="Example output for list_pop()" width="300">
+  <img src="docs/images/list_pop_example.png" alt="Example output for list_pop()" width="400">
 </p>
 
 List available genotyping SNP chips:
