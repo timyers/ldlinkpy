@@ -32,6 +32,31 @@ py -m venv .venv
 .\.venv\Scripts\python -m pip install "git+https://github.com/timyers/LDlinkPython.git"
 ```
 
+## Quick Start
+
+### 1. Personal Access Token - **Required**
+
+In order to access the [LDlink](https://ldlink.nih.gov) API via *LDlinkPython*, we use a personal access token.
+
+You will need to:
+
+- Make a one-time request for your personal access token from a web browser at <https://ldlink.nih.gov/?tab=apiaccess>.
+- Once registered, your personal access token will be emailed to you. It is a string of 12 random letters and numbers. 
+- *LDlinkPython* uses your personal LDlink API token for access. Set it as an environment variable named `LDLINK_TOKEN`.  See examples below:
+
+#### macOS / Linux
+
+```bash
+export LDLINK_TOKEN="your_token_here"
+```
+
+#### Windows (Powershell)
+```powershell
+$env:LDLINK_TOKEN="your_token_here"
+```
+
+
+
 ## Examples
 ### LDtrait notes
 
