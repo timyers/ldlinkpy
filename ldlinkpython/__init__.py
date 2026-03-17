@@ -26,7 +26,6 @@ __all__ = [
     "__version__",
     "LDlinkClient",
     "ldpair",
-    "ldmatrix",
     "ldproxy",
     "ldtrait",
     "ldmatrix",
