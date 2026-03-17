@@ -55,9 +55,56 @@ export LDLINK_TOKEN="your_token_here"
 $env:LDLINK_TOKEN="your_token_here"
 ```
 
+### 2. Start Python
 
+#### macOS / Linux
+```bash
+python3
+```
 
-## Examples
+#### Windows 
+```powershell
+py
+```
+
+### 3. Import *LDlinkPython**
+
+```python
+from ldlinkpython import list_pop, list_chips, ldpair, ldproxy
+```
+
+### 4. Try a simple lookup
+
+List available 1000 Genomes populations:
+```python
+list_pop()
+```
+
+List available genotyping SNP chips:
+```python
+list_chips()
+```
+### 5. Run a simple analysis
+
+Check LD between two variants:
+
+```python
+ldpair("rs3", "rs4", pop="YRI")
+```
+
+Find proxy variants for a SNP:
+
+```python
+ldproxy("rs7412", pop="CEU")
+```
+
+### Notes
+
+- *LDlinkPython* reads your token from the LDLINK_TOKEN environment variable by default.
+- Most functions return pandas DataFrames.
+- You can also pass token="your_token_here" directly to functions if you prefer not to use an environment variable.
+
+## Longer usage examples
 ### LDtrait notes
 
 - **Recommended:** use `request_method="auto"` (POST). This is the default and is the most reliable.
