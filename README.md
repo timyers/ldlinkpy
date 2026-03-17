@@ -10,7 +10,7 @@ Please see the online LDlink documentation for more information about understand
 
 ## Install
 
-LDlinkPython is currently installed from GitHub (not PyPI yet).
+`LDlinkPython` is currently installed from GitHub (not PyPI yet).
 Using a virtual environment is also the standard recommendation.
 
 ### Requirements
@@ -36,13 +36,13 @@ py -m venv .venv
 
 ### 1. Personal Access Token - **Required**
 
-In order to access the [LDlink](https://ldlink.nih.gov) API via *LDlinkPython*, we use a personal access token.
+In order to access the [LDlink](https://ldlink.nih.gov) API via `LDlinkPython`, we use a personal access token.
 
 You will need to:
 
 - Make a one-time request for your personal access token from a web browser at <https://ldlink.nih.gov/?tab=apiaccess>.
-- Once registered, your personal access token will be emailed to you. It is a string of 12 random letters and numbers. 
-- *LDlinkPython* uses your personal LDlink API token for access. Set it as an environment variable named `LDLINK_TOKEN`.  See examples below:
+- Once registered, your personal access token will be emailed to you.  It is a string of 12 random letters and numbers. 
+- `LDlinkPython` uses your personal LDlink API token for access.  Set it as an environment variable named `LDLINK_TOKEN`.  See examples below:
 
 #### macOS / Linux
 
@@ -67,7 +67,7 @@ python3
 py
 ```
 
-### 3. Import *LDlinkPython**
+### 3. Import `LDlinkPython`
 
 ```python
 from ldlinkpython import list_pop, list_chips, ldpair, ldproxy
@@ -100,9 +100,9 @@ ldproxy("rs7412", pop="CEU")
 
 ### Notes
 
-- *LDlinkPython* reads your token from the LDLINK_TOKEN environment variable by default.
+- `LDlinkPython` reads your token from the LDLINK_TOKEN environment variable by default.
 - Most functions return pandas DataFrames.
-- You can also pass token="your_token_here" directly to functions if you prefer not to use an environment variable.
+- You can also pass `token="your_token_here"` directly to functions as an argument if you prefer not to use an environment variable.
 
 ## Longer usage examples
 ### LDtrait notes
