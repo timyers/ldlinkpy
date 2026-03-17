@@ -84,8 +84,9 @@ List available 1000 Genomes populations:
 ```python
 list_pop()
 ```
+
 <p align="center">
-  <img src="docs/images/list_pop_example.png" alt="Example output for list_pop_example()" width="400">
+  <img src="docs/images/list_pop_example.png" alt="Example output for list_pop()" width="300">
 </p>
 
 List available genotyping SNP chips:
