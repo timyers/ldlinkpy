@@ -1,6 +1,6 @@
 """Lookup helpers for packaged non-endpoint reference datasets.
 
-This module intentionally contains non-endpoint lookup helpers for LDlinkPython.
+This module intentionally contains non-endpoint lookup helpers for ldlinkpy.
 It is the future home for additional packaged helpers such as ``list_pop()`` and
 ``list_gtex_tissues()`` that should remain separate from endpoint wrappers.
 """
