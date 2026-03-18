@@ -52,7 +52,7 @@ In order to access the [LDlink](https://ldlink.nih.gov) API via `LDlinkPython`, 
 
 You will need to:
 
-- Make a one-time request for your personal access token from a web browser at <https://ldlink.nih.gov/?tab=apiaccess>.
+- Make a one-time request for your personal access token from a web browser at <https://ldlink.nih.gov/apiaccess>.
 - Once registered, your personal access token will be emailed to you.  It is a string of 12 random letters and numbers. 
 - `LDlinkPython` uses your personal LDlink API token for access.  By default it reads your token from the LDLINK_TOKEN environment variable.  Set it as an environment variable named `LDLINK_TOKEN`.  See examples below:
 
