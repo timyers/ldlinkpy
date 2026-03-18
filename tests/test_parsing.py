@@ -5,7 +5,7 @@ from __future__ import annotations
 import pandas as pd
 import pytest
 
-from ldlinkpython.parsing import coerce_response, is_json_response, parse_matrix, parse_tsv
+from ldlinkpy.parsing import coerce_response, is_json_response, parse_matrix, parse_tsv
 
 
 def test_is_json_response_true_cases() -> None:

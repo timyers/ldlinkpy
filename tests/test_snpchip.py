@@ -5,7 +5,7 @@ from __future__ import annotations
 import pandas as pd
 import pytest
 
-import ldlinkpython.endpoints.snpchip as snpchip_mod
+import ldlinkpy.endpoints.snpchip as snpchip_mod
 
 
 def test_snpchip_posts_and_parses_tsv(monkeypatch: pytest.MonkeyPatch) -> None:

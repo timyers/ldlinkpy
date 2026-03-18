@@ -2,7 +2,7 @@ from __future__ import annotations
 
 import pandas as pd
 
-from ldlinkpython.lookups import list_pop
+from ldlinkpy.lookups import list_pop
 
 
 def test_list_pop_shape_order_and_mappings() -> None:

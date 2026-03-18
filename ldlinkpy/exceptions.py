@@ -1,5 +1,5 @@
 """
-Custom exceptions for ldlinkpython.
+Custom exceptions for ldlinkpy.
 
 These exceptions provide clear, user-friendly error messages and preserve key
 context (HTTP status codes, endpoint, etc.) for debugging.
@@ -12,7 +12,7 @@ from typing import Optional
 
 
 class LDlinkError(Exception):
-    """Base exception for all ldlinkpython errors."""
+    """Base exception for all ldlinkpy errors."""
 
     def __init__(self, message: str = "An LDlink error occurred.") -> None:
         self.message = message

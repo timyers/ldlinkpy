@@ -1,6 +1,6 @@
-# ldlinkpython/http.py
+# ldlinkpy/http.py
 #
-# Shared HTTP request helper used by all ldlinkpython endpoint wrappers.
+# Shared HTTP request helper used by all ldlinkpy endpoint wrappers.
 #
 # What it does
 # - Provides a single `request()` function that builds and sends LDlink REST requests via `requests`.
@@ -19,7 +19,7 @@
 # - Centralizes reliability workarounds (global serialization and IPv4 retry) in one place.
 # - Makes endpoint functions smaller and easier to maintain and test.
 
-# ldlinkpython/http.py
+# ldlinkpy/http.py
 from __future__ import annotations
 
 import json

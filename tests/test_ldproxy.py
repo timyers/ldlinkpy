@@ -6,7 +6,7 @@ import pandas as pd
 import pytest
 import responses
 
-from ldlinkpython.endpoints.ldproxy import ldproxy
+from ldlinkpy.endpoints.ldproxy import ldproxy
 
 
 @responses.activate

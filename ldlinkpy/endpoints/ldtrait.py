@@ -4,9 +4,9 @@ from typing import Any, Iterable, Mapping, Sequence
 
 import pandas as pd
 
-from ldlinkpython import DEFAULT_API_ROOT
-from ldlinkpython.http import request
-from ldlinkpython.validators import (
+from ldlinkpy import DEFAULT_API_ROOT
+from ldlinkpy.http import request
+from ldlinkpy.validators import (
     ensure_token,
     normalize_snps,
     validate_genome_build,
@@ -64,7 +64,7 @@ def _json_to_dataframe(payload: Any) -> pd.DataFrame:
         for key in ("output", "Output", "text", "Text", "tsv", "TSV"):
             if key in payload and isinstance(payload[key], str):
                 try:
-                    from ldlinkpython.parsing import parse_tsv
+                    from ldlinkpy.parsing import parse_tsv
 
                     return parse_tsv(payload[key])
                 except Exception as e:  # pragma: no cover
@@ -196,7 +196,7 @@ def ldtrait(
     # DataFrame coercion:
     if isinstance(payload, str):
         # Default: parse TSV
-        from ldlinkpython.parsing import parse_tsv
+        from ldlinkpy.parsing import parse_tsv
 
         try:
             return parse_tsv(payload)

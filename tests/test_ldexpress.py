@@ -2,7 +2,7 @@ from __future__ import annotations
 
 import pytest
 
-from ldlinkpython.endpoints.ldexpress import ldexpress
+from ldlinkpy.endpoints.ldexpress import ldexpress
 
 
 def test_ldexpress_posts_expected_body_and_parses_tsv(monkeypatch: pytest.MonkeyPatch) -> None:
@@ -33,7 +33,7 @@ def test_ldexpress_posts_expected_body_and_parses_tsv(monkeypatch: pytest.Monkey
             "rs429358\trs429358\tchr19:45411941\t1.0\t1.0\tAPOE\tENSG00000130203.10\tWhole Blood\tC=0.9\tT=0.1\t0.2\t0.001\n"
         )
 
-    monkeypatch.setattr("ldlinkpython.endpoints.ldexpress.request", fake_request)
+    monkeypatch.setattr("ldlinkpy.endpoints.ldexpress.request", fake_request)
     monkeypatch.setenv("LDLINK_TOKEN", "TESTTOKEN")
 
     df = ldexpress(
@@ -87,7 +87,7 @@ def test_ldexpress_all_tissue_expands(monkeypatch: pytest.MonkeyPatch) -> None:
         captured["json_body"] = json_body
         return "A\tB\n1\t2\n"
 
-    monkeypatch.setattr("ldlinkpython.endpoints.ldexpress.request", fake_request)
+    monkeypatch.setattr("ldlinkpy.endpoints.ldexpress.request", fake_request)
     monkeypatch.setenv("LDLINK_TOKEN", "TESTTOKEN")
 
     _ = ldexpress(snps="rs429358", tissue="ALL")

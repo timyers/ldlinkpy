@@ -5,8 +5,8 @@ from typing import Iterable, Union, overload
 
 import pandas as pd
 
-from ldlinkpython import DEFAULT_API_ROOT
-from ldlinkpython.client import LDlinkClient
+from ldlinkpy import DEFAULT_API_ROOT
+from ldlinkpy.client import LDlinkClient
 
 
 _VALID_GENOME_BUILDS = {"grch37", "grch38"}

@@ -11,7 +11,7 @@ from importlib import resources
 
 import pandas as pd
 
-from ldlinkpython.exceptions import ParseError
+from ldlinkpy.exceptions import ParseError
 
 _EXPECTED_COLUMNS: list[str] = ["chip_code", "chip_name"]
 _EXPECTED_POP_COLUMNS: list[str] = ["pop_code", "super_pop_code", "pop_name"]
@@ -24,7 +24,7 @@ _EXPECTED_GTEX_TISSUE_COLUMNS: list[str] = [
 def list_chip_platforms() -> pd.DataFrame:
     """Return LDlink SNP chip platforms from packaged lookup data."""
     try:
-        csv_path = resources.files("ldlinkpython").joinpath("data/chips.csv")
+        csv_path = resources.files("ldlinkpy").joinpath("data/chips.csv")
         with csv_path.open("r", encoding="utf-8", newline="") as handle:
             dataframe = pd.read_csv(handle, dtype=str)
     except Exception as exc:  # pragma: no cover - exception path validated by behavior
@@ -48,7 +48,7 @@ def list_chips() -> pd.DataFrame:
 def list_pop() -> pd.DataFrame:
     """Return LDlink reference populations from packaged lookup data."""
     try:
-        csv_path = resources.files("ldlinkpython").joinpath("data/pops.csv")
+        csv_path = resources.files("ldlinkpy").joinpath("data/pops.csv")
         with csv_path.open("r", encoding="utf-8", newline="") as handle:
             dataframe = pd.read_csv(handle, dtype=str)
     except Exception as exc:  # pragma: no cover - exception path validated by behavior
@@ -67,7 +67,7 @@ def list_pop() -> pd.DataFrame:
 def list_gtex_tissues() -> pd.DataFrame:
     """Return LDlink GTEx tissues from packaged lookup data."""
     try:
-        csv_path = resources.files("ldlinkpython").joinpath("data/gtex_tissues.csv")
+        csv_path = resources.files("ldlinkpy").joinpath("data/gtex_tissues.csv")
         with csv_path.open("r", encoding="utf-8", newline="") as handle:
             dataframe = pd.read_csv(handle, dtype=str)
     except Exception as exc:  # pragma: no cover - exception path validated by behavior

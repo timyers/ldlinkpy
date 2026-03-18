@@ -4,10 +4,10 @@ from typing import Any, Sequence, Union, Optional
 
 import pandas as pd
 
-from ldlinkpython import DEFAULT_API_ROOT
-from ldlinkpython.http import request as http_request
-from ldlinkpython.parsing import parse_matrix
-from ldlinkpython.validators import normalize_snps, validate_genome_build, validate_r2d
+from ldlinkpy import DEFAULT_API_ROOT
+from ldlinkpy.http import request as http_request
+from ldlinkpy.parsing import parse_matrix
+from ldlinkpy.validators import normalize_snps, validate_genome_build, validate_r2d
 
 
 def ldmatrix(

@@ -5,7 +5,7 @@ from __future__ import annotations
 import pandas as pd
 import pytest
 
-import ldlinkpython.endpoints.snpclip as snpclip_mod
+import ldlinkpy.endpoints.snpclip as snpclip_mod
 
 
 def test_snpclip_posts_and_parses_tsv(monkeypatch: pytest.MonkeyPatch) -> None:

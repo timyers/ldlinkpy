@@ -2,7 +2,7 @@ from __future__ import annotations
 
 import pytest
 
-import ldlinkpython.endpoints.ldpair as ldpair_mod
+import ldlinkpy.endpoints.ldpair as ldpair_mod
 
 
 def test_ldpair_single_pair_get_returns_dataframe(monkeypatch):

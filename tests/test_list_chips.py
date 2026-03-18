@@ -3,7 +3,7 @@ from __future__ import annotations
 import pandas as pd
 import pandas.testing as pdt
 
-from ldlinkpython.lookups import list_chip_platforms, list_chips
+from ldlinkpy.lookups import list_chip_platforms, list_chips
 
 
 def test_list_chip_platforms_shape_and_mappings() -> None:

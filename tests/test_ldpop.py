@@ -3,7 +3,7 @@ from __future__ import annotations
 import pandas as pd
 import pytest
 
-import ldlinkpython.endpoints.ldpop as ldpop_mod
+import ldlinkpy.endpoints.ldpop as ldpop_mod
 
 
 def test_ldpop_calls_endpoint_and_parses(monkeypatch: pytest.MonkeyPatch) -> None:

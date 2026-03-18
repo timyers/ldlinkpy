@@ -2,8 +2,8 @@
 
 import pytest
 
-from ldlinkpython.exceptions import TokenMissingError, ValidationError
-from ldlinkpython.validators import (
+from ldlinkpy.exceptions import TokenMissingError, ValidationError
+from ldlinkpy.validators import (
     ensure_token,
     normalize_list_arg,
     normalize_snps,

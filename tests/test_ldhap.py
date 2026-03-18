@@ -5,7 +5,7 @@ from __future__ import annotations
 import pandas as pd
 import pytest
 
-import ldlinkpython.endpoints.ldhap as ldhap_mod
+import ldlinkpy.endpoints.ldhap as ldhap_mod
 
 
 def test_ldhap_calls_endpoint_and_parses_haplotype_table(monkeypatch: pytest.MonkeyPatch) -> None:

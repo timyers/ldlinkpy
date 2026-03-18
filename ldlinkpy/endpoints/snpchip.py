@@ -1,4 +1,4 @@
-# ldlinkpython/endpoints/snpchip.py
+# ldlinkpy/endpoints/snpchip.py
 
 from __future__ import annotations
 
@@ -8,10 +8,10 @@ from typing import Sequence
 
 import pandas as pd
 
-from ldlinkpython import DEFAULT_API_ROOT
-from ldlinkpython.exceptions import ValidationError
-from ldlinkpython.http import request as http_request
-from ldlinkpython.validators import ensure_token
+from ldlinkpy import DEFAULT_API_ROOT
+from ldlinkpy.exceptions import ValidationError
+from ldlinkpy.http import request as http_request
+from ldlinkpy.validators import ensure_token
 
 _RSID_RE = re.compile(r"^rs\d+$", flags=re.IGNORECASE)
 _CHR_COORD_RE = re.compile(r"^chr(\d{1,2}|x|y):(\d{1,9})$", flags=re.IGNORECASE)

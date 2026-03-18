@@ -1,4 +1,4 @@
-# ldlinkpython/client.py
+# ldlinkpy/client.py
 
 from __future__ import annotations
 

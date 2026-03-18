@@ -7,7 +7,7 @@ from typing import Any, Dict, Iterator, Optional
 import pytest
 import requests
 
-import ldlinkpython.http as http
+import ldlinkpy.http as http
 
 
 class DummyResp:

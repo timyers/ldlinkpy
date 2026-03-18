@@ -3,14 +3,14 @@ requires = ["setuptools>=68", "wheel"]
 build-backend = "setuptools.build_meta"
 
 [project]
-name = "ldlinkpython"
+name = "ldlinkpy"
 version = "0.2.0"
 description = "Official Python client for the NIH LDlink REST API."
 readme = "README.md"
 requires-python = ">=3.10"
 license = { text = "MIT" }
 authors = [
-  { name = "LDlinkPython contributors" }
+  { name = "ldlinkpy contributors" }
 ]
 dependencies = [
   "requests>=2.31",
@@ -29,10 +29,10 @@ include-package-data = true
 
 [tool.setuptools.packages.find]
 where = ["."]
-include = ["ldlinkpython*"]
+include = ["ldlinkpy*"]
 
 [tool.setuptools.package-data]
-ldlinkpython = ["data/*.csv"]
+ldlinkpy = ["data/*.csv"]
 
 [tool.ruff]
 line-length = 88

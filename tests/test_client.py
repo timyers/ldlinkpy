@@ -5,8 +5,8 @@ import threading
 import pytest
 import responses
 
-from ldlinkpython.client import LDlinkClient
-from ldlinkpython.exceptions import APIError
+from ldlinkpy.client import LDlinkClient
+from ldlinkpy.exceptions import APIError
 
 
 @responses.activate

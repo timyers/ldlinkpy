@@ -20,7 +20,7 @@ def _parse_matrix_tsv(text: str) -> pd.DataFrame:
 
 
 def test_ldmatrix_auto_get_params(monkeypatch: pytest.MonkeyPatch) -> None:
-    from ldlinkpython.endpoints import ldmatrix as ldmatrix_mod
+    from ldlinkpy.endpoints import ldmatrix as ldmatrix_mod
 
     calls: Dict[str, Any] = {}
 
@@ -74,7 +74,7 @@ def test_ldmatrix_auto_get_params(monkeypatch: pytest.MonkeyPatch) -> None:
 
 
 def test_ldmatrix_auto_post_json_body(monkeypatch: pytest.MonkeyPatch) -> None:
-    from ldlinkpython.endpoints import ldmatrix as ldmatrix_mod
+    from ldlinkpy.endpoints import ldmatrix as ldmatrix_mod
 
     calls: Dict[str, Any] = {}
 
@@ -128,7 +128,7 @@ def test_ldmatrix_auto_post_json_body(monkeypatch: pytest.MonkeyPatch) -> None:
 
 
 def test_ldmatrix_parses_matrix_to_dataframe(monkeypatch: pytest.MonkeyPatch) -> None:
-    from ldlinkpython.endpoints import ldmatrix as ldmatrix_mod
+    from ldlinkpy.endpoints import ldmatrix as ldmatrix_mod
 
     def fake_http_request(
         endpoint: str,

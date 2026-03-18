@@ -2,7 +2,7 @@ from __future__ import annotations
 
 import pandas as pd
 
-from ldlinkpython.lookups import list_gtex_tissues
+from ldlinkpy.lookups import list_gtex_tissues
 
 
 def test_list_gtex_tissues_shape_order_and_mappings() -> None:

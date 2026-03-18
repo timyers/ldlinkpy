@@ -1,4 +1,4 @@
-# ldlinkpython/endpoints/snpclip.py
+# ldlinkpy/endpoints/snpclip.py
 
 from __future__ import annotations
 
@@ -8,10 +8,10 @@ from typing import Sequence
 
 import pandas as pd
 
-from ldlinkpython import DEFAULT_API_ROOT
-from ldlinkpython.exceptions import ValidationError
-from ldlinkpython.http import request as http_request
-from ldlinkpython.validators import ensure_token
+from ldlinkpy import DEFAULT_API_ROOT
+from ldlinkpy.exceptions import ValidationError
+from ldlinkpy.http import request as http_request
+from ldlinkpy.validators import ensure_token
 
 _AVAIL_POP: set[str] = {
     "YRI",
