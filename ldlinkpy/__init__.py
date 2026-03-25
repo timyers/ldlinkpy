@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 DEFAULT_API_ROOT = "https://ldlink.nih.gov/LDlinkRest"
-__version__ = "0.2.0"
+__version__ = "0.3.0"
 
 from ldlinkpy.client import LDlinkClient
 from ldlinkpy.endpoints.ldpair import ldpair
