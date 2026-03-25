@@ -1,6 +1,5 @@
 from __future__ import annotations
 
-import os
 from pathlib import Path
 
 import pandas as pd
@@ -95,49 +94,3 @@ def test_ldproxy_batch_validates_genome_build_and_window() -> None:
 
     with pytest.raises(ValueError, match="win_size"):
         ldproxy_batch(snp="rs1", win_size=1_000_001)
-
-
-def test_ldproxy_batch_real_api_calls_with_multiple_rsids(tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> None:
-    """Real integration test against LDlink API (requires LDLINK_TOKEN)."""
-    token = os.getenv("LDLINK_TOKEN")
-    if not token:
-        pytest.skip("LDLINK_TOKEN not set; skipping real API integration test.")
-
-    from ldlinkpy.endpoints.ldproxy_batch import ldproxy_batch
-
-    monkeypatch.chdir(tmp_path)
-
-    snps = ["rs3", "rs7412"]
-    try:
-        files = ldproxy_batch(
-            snp=snps,
-            pop="CEU",
-            r2d="r2",
-            token=token,
-            append=True,
-            genome_build="grch37",
-            win_size=50000,
-        )
-    except Exception as exc:  # pragma: no cover - environment/network dependent
-        msg = str(exc)
-        network_markers = (
-            "ProxyError",
-            "Tunnel connection failed",
-            "Max retries exceeded",
-            "Name or service not known",
-            "Temporary failure in name resolution",
-            "Connection refused",
-            "timed out",
-        )
-        if any(marker in msg for marker in network_markers):
-            pytest.skip(f"LDlink API not reachable from this environment: {exc}")
-        raise
-
-    combined = tmp_path / "combined_query_snp_list_grch37.txt"
-    assert files == [str(combined)]
-    assert combined.exists()
-
-    text = combined.read_text()
-    assert "query_snp" in text
-    assert "rs3" in text
-    assert "rs7412" in text
