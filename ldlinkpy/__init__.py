@@ -7,6 +7,7 @@ from ldlinkpy.client import LDlinkClient
 from ldlinkpy.endpoints.ldpair import ldpair
 from ldlinkpy.endpoints.ldmatrix import ldmatrix
 from ldlinkpy.endpoints.ldproxy import ldproxy
+from ldlinkpy.endpoints.ldproxy_batch import ldproxy_batch
 from ldlinkpy.endpoints.ldtrait import ldtrait
 from ldlinkpy.endpoints.ldmatrix import ldmatrix
 from ldlinkpy.endpoints.ldexpress import ldexpress
@@ -27,6 +28,7 @@ __all__ = [
     "LDlinkClient",
     "ldpair",
     "ldproxy",
+    "ldproxy_batch",
     "ldtrait",
     "ldmatrix",
     "ldexpress",
