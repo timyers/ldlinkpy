@@ -453,3 +453,72 @@ PYTHONPATH=. python -c "from ldlinkpy import list_gtex_tissues; df=list_gtex_tis
 ```bash
 PYTHONPATH=. python -c "from ldlinkpy import list_gtex_tissues; df=list_gtex_tissues(); df.to_csv('tmp/gtex_tissues.csv', index=False); print('wrote tmp/gtex_tissues.csv with', len(df), 'rows')"
 ```
+
+
+### `ldproxy_batch` command-line examples (0–7)
+
+Set your token once in your shell:
+
+```bash
+export LDLINK_TOKEN="YOUR_TOKEN_HERE"
+```
+
+0) One-time sanity check from repo root:
+
+```bash
+cd /workspace/ldlinkpy
+mkdir -p tmp
+PYTHONPATH=. python -c "import os; print('LDLINK_TOKEN set:', bool(os.getenv('LDLINK_TOKEN')))"
+```
+
+1) Basic real batch call (separate output files, defaults):
+
+```bash
+PYTHONPATH=. python -c "from ldlinkpy import ldproxy_batch; files=ldproxy_batch(snp=['rs3','rs7412','rs429358'], pop='CEU', token=None); print('written files:'); [print(' -', f) for f in files]"
+```
+
+2) Combined append mode + multiple populations:
+
+```bash
+PYTHONPATH=. python -c "from ldlinkpy import ldproxy_batch; files=ldproxy_batch(snp=['rs3','rs7412','rs429358'], pop=['CEU','YRI'], r2d='r2', append=True, genome_build='grch37', win_size=100000, token=None); print(files)"
+```
+
+3) D-prime output (`r2d='d'`):
+
+```bash
+PYTHONPATH=. python -c "from ldlinkpy import ldproxy_batch; files=ldproxy_batch(snp=['rs3','rs7412'], pop='CEU', r2d='d', append=False, genome_build='grch37', win_size=50000, token=None); print(files)"
+```
+
+4) CSV/newline string SNP input:
+
+```bash
+PYTHONPATH=. python -c "from ldlinkpy import ldproxy_batch; files=ldproxy_batch(snp='rs3,rs7412\\nrs429358', pop='CEU', append=False, genome_build='grch37', win_size=50000, token=None); print(files)"
+```
+
+5) DataFrame SNP input:
+
+```bash
+PYTHONPATH=. python -c "import pandas as pd; from ldlinkpy import ldproxy_batch; snp_df=pd.DataFrame(['rs3','rs7412','rs429358']); files=ldproxy_batch(snp=snp_df, pop='CEU', append=False, genome_build='grch37', win_size=50000, token=None); print(files)"
+```
+
+6) Test alternate genome builds:
+
+```bash
+PYTHONPATH=. python -c "from ldlinkpy import ldproxy_batch; [print(gb, '->', ldproxy_batch(snp=['rs3','rs7412'], pop='CEU', append=True, genome_build=gb, win_size=50000, token=None)) for gb in ['grch37','grch38','grch38_high_coverage']]"
+```
+
+7) `win_size` boundary checks (0 and 1,000,000):
+
+```bash
+PYTHONPATH=. python -c "from ldlinkpy import ldproxy_batch; [print('win_size', w, '->', ldproxy_batch(snp=['rs3','rs7412'], pop='CEU', append=True, genome_build='grch37', win_size=w, token=None)) for w in [0,1000000]]"
+```
+
+Notes:
+
+- `ldproxy_batch` writes output files to your current working directory.
+- With `append=False` (default), one file is written per query SNP: `<snp>_<genome_build>.txt`.
+- With `append=True`, one combined file is written: `combined_query_snp_list_<genome_build>.txt`.
+- Real API usage requires a valid `LDLINK_TOKEN`.
+- `snp` accepts newline/CSV strings, lists/iterables, and pandas DataFrames.
+- Supported `genome_build` values are `grch37`, `grch38`, and `grch38_high_coverage`.
+- `win_size` must be an integer in the range `0` to `1,000,000`.
