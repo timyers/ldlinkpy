@@ -108,3 +108,37 @@ def test_ldproxy_accepts_grch38_high_coverage() -> None:
 
     assert isinstance(df, pd.DataFrame)
     assert df.shape == (1, 3)
+
+
+@responses.activate
+def test_ldproxy_writes_file(tmp_path) -> None:
+    api_root = "https://example.org/LDlinkRest"
+    token = "test-token-123"
+    expected_url = f"{api_root}/ldproxy"
+    out_file = tmp_path / "ldproxy.tsv"
+
+    tsv = (
+        "RS_Number\tCoord\tR2\n"
+        "rs123\t1:1000\t1.0\n"
+    )
+    responses.add(method=responses.GET, url=expected_url, body=tsv, status=200, content_type="text/plain")
+
+    out = ldproxy(snp="rs123", pop="CEU", token=token, api_root=api_root, file=str(out_file))
+
+    assert isinstance(out, pd.DataFrame)
+    assert out_file.exists()
+    assert "RS_Number\tCoord\tR2" in out_file.read_text()
+
+
+def test_ldproxy_validates_inputs() -> None:
+    with pytest.raises(ValueError, match="Invalid query format for variant"):
+        ldproxy(snp="not-a-variant", pop="CEU", token="tok")
+
+    with pytest.raises(ValueError, match="Not a valid population code"):
+        ldproxy(snp="rs123", pop="BAD", token="tok")
+
+    with pytest.raises(ValueError, match="greater than 0 and less than or equal to 1,000,000"):
+        ldproxy(snp="rs123", pop="CEU", token="tok", win_size=1_000_001)
+
+    with pytest.raises(ValueError, match="Invalid input for file option"):
+        ldproxy(snp="rs123", pop="CEU", token="tok", file=123)
