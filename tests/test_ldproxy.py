@@ -75,3 +75,36 @@ def test_ldproxy_hits_correct_url_and_params_and_returns_dataframe() -> None:
     assert df.loc[0, "R2"] == "1.0"
     assert df.loc[1, "RS_Number"] == "rs456"
     assert df.loc[1, "R2"] == "0.8"
+
+
+@responses.activate
+def test_ldproxy_accepts_grch38_high_coverage() -> None:
+    api_root = "https://example.org/LDlinkRest"
+    token = "test-token-123"
+    expected_url = f"{api_root}/ldproxy"
+
+    tsv = "RS_Number\tCoord\tR2\nrs123\t1:1000\t1.0\n"
+
+    def _callback(request):
+        parsed = urlparse(request.url)
+        qs = parse_qs(parsed.query)
+        assert qs["genome_build"] == ["grch38_high_coverage"]
+        return (200, {"Content-Type": "text/plain"}, tsv)
+
+    responses.add_callback(
+        method=responses.GET,
+        url=expected_url,
+        callback=_callback,
+        content_type="text/plain",
+    )
+
+    df = ldproxy(
+        snp="rs123",
+        pop="CEU",
+        genome_build="grch38_high_coverage",
+        token=token,
+        api_root=api_root,
+    )
+
+    assert isinstance(df, pd.DataFrame)
+    assert df.shape == (1, 3)
