@@ -130,6 +130,64 @@ ldproxy("rs7412", pop="CEU")
 - **Recommended:** use `request_method="auto"` (POST). This is the default and is the most reliable.
 - **Optional:** `request_method="get"` uses the `ldtraitget` endpoint. In some environments this may fail due to network/TLS issues. If you hit errors with GET, switch back to POST.
 
+### `ldproxy` command-line examples (1–7)
+
+Set your token once in your shell:
+
+```bash
+export LDLINK_TOKEN="YOUR_TOKEN_HERE"
+```
+
+1) Basic call (defaults: `r2d='r2'`, `win_size=500000`, `genome_build='grch37'`):
+
+```bash
+PYTHONPATH=. python -c "from ldlinkpy import ldproxy; df=ldproxy(snp='rs7412', pop='CEU', token=None); print(df.head().to_string(index=False))"
+```
+
+2) Multiple populations as a list:
+
+```bash
+PYTHONPATH=. python -c "from ldlinkpy import ldproxy; df=ldproxy(snp='rs7412', pop=['CEU','YRI'], token=None); print(df[['RS_Number','Coord','R2']].head().to_string(index=False))"
+```
+
+3) Use D' (`r2d='d'`) instead of R²:
+
+```bash
+PYTHONPATH=. python -c "from ldlinkpy import ldproxy; df=ldproxy(snp='rs429358', pop='EUR', r2d='d', token=None); print(df.head().to_string(index=False))"
+```
+
+4) Smaller window size (`win_size=100000`):
+
+```bash
+PYTHONPATH=. python -c "from ldlinkpy import ldproxy; df=ldproxy(snp='rs429358', pop='EUR', win_size=100000, token=None); print(df.head().to_string(index=False))"
+```
+
+5) GRCh38 build:
+
+```bash
+PYTHONPATH=. python -c "from ldlinkpy import ldproxy; df=ldproxy(snp='rs7412', pop='CEU', genome_build='grch38', token=None); print(df.head().to_string(index=False))"
+```
+
+6) GRCh38 high coverage build:
+
+```bash
+PYTHONPATH=. python -c "from ldlinkpy import ldproxy; df=ldproxy(snp='rs7412', pop='CEU', genome_build='grch38_high_coverage', token=None); print(df.head().to_string(index=False))"
+```
+
+7) Raw text output (`return_type='raw'`) with explicit token argument:
+
+```bash
+PYTHONPATH=. python -c "from ldlinkpy import ldproxy; txt=ldproxy(snp='rs7412', pop='CEU', genome_build='grch37', return_type='raw', token='YOUR_TOKEN_HERE'); print('\n'.join(txt.splitlines()[:10]))"
+```
+
+Notes:
+
+- `snp` accepts an rsID query variant (for example, `rs7412` or `rs429358`).
+- `pop` accepts one code (string) or multiple codes (list).
+- `r2d` must be `r2` or `d`.
+- `genome_build` supports `grch37`, `grch38`, and `grch38_high_coverage`.
+- `return_type` supports `dataframe` (default) or `raw`.
+
 ### `ldhap` command-line examples (1–4)
 
 Set your token once in your shell:
