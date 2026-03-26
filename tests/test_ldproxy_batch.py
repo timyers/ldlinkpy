@@ -94,6 +94,9 @@ def test_ldproxy_batch_validates_genome_build_and_window() -> None:
         ldproxy_batch(snp="rs1", genome_build="hg19")
 
     with pytest.raises(ValueError, match="win_size"):
+        ldproxy_batch(snp="rs1", win_size=0)
+
+    with pytest.raises(ValueError, match="win_size"):
         ldproxy_batch(snp="rs1", win_size=1_000_001)
 
 

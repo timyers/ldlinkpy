@@ -507,10 +507,10 @@ PYTHONPATH=. python -c "import pandas as pd; from ldlinkpy import ldproxy_batch;
 PYTHONPATH=. python -c "from ldlinkpy import ldproxy_batch; [print(gb, '->', ldproxy_batch(snp=['rs3','rs7412'], pop='CEU', append=True, genome_build=gb, win_size=50000, token=None)) for gb in ['grch37','grch38','grch38_high_coverage']]"
 ```
 
-7) `win_size` boundary checks (0 and 1,000,000):
+7) `win_size` boundary checks (1 and 1,000,000):
 
 ```bash
-PYTHONPATH=. python -c "from ldlinkpy import ldproxy_batch; [print('win_size', w, '->', ldproxy_batch(snp=['rs3','rs7412'], pop='CEU', append=True, genome_build='grch37', win_size=w, token=None)) for w in [0,1000000]]"
+PYTHONPATH=. python -c "from ldlinkpy import ldproxy_batch; [print('win_size', w, '->', ldproxy_batch(snp=['rs3','rs7412'], pop='CEU', append=True, genome_build='grch37', win_size=w, token=None)) for w in [1,1000000]]"
 ```
 
 Notes:
@@ -521,4 +521,4 @@ Notes:
 - Real API usage requires a valid `LDLINK_TOKEN`.
 - `snp` accepts newline/CSV strings, lists/iterables, and pandas DataFrames.
 - Supported `genome_build` values are `grch37`, `grch38`, and `grch38_high_coverage`.
-- `win_size` must be an integer in the range `0` to `1,000,000`.
+- `win_size` must be an integer greater than `0` and less than or equal to `1,000,000`.

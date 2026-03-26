@@ -62,8 +62,8 @@ def ldproxy_batch(
             f"genome_build must be one of {sorted(_VALID_GENOME_BUILDS)} (got: {genome_build!r})."
         )
 
-    if not isinstance(win_size, int) or win_size < 0 or win_size > 1_000_000:
-        raise ValueError("win_size must be an integer between 0 and 1,000,000 (inclusive).")
+    if not isinstance(win_size, int) or win_size <= 0 or win_size > 1_000_000:
+        raise ValueError("win_size must be an integer greater than 0 and less than or equal to 1,000,000.")
 
     snps = _normalize_snps(snp)
     written_files: list[str] = []
