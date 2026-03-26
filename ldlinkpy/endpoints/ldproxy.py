@@ -9,7 +9,7 @@ from ldlinkpy import DEFAULT_API_ROOT
 from ldlinkpy.client import LDlinkClient
 
 
-_VALID_GENOME_BUILDS = {"grch37", "grch38"}
+_VALID_GENOME_BUILDS = {"grch37", "grch38", "grch38_high_coverage"}
 _VALID_R2D = {"r2", "d"}
 
 
@@ -76,7 +76,7 @@ def ldproxy(
     win_size:
         Window size in base pairs.
     genome_build:
-        'grch37' or 'grch38'.
+        'grch37', 'grch38', or 'grch38_high_coverage'.
     token:
         LDlink API token (or use env var LDLINK_TOKEN).
     api_root:
