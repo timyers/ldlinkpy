@@ -47,8 +47,8 @@ _AVAIL_POP: set[str] = {
     "SAS",
 }
 
-_RSID_RE = re.compile(r"^rs\\d+$", flags=re.IGNORECASE)
-_CHR_COORD_RE = re.compile(r"^chr(\\d{1,2}|x|y):(\\d{1,9})$", flags=re.IGNORECASE)
+_RSID_RE = re.compile(r"^rs\d+$", flags=re.IGNORECASE)
+_CHR_COORD_RE = re.compile(r"^chr(\d{1,2}|x|y):(\d{1,9})$", flags=re.IGNORECASE)
 
 
 def _normalize_pop(pop: Union[str, Iterable[str]]) -> str:
