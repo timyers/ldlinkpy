@@ -39,14 +39,14 @@ def test_ldpair_multiple_pairs_post_returns_parsed_json(monkeypatch):
         api_root=None,
         method="GET",
         params=None,
-        json=None,
+        json_body=None,
     ):
         assert path == "ldpair"
         assert method == "POST"
-        assert json is not None
-        assert json["pop"] == "CEU"
-        assert json["genome_build"] == "grch37"
-        assert json["snp_pairs"] == [["rs1", "rs2"], ["rs3", "rs4"]]
+        assert json_body is not None
+        assert json_body["pop"] == "CEU"
+        assert json_body["genome_build"] == "grch37"
+        assert json_body["snp_pairs"] == [["rs1", "rs2"], ["rs3", "rs4"]]
         # Return text JSON to ensure endpoint parses it
         return '{"results":[{"var1":"rs1","var2":"rs2","r2":0.42},{"var1":"rs3","var2":"rs4","r2":0.11}]}'
 
@@ -91,3 +91,48 @@ def test_ldpair_validation_errors_missing_or_ambiguous():
     # request_method='get' not allowed for multiple pairs
     with pytest.raises(ValueError):
         ldpair_mod.ldpair(snp_pairs=[("rs1", "rs2"), ("rs3", "rs4")], request_method="get")
+
+
+def test_ldpair_accepts_population_list_and_high_coverage_build(monkeypatch):
+    def fake_http_request(path, token=None, api_root=None, method="GET", params=None, json_body=None):
+        assert path == "ldpair"
+        assert method == "GET"
+        assert params is not None
+        assert params["pop"] == "CEU+YRI"
+        assert params["genome_build"] == "grch38_high_coverage"
+        return "SNP_A\tSNP_B\tR2\nrs1\trs2\t0.42\n"
+
+    monkeypatch.setattr(ldpair_mod, "http_request", fake_http_request)
+
+    out = ldpair_mod.ldpair(
+        var1="rs1",
+        var2="rs2",
+        pop=["ceu", "yri"],
+        genome_build="grch38_high_coverage",
+    )
+    assert out.shape == (1, 3)
+
+
+def test_ldpair_writes_output_file(tmp_path, monkeypatch):
+    monkeypatch.setattr(ldpair_mod, "http_request", lambda *args, **kwargs: "SNP_A\tSNP_B\tR2\nrs1\trs2\t0.42\n")
+
+    out_file = tmp_path / "nested" / "ldpair.tsv"
+    df = ldpair_mod.ldpair(var1="rs1", var2="rs2", token="x", file=str(out_file))
+
+    assert out_file.exists()
+    assert "SNP_A\tSNP_B\tR2" in out_file.read_text(encoding="utf-8")
+    assert df.shape == (1, 3)
+
+
+def test_ldpair_validates_variant_pop_genome_build_and_file():
+    with pytest.raises(ValueError, match="var1 must be an rsID"):
+        ldpair_mod.ldpair(var1="bad", var2="rs2")
+
+    with pytest.raises(ValueError, match="Not a valid population code"):
+        ldpair_mod.ldpair(var1="rs1", var2="rs2", pop="BAD")
+
+    with pytest.raises(ValueError, match="Invalid genome build"):
+        ldpair_mod.ldpair(var1="rs1", var2="rs2", genome_build="hg19")
+
+    with pytest.raises(ValueError, match="file must be a string path or False"):
+        ldpair_mod.ldpair(var1="rs1", var2="rs2", file=123)
