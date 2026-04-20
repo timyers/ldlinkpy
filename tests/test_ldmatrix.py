@@ -123,8 +123,9 @@ def test_ldmatrix_auto_post_json_body(monkeypatch: pytest.MonkeyPatch) -> None:
     assert calls["json_body"]["pop"] == "CEU"
     assert calls["json_body"]["r2_d"] == "r2"
     assert calls["json_body"]["genome_build"] == "grch37"
-    assert isinstance(calls["json_body"]["snps"], list)
-    assert len(calls["json_body"]["snps"]) == 301
+    assert isinstance(calls["json_body"]["snps"], str)
+    assert "rs1" in calls["json_body"]["snps"]
+    assert "rs301" in calls["json_body"]["snps"]
 
 
 def test_ldmatrix_parses_matrix_to_dataframe(monkeypatch: pytest.MonkeyPatch) -> None:

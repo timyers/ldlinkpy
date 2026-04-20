@@ -127,7 +127,9 @@ def ldmatrix(
         )
     else:
         body = {
-            "snps": snp_list,
+            # LDlink expects newline-delimited SNPs for ldmatrix POST payloads.
+            # Sending a JSON array can trigger 500 responses from the API.
+            "snps": "\n".join(snp_list),
             "pop": pop_norm,
             "r2_d": r2d_norm,
             "genome_build": genome_build_norm,
