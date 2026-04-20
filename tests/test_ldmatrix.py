@@ -141,13 +141,13 @@ def test_ldmatrix_parses_matrix_to_dataframe(monkeypatch: pytest.MonkeyPatch) ->
         method: str = "GET",
         timeout: float = 60.0,
     ) -> str:
-        return "\trsA\trsB\nrsA\t1\t0.75\nrsB\t0.75\t1\n"
+        return "\trs11\trs22\nrs11\t1\t0.75\nrs22\t0.75\t1\n"
 
     monkeypatch.setattr(ldmatrix_mod, "parse_matrix", _parse_matrix_tsv)
     monkeypatch.setattr(ldmatrix_mod, "http_request", fake_http_request)
 
     df = ldmatrix_mod.ldmatrix(
-        snps="rsA rsB",
+        snps="rs11 rs22",
         pop="CEU",
         r2d="r2",
         genome_build="grch37",
@@ -158,6 +158,79 @@ def test_ldmatrix_parses_matrix_to_dataframe(monkeypatch: pytest.MonkeyPatch) ->
     )
 
     assert isinstance(df, pd.DataFrame)
-    assert list(df.columns) == ["rsA", "rsB"]
-    assert list(df.index) == ["rsA", "rsB"]
-    assert float(df.loc["rsA", "rsB"]) == 0.75
+    assert list(df.columns) == ["rs11", "rs22"]
+    assert list(df.index) == ["rs11", "rs22"]
+    assert float(df.loc["rs11", "rs22"]) == 0.75
+
+
+def test_ldmatrix_supports_multiple_populations(monkeypatch: pytest.MonkeyPatch) -> None:
+    from ldlinkpy.endpoints import ldmatrix as ldmatrix_mod
+
+    calls: Dict[str, Any] = {}
+
+    def fake_http_request(
+        endpoint: str,
+        *,
+        params: Optional[Dict[str, Any]] = None,
+        json_body: Optional[Dict[str, Any]] = None,
+        headers: Optional[Dict[str, str]] = None,
+        token: Optional[str] = None,
+        api_root: str,
+        method: str = "GET",
+        timeout: float = 60.0,
+    ) -> str:
+        calls["params"] = params
+        return "\trs1\trs2\nrs1\t1\t0.2\nrs2\t0.2\t1\n"
+
+    monkeypatch.setattr(ldmatrix_mod, "parse_matrix", _parse_matrix_tsv)
+    monkeypatch.setattr(ldmatrix_mod, "http_request", fake_http_request)
+
+    ldmatrix_mod.ldmatrix(
+        snps=["rs1", "chr7:24966446"],
+        pop=["YRI", "CEU"],
+        r2d="r2",
+        token="tok",
+        request_method="get",
+    )
+    assert calls["params"] is not None
+    assert calls["params"]["pop"] == "YRI+CEU"
+
+
+def test_ldmatrix_file_writes_tsv(monkeypatch: pytest.MonkeyPatch, tmp_path) -> None:
+    from ldlinkpy.endpoints import ldmatrix as ldmatrix_mod
+
+    def fake_http_request(
+        endpoint: str,
+        *,
+        params: Optional[Dict[str, Any]] = None,
+        json_body: Optional[Dict[str, Any]] = None,
+        headers: Optional[Dict[str, str]] = None,
+        token: Optional[str] = None,
+        api_root: str,
+        method: str = "GET",
+        timeout: float = 60.0,
+    ) -> str:
+        return "\trs11\trs22\nrs11\t1\t0.75\nrs22\t0.75\t1\n"
+
+    monkeypatch.setattr(ldmatrix_mod, "parse_matrix", _parse_matrix_tsv)
+    monkeypatch.setattr(ldmatrix_mod, "http_request", fake_http_request)
+    out = tmp_path / "ldmatrix.tsv"
+
+    ldmatrix_mod.ldmatrix(
+        snps=["rs11", "rs22"],
+        pop="CEU",
+        r2d="r2",
+        token="tok",
+        request_method="get",
+        file=str(out),
+    )
+
+    assert out.exists()
+    assert "rs11" in out.read_text(encoding="utf-8")
+
+
+def test_ldmatrix_rejects_bad_variant_format() -> None:
+    from ldlinkpy.endpoints import ldmatrix as ldmatrix_mod
+
+    with pytest.raises(ValueError, match="Invalid variant format"):
+        ldmatrix_mod.ldmatrix(snps=["rs1", "bad_variant"], token="tok")
