@@ -104,14 +104,17 @@ def validate_r2d(r2d: str) -> str:
 
 def validate_genome_build(build: str) -> str:
     """
-    Validate genome build. Allowed values: {'grch37', 'grch38'} (case-insensitive).
+    Validate genome build. Allowed values:
+    {'grch37', 'grch38', 'grch38_high_coverage'} (case-insensitive).
     Returns normalized value.
     """
     if not isinstance(build, str):
         raise ValidationError(f"build must be a string, got {type(build).__name__}.")
     v = build.strip().lower()
-    if v not in {"grch37", "grch38"}:
-        raise ValidationError("Invalid genome build. Allowed values are 'grch37' or 'grch38'.")
+    if v not in {"grch37", "grch38", "grch38_high_coverage"}:
+        raise ValidationError(
+            "Invalid genome build. Allowed values are 'grch37', 'grch38', or 'grch38_high_coverage'."
+        )
     return v
 
 
