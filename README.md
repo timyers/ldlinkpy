@@ -601,37 +601,37 @@ PYTHONPATH=. python -c "import os; print('LDLINK_TOKEN set:', bool(os.getenv('LD
 1) Basic single-pair call (defaults: `pop='CEU'`, `genome_build='grch37'`, `output='table'`):
 
 ```bash
-PYTHONPATH=. python -c "from ldlinkpy import ldpair; df=ldpair(var1='rs3', var2='rs4', token=None); print(type(df).__name__); print(df.head().to_string(index=False))"
+PYTHONPATH=. python -c "from ldlinkpy import ldpair; df=ldpair(var1='rs3', var2='rs4', token=None); print(type(df).__name__); print(df.head(25).to_string(index=False))"
 ```
 
 2) Text output:
 
 ```bash
-PYTHONPATH=. python -c "from ldlinkpy import ldpair; txt=ldpair(var1='rs3', var2='rs4', output='text', token=None); print(type(txt).__name__); print('\n'.join(txt.splitlines()[:12]))"
+PYTHONPATH=. python -c "from ldlinkpy import ldpair; txt=ldpair(var1='rs3', var2='rs4', output='text', token=None); print(type(txt).__name__); print('\n'.join(txt.splitlines()[:30]))"
 ```
 
 3) Multiple populations as list:
 
 ```bash
-PYTHONPATH=. python -c "from ldlinkpy import ldpair; df=ldpair(var1='rs3', var2='rs4', pop=['CEU','YRI'], token=None); print(df.head().to_string(index=False))"
+PYTHONPATH=. python -c "from ldlinkpy import ldpair; df=ldpair(var1='rs3', var2='rs4', pop=['CEU','YRI'], token=None); print(df.head(30).to_string(index=False))"
 ```
 
 4) Coordinate input (`chr:pos`) mixed with rsID:
 
 ```bash
-PYTHONPATH=. python -c "from ldlinkpy import ldpair; out=ldpair(var1='chr7:24966446', var2='rs4', pop='CEU', genome_build='grch37', output='text', token=None); print('\n'.join(out.splitlines()[:12]))"
+PYTHONPATH=. python -c "from ldlinkpy import ldpair; out=ldpair(var1='chr7:24966446', var2='rs4', pop='CEU', genome_build='grch37', output='text', token=None); print('\n'.join(out.splitlines()[:30]))"
 ```
 
 5) GRCh38 build:
 
 ```bash
-PYTHONPATH=. python -c "from ldlinkpy import ldpair; out=ldpair(var1='rs3', var2='rs4', genome_build='grch38', output='text', token=None); print('\n'.join(out.splitlines()[:12]))"
+PYTHONPATH=. python -c "from ldlinkpy import ldpair; out=ldpair(var1='rs3', var2='rs4', genome_build='grch38', output='text', token=None); print('\n'.join(out.splitlines()[:30]))"
 ```
 
 6) GRCh38 high-coverage build:
 
 ```bash
-PYTHONPATH=. python -c "from ldlinkpy import ldpair; out=ldpair(var1='rs3', var2='rs4', genome_build='grch38_high_coverage', output='text', token=None); print('\n'.join(out.splitlines()[:12]))"
+PYTHONPATH=. python -c "from ldlinkpy import ldpair; out=ldpair(var1='rs3', var2='rs4', genome_build='grch38_high_coverage', output='text', token=None); print('\n'.join(out.splitlines()[:30]))"
 ```
 
 7) Save parsed table output to TSV:
@@ -661,7 +661,7 @@ PYTHONPATH=. python -c "from ldlinkpy import ldpair; out=ldpair(snp_pairs=[('rs3
 11) Explicit token argument (instead of env var):
 
 ```bash
-PYTHONPATH=. python -c "from ldlinkpy import ldpair; out=ldpair(var1='rs3', var2='rs4', output='text', token='YOUR_TOKEN_HERE'); print('\n'.join(out.splitlines()[:12]))"
+PYTHONPATH=. python -c "from ldlinkpy import ldpair; out=ldpair(var1='rs3', var2='rs4', output='text', token='YOUR_TOKEN_HERE'); print('\n'.join(out.splitlines()[:30]))"
 ```
 
 12) Quick validation checks (expected errors):
