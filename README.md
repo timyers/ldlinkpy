@@ -580,3 +580,111 @@ Notes:
 - `snp` accepts newline/CSV strings, lists/iterables, and pandas DataFrames.
 - Supported `genome_build` values are `grch37`, `grch38`, and `grch38_high_coverage`.
 - `win_size` must be an integer greater than `0` and less than or equal to `1,000,000`.
+
+
+### `ldpair` command-line examples (0–12)
+
+Set your token once in your shell:
+
+```bash
+export LDLINK_TOKEN="YOUR_TOKEN_HERE"
+```
+
+0) One-time sanity check from repo root:
+
+```bash
+cd /workspace/ldlinkpy
+mkdir -p tmp
+PYTHONPATH=. python -c "import os; print('LDLINK_TOKEN set:', bool(os.getenv('LDLINK_TOKEN')))"
+```
+
+1) Basic single-pair call (defaults: `pop='CEU'`, `genome_build='grch37'`, `output='table'`):
+
+```bash
+PYTHONPATH=. python -c "from ldlinkpy import ldpair; df=ldpair(var1='rs3', var2='rs4', token=None); print(type(df).__name__); print(df.head(25).to_string(index=False))"
+```
+
+2) Text output:
+
+```bash
+PYTHONPATH=. python -c "from ldlinkpy import ldpair; txt=ldpair(var1='rs3', var2='rs4', output='text', token=None); print(type(txt).__name__); print('\n'.join(txt.splitlines()[:30]))"
+```
+
+3) Multiple populations as list:
+
+```bash
+PYTHONPATH=. python -c "from ldlinkpy import ldpair; df=ldpair(var1='rs3', var2='rs4', pop=['CEU','YRI'], token=None); print(df.head(30).to_string(index=False))"
+```
+
+4) Coordinate input (`chr:pos`) mixed with rsID:
+
+```bash
+PYTHONPATH=. python -c "from ldlinkpy import ldpair; out=ldpair(var1='chr7:24966446', var2='rs4', pop='CEU', genome_build='grch37', output='text', token=None); print('\n'.join(out.splitlines()[:30]))"
+```
+
+5) GRCh38 build:
+
+```bash
+PYTHONPATH=. python -c "from ldlinkpy import ldpair; out=ldpair(var1='rs3', var2='rs4', genome_build='grch38', output='text', token=None); print('\n'.join(out.splitlines()[:30]))"
+```
+
+6) GRCh38 high-coverage build:
+
+```bash
+PYTHONPATH=. python -c "from ldlinkpy import ldpair; out=ldpair(var1='rs3', var2='rs4', genome_build='grch38_high_coverage', output='text', token=None); print('\n'.join(out.splitlines()[:30]))"
+```
+
+7) Save parsed table output to TSV:
+
+```bash
+PYTHONPATH=. python -c "from ldlinkpy import ldpair; df=ldpair(var1='rs3', var2='rs4', output='table', file='tmp/ldpair_table.tsv', token=None); print('rows=', len(df)); print('wrote tmp/ldpair_table.tsv')"
+```
+
+8) Save text output to file:
+
+```bash
+PYTHONPATH=. python -c "from ldlinkpy import ldpair; txt=ldpair(var1='rs3', var2='rs4', output='text', file='tmp/ldpair_text.txt', token=None); print('chars=', len(txt)); print('wrote tmp/ldpair_text.txt')"
+```
+
+9) Batch mode with multiple SNP pairs (`snp_pairs`):
+
+```bash
+PYTHONPATH=. python -c "from ldlinkpy import ldpair; out=ldpair(snp_pairs=[('rs3','rs4'),('rs7412','rs429358')], pop='CEU', genome_build='grch37', token=None); print(type(out).__name__); print(str(out)[:800])"
+```
+
+10) Force POST for a single pair (`request_method='post'`):
+
+```bash
+PYTHONPATH=. python -c "from ldlinkpy import ldpair; out=ldpair(snp_pairs=[('rs3','rs4')], request_method='post', token=None); print(type(out).__name__); print(str(out)[:800])"
+```
+
+11) Explicit token argument (instead of env var):
+
+```bash
+PYTHONPATH=. python -c "from ldlinkpy import ldpair; out=ldpair(var1='rs3', var2='rs4', output='text', token='YOUR_TOKEN_HERE'); print('\n'.join(out.splitlines()[:30]))"
+```
+
+12) Quick validation checks (expected errors):
+
+```bash
+PYTHONPATH=. python -c "from ldlinkpy import ldpair; \
+cases=[ \
+  ('bad var1', dict(var1='bad', var2='rs4')), \
+  ('bad pop', dict(var1='rs3', var2='rs4', pop='BAD')), \
+  ('bad genome_build', dict(var1='rs3', var2='rs4', genome_build='hg19')), \
+  ('bad output', dict(var1='rs3', var2='rs4', output='json')), \
+  ('get with multi snp_pairs', dict(snp_pairs=[('rs3','rs4'),('rs7412','rs429358')], request_method='get')) \
+]; \
+for name, kwargs in cases: \
+  try: ldpair(token=None, **kwargs); print(name, '-> UNEXPECTED SUCCESS'); \
+  except Exception as e: print(name, '->', type(e).__name__, str(e))"
+```
+
+Notes:
+
+- `var1` and `var2` accept rsIDs (for example, `rs3`) or coordinate format like `chr7:24966446`.
+- `pop` accepts one population code (`\"CEU\"`) or multiple codes (`[\"CEU\", \"YRI\"]`).
+- `output` accepts `table` (DataFrame) or `text` (raw response text).
+- `file` accepts a file path string or `False` (default, no file writing).
+- `genome_build` accepts `grch37`, `grch38`, and `grch38_high_coverage`.
+- You can call with either (`var1`, `var2`) or `snp_pairs=[(...),(...)]`, but not both in the same call.
