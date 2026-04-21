@@ -215,7 +215,7 @@ def test_ldmatrix_file_writes_tsv(monkeypatch: pytest.MonkeyPatch, tmp_path) -> 
 
     monkeypatch.setattr(ldmatrix_mod, "parse_matrix", _parse_matrix_tsv)
     monkeypatch.setattr(ldmatrix_mod, "http_request", fake_http_request)
-    out = tmp_path / "ldmatrix.tsv"
+    out = tmp_path / "nested" / "output" / "ldmatrix.tsv"
 
     ldmatrix_mod.ldmatrix(
         snps=["rs11", "rs22"],
@@ -226,6 +226,44 @@ def test_ldmatrix_file_writes_tsv(monkeypatch: pytest.MonkeyPatch, tmp_path) -> 
         file=str(out),
     )
 
+    assert out.exists()
+    lines = out.read_text(encoding="utf-8").splitlines()
+    assert lines[1].startswith("rs11\t")
+    assert lines[2].startswith("rs22\t")
+
+
+def test_ldmatrix_raw_file_writes_creates_parent_dirs(
+    monkeypatch: pytest.MonkeyPatch, tmp_path
+) -> None:
+    from ldlinkpy.endpoints import ldmatrix as ldmatrix_mod
+
+    def fake_http_request(
+        endpoint: str,
+        *,
+        params: Optional[Dict[str, Any]] = None,
+        json_body: Optional[Dict[str, Any]] = None,
+        headers: Optional[Dict[str, str]] = None,
+        token: Optional[str] = None,
+        api_root: str,
+        method: str = "GET",
+        timeout: float = 60.0,
+    ) -> str:
+        return "\trs11\trs22\nrs11\t1\t0.75\nrs22\t0.75\t1\n"
+
+    monkeypatch.setattr(ldmatrix_mod, "http_request", fake_http_request)
+    out = tmp_path / "nested" / "raw" / "ldmatrix_raw.txt"
+
+    raw = ldmatrix_mod.ldmatrix(
+        snps=["rs11", "rs22"],
+        pop="CEU",
+        r2d="r2",
+        token="tok",
+        request_method="get",
+        return_type="raw",
+        file=str(out),
+    )
+
+    assert isinstance(raw, str)
     assert out.exists()
     assert "rs11" in out.read_text(encoding="utf-8")
 

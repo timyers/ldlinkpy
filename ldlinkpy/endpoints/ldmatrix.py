@@ -146,7 +146,9 @@ def ldmatrix(
 
     if return_type_norm == "raw":
         if isinstance(file, str):
-            Path(file).write_text(str(data), encoding="utf-8")
+            file_path = Path(file)
+            file_path.parent.mkdir(parents=True, exist_ok=True)
+            file_path.write_text(str(data), encoding="utf-8")
         return data
 
     if not isinstance(data, str):
@@ -160,5 +162,7 @@ def ldmatrix(
     if not isinstance(df, pd.DataFrame):
         raise RuntimeError("parse_matrix did not return a pandas.DataFrame as expected.")
     if isinstance(file, str):
-        df.to_csv(file, sep="\t", index=False)
+        file_path = Path(file)
+        file_path.parent.mkdir(parents=True, exist_ok=True)
+        df.to_csv(file_path, sep="\t", index=True)
     return df
