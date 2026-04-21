@@ -688,3 +688,149 @@ Notes:
 - `file` accepts a file path string or `False` (default, no file writing).
 - `genome_build` accepts `grch37`, `grch38`, and `grch38_high_coverage`.
 - You can call with either (`var1`, `var2`) or `snp_pairs=[(...),(...)]`, but not both in the same call.
+
+### `ldmatrix` command-line examples (0–9 + negative tests)
+
+Set your token once in your shell:
+
+```bash
+export LDLINK_TOKEN="YOUR_TOKEN_HERE"
+```
+
+0) One-time sanity check from repo root:
+
+```bash
+cd /workspace/ldlinkpy
+mkdir -p tmp
+PYTHONPATH=. python -c "import os; print('LDLINK_TOKEN set:', bool(os.getenv('LDLINK_TOKEN')))"
+```
+
+1) Minimal happy path (defaults: `pop='CEU'`, `r2d='r2'`, `genome_build='grch37'`, `file=False`):
+
+```bash
+PYTHONPATH=. python -c "from ldlinkpy.endpoints.ldmatrix import ldmatrix; df=ldmatrix(snps=['rs3','rs4'], token=None); print(type(df).__name__, df.shape); print(df.head())"
+```
+
+2) `snps` as chromosome coordinate + rsID:
+
+```bash
+PYTHONPATH=. python -c "from ldlinkpy.endpoints.ldmatrix import ldmatrix; df=ldmatrix(snps=['chr13:32444611','rs11147477'], pop='CEU', r2d='r2', token=None); print(df.head())"
+```
+
+3) `pop` as multiple populations (list):
+
+```bash
+PYTHONPATH=. python -c "from ldlinkpy.endpoints.ldmatrix import ldmatrix; df=ldmatrix(snps=['rs3','rs4'], pop=['YRI','CEU'], token=None); print(df.head())"
+```
+
+4) `r2d='d'` path:
+
+```bash
+PYTHONPATH=. python -c "from ldlinkpy.endpoints.ldmatrix import ldmatrix; df=ldmatrix(snps=['rs3','rs4'], pop='CEU', r2d='d', token=None); print(df.head())"
+```
+
+5) Each `genome_build` option:
+
+```bash
+PYTHONPATH=. python -c "from ldlinkpy.endpoints.ldmatrix import ldmatrix; [print(gb, '->', ldmatrix(snps=['rs3','rs4'], pop='CEU', r2d='r2', genome_build=gb, token=None).shape) for gb in ['grch37','grch38','grch38_high_coverage']]"
+```
+
+6) `file` output for dataframe return:
+
+```bash
+PYTHONPATH=. python -c "from ldlinkpy.endpoints.ldmatrix import ldmatrix; out='tmp/ldmatrix_df.tsv'; df=ldmatrix(snps=['rs3','rs4'], token=None, file=out, return_type='dataframe'); print('saved:', out, 'rows:', len(df))"
+ls -lh tmp/ldmatrix_df.tsv
+head -n 5 tmp/ldmatrix_df.tsv
+```
+
+7) `return_type='raw'` + `file` output:
+
+```bash
+PYTHONPATH=. python -c "from ldlinkpy.endpoints.ldmatrix import ldmatrix; out='tmp/ldmatrix_raw.txt'; raw=ldmatrix(snps=['rs3','rs4'], token=None, return_type='raw', file=out); print(type(raw).__name__, 'saved:', out)"
+ls -lh tmp/ldmatrix_raw.txt
+head -n 5 tmp/ldmatrix_raw.txt
+```
+
+8) Force request method `get`:
+
+```bash
+PYTHONPATH=. python -c "from ldlinkpy.endpoints.ldmatrix import ldmatrix; df=ldmatrix(snps=['rs3','rs4'], token=None, request_method='get'); print(df.shape)"
+```
+
+9) Force request method `post`:
+
+```bash
+PYTHONPATH=. python -c "from ldlinkpy.endpoints.ldmatrix import ldmatrix; df=ldmatrix(snps=['rs3','rs4'], token=None, request_method='post'); print(df.shape)"
+```
+
+Negative tests (expected errors):
+
+A) Too few SNPs (`<2`):
+
+```bash
+PYTHONPATH=. python -c "from ldlinkpy.endpoints.ldmatrix import ldmatrix; \
+try: ldmatrix(snps=['rs3'], token='dummy'); print('UNEXPECTED SUCCESS'); \
+except Exception as e: print(type(e).__name__, e)"
+```
+
+B) Too many SNPs (`>2500`):
+
+```bash
+PYTHONPATH=. python -c "from ldlinkpy.endpoints.ldmatrix import ldmatrix; snps=[f'rs{i}' for i in range(1,2502)]; \
+try: ldmatrix(snps=snps, token='dummy'); print('UNEXPECTED SUCCESS'); \
+except Exception as e: print(type(e).__name__, e)"
+```
+
+C) Bad SNP format:
+
+```bash
+PYTHONPATH=. python -c "from ldlinkpy.endpoints.ldmatrix import ldmatrix; \
+try: ldmatrix(snps=['rs3','not_a_variant'], token='dummy'); print('UNEXPECTED SUCCESS'); \
+except Exception as e: print(type(e).__name__, e)"
+```
+
+D) Invalid pop code:
+
+```bash
+PYTHONPATH=. python -c "from ldlinkpy.endpoints.ldmatrix import ldmatrix; \
+try: ldmatrix(snps=['rs3','rs4'], pop='BAD', token='dummy'); print('UNEXPECTED SUCCESS'); \
+except Exception as e: print(type(e).__name__, e)"
+```
+
+E) Invalid `r2d`:
+
+```bash
+PYTHONPATH=. python -c "from ldlinkpy.endpoints.ldmatrix import ldmatrix; \
+try: ldmatrix(snps=['rs3','rs4'], r2d='r', token='dummy'); print('UNEXPECTED SUCCESS'); \
+except Exception as e: print(type(e).__name__, e)"
+```
+
+F) Invalid `genome_build`:
+
+```bash
+PYTHONPATH=. python -c "from ldlinkpy.endpoints.ldmatrix import ldmatrix; \
+try: ldmatrix(snps=['rs3','rs4'], genome_build='hg19', token='dummy'); print('UNEXPECTED SUCCESS'); \
+except Exception as e: print(type(e).__name__, e)"
+```
+
+G) Invalid `file` type:
+
+```bash
+PYTHONPATH=. python -c "from ldlinkpy.endpoints.ldmatrix import ldmatrix; \
+try: ldmatrix(snps=['rs3','rs4'], file=123, token='dummy'); print('UNEXPECTED SUCCESS'); \
+except Exception as e: print(type(e).__name__, e)"
+```
+
+H) Missing token (neither argument nor env var):
+
+```bash
+env -u LDLINK_TOKEN PYTHONPATH=. python -c "from ldlinkpy.endpoints.ldmatrix import ldmatrix; \
+try: ldmatrix(snps=['rs3','rs4']); print('UNEXPECTED SUCCESS'); \
+except Exception as e: print(type(e).__name__, e)"
+```
+
+Notes:
+
+- We intentionally follow the LDlink API Access guidance for LDmatrix request sizing (`GET` up to `300` SNPs, `POST` up to `2500` SNPs) when sources disagree.
+- `request_method='auto'` uses `GET` when `len(snps) <= 300`, otherwise `POST`.
+- LDmatrix POST payloads use newline-delimited SNP strings (for example, `"rs3\\nrs4"`).
