@@ -5,6 +5,7 @@ from typing import Any, Dict, Optional
 
 import pandas as pd
 import pytest
+from ldlinkpy.exceptions import ValidationError
 
 
 def _parse_matrix_tsv(text: str) -> pd.DataFrame:
@@ -271,5 +272,5 @@ def test_ldmatrix_raw_file_writes_creates_parent_dirs(
 def test_ldmatrix_rejects_bad_variant_format() -> None:
     from ldlinkpy.endpoints import ldmatrix as ldmatrix_mod
 
-    with pytest.raises(ValueError, match="Invalid variant format"):
+    with pytest.raises(ValidationError, match="Invalid variant format"):
         ldmatrix_mod.ldmatrix(snps=["rs1", "bad_variant"], token="tok")

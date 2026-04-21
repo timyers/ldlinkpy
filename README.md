@@ -689,7 +689,7 @@ Notes:
 - `genome_build` accepts `grch37`, `grch38`, and `grch38_high_coverage`.
 - You can call with either (`var1`, `var2`) or `snp_pairs=[(...),(...)]`, but not both in the same call.
 
-### `ldmatrix` command-line examples (0–10 + negative tests)
+### `ldmatrix` command-line examples (0–9 + negative tests)
 
 Set your token once in your shell:
 
@@ -717,25 +717,25 @@ PYTHONPATH=. python -c "from ldlinkpy.endpoints.ldmatrix import ldmatrix; df=ldm
 PYTHONPATH=. python -c "from ldlinkpy.endpoints.ldmatrix import ldmatrix; df=ldmatrix(snps=['chr13:32444611','rs11147477'], pop='CEU', r2d='r2', token=None); print(df.head())"
 ```
 
-4) `pop` as multiple populations (list):
+3) `pop` as multiple populations (list):
 
 ```bash
 PYTHONPATH=. python -c "from ldlinkpy.endpoints.ldmatrix import ldmatrix; df=ldmatrix(snps=['rs3','rs4'], pop=['YRI','CEU'], token=None); print(df.head())"
 ```
 
-5) `r2d='d'` path:
+4) `r2d='d'` path:
 
 ```bash
 PYTHONPATH=. python -c "from ldlinkpy.endpoints.ldmatrix import ldmatrix; df=ldmatrix(snps=['rs3','rs4'], pop='CEU', r2d='d', token=None); print(df.head())"
 ```
 
-6) Each `genome_build` option:
+5) Each `genome_build` option:
 
 ```bash
 PYTHONPATH=. python -c "from ldlinkpy.endpoints.ldmatrix import ldmatrix; [print(gb, '->', ldmatrix(snps=['rs3','rs4'], pop='CEU', r2d='r2', genome_build=gb, token=None).shape) for gb in ['grch37','grch38','grch38_high_coverage']]"
 ```
 
-7) `file` output for dataframe return:
+6) `file` output for dataframe return:
 
 ```bash
 PYTHONPATH=. python -c "from ldlinkpy.endpoints.ldmatrix import ldmatrix; out='tmp/ldmatrix_df.tsv'; df=ldmatrix(snps=['rs3','rs4'], token=None, file=out, return_type='dataframe'); print('saved:', out, 'rows:', len(df))"
@@ -743,7 +743,7 @@ ls -lh tmp/ldmatrix_df.tsv
 head -n 5 tmp/ldmatrix_df.tsv
 ```
 
-8) `return_type='raw'` + `file` output:
+7) `return_type='raw'` + `file` output:
 
 ```bash
 PYTHONPATH=. python -c "from ldlinkpy.endpoints.ldmatrix import ldmatrix; out='tmp/ldmatrix_raw.txt'; raw=ldmatrix(snps=['rs3','rs4'], token=None, return_type='raw', file=out); print(type(raw).__name__, 'saved:', out)"
@@ -751,13 +751,13 @@ ls -lh tmp/ldmatrix_raw.txt
 head -n 5 tmp/ldmatrix_raw.txt
 ```
 
-9) Force request method `get`:
+8) Force request method `get`:
 
 ```bash
 PYTHONPATH=. python -c "from ldlinkpy.endpoints.ldmatrix import ldmatrix; df=ldmatrix(snps=['rs3','rs4'], token=None, request_method='get'); print(df.shape)"
 ```
 
-10) Force request method `post`:
+9) Force request method `post`:
 
 ```bash
 PYTHONPATH=. python -c "from ldlinkpy.endpoints.ldmatrix import ldmatrix; df=ldmatrix(snps=['rs3','rs4'], token=None, request_method='post'); print(df.shape)"
