@@ -9,8 +9,8 @@ import pandas as pd
 from ldlinkpy import DEFAULT_API_ROOT
 from ldlinkpy.http import request as http_request
 from ldlinkpy.parsing import parse_matrix
+from ldlinkpy.exceptions import ValidationError
 from ldlinkpy.validators import (
-    ValidationError,
     normalize_snps,
     validate_genome_build,
     validate_r2d,
@@ -64,10 +64,10 @@ _CHR_COORD_RE = re.compile(r"^chr(\d{1,2}|X|Y):(\d{1,9})$", re.IGNORECASE)
 
 def _validate_ldmatrix_snps(snps: list[str]) -> list[str]:
     if len(snps) < 2 or len(snps) > 2500:
-        raise ValueError("snps must include between 2 and 2500 variants.")
+        raise ValidationError("snps must include between 2 and 2500 variants.")
     for snp in snps:
         if not (_RSID_RE.match(snp) or _CHR_COORD_RE.match(snp)):
-            raise ValueError(
+            raise ValidationError(
                 f"Invalid variant format '{snp}'. Use an rsID (e.g. rs123) or chromosome coordinate (e.g. chr7:24966446)."
             )
     return snps
