@@ -51,6 +51,41 @@ def _normalize_pop(pop: Union[str, Sequence[str]]) -> str:
         raise ValidationError("Not a valid population code.")
     return "+".join(tokens)
 
+_VALID_POPS = {
+    "YRI", "LWK", "GWD", "MSL", "ESN", "ASW", "ACB",
+    "MXL", "PUR", "CLM", "PEL", "CHB", "JPT", "CHS",
+    "CDX", "KHV", "CEU", "TSI", "FIN", "GBR", "IBS",
+    "GIH", "PJL", "BEB", "STU", "ITU",
+    "ALL", "AFR", "AMR", "EAS", "EUR", "SAS",
+}
+_RSID_RE = re.compile(r"^rs\d+$", re.IGNORECASE)
+_CHR_COORD_RE = re.compile(r"^chr(\d{1,2}|X|Y):(\d{1,9})$", re.IGNORECASE)
+
+
+def _validate_ldmatrix_snps(snps: list[str]) -> list[str]:
+    if len(snps) < 2 or len(snps) > 2500:
+        raise ValueError("snps must include between 2 and 2500 variants.")
+    for snp in snps:
+        if not (_RSID_RE.match(snp) or _CHR_COORD_RE.match(snp)):
+            raise ValueError(
+                f"Invalid variant format '{snp}'. Use an rsID (e.g. rs123) or chromosome coordinate (e.g. chr7:24966446)."
+            )
+    return snps
+
+
+def _normalize_pop(pop: Union[str, Sequence[str]]) -> str:
+    if isinstance(pop, str):
+        tokens = [p for p in re.split(r"[\s,+]+", pop.strip().upper()) if p]
+    elif isinstance(pop, Sequence):
+        tokens = [str(p).strip().upper() for p in pop if str(p).strip()]
+    else:
+        raise ValueError("pop must be a population code string or sequence of population code strings.")
+    if not tokens:
+        raise ValueError("pop is required.")
+    if not all(p in _VALID_POPS for p in tokens):
+        raise ValueError("Not a valid population code.")
+    return "+".join(tokens)
+
 
 def ldmatrix(
     snps: Union[str, Sequence[str]],
