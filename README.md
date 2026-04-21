@@ -768,65 +768,106 @@ Negative tests (expected errors):
 A) Too few SNPs (`<2`):
 
 ```bash
-PYTHONPATH=. python -c "from ldlinkpy.endpoints.ldmatrix import ldmatrix; \
-try: ldmatrix(snps=['rs3'], token='dummy'); print('UNEXPECTED SUCCESS'); \
-except Exception as e: print(type(e).__name__, e)"
+PYTHONPATH=. python - <<'PY'
+from ldlinkpy.endpoints.ldmatrix import ldmatrix
+try:
+    ldmatrix(snps=["rs3"], token="dummy")
+    print("UNEXPECTED SUCCESS")
+except Exception as e:
+    print(type(e).__name__, e)
+PY
 ```
 
 B) Too many SNPs (`>2500`):
 
 ```bash
-PYTHONPATH=. python -c "from ldlinkpy.endpoints.ldmatrix import ldmatrix; snps=[f'rs{i}' for i in range(1,2502)]; \
-try: ldmatrix(snps=snps, token='dummy'); print('UNEXPECTED SUCCESS'); \
-except Exception as e: print(type(e).__name__, e)"
+PYTHONPATH=. python - <<'PY'
+from ldlinkpy.endpoints.ldmatrix import ldmatrix
+snps = [f"rs{i}" for i in range(1, 2502)]
+try:
+    ldmatrix(snps=snps, token="dummy")
+    print("UNEXPECTED SUCCESS")
+except Exception as e:
+    print(type(e).__name__, e)
+PY
 ```
 
 C) Bad SNP format:
 
 ```bash
-PYTHONPATH=. python -c "from ldlinkpy.endpoints.ldmatrix import ldmatrix; \
-try: ldmatrix(snps=['rs3','not_a_variant'], token='dummy'); print('UNEXPECTED SUCCESS'); \
-except Exception as e: print(type(e).__name__, e)"
+PYTHONPATH=. python - <<'PY'
+from ldlinkpy.endpoints.ldmatrix import ldmatrix
+try:
+    ldmatrix(snps=["rs3", "not_a_variant"], token="dummy")
+    print("UNEXPECTED SUCCESS")
+except Exception as e:
+    print(type(e).__name__, e)
+PY
 ```
 
 D) Invalid pop code:
 
 ```bash
-PYTHONPATH=. python -c "from ldlinkpy.endpoints.ldmatrix import ldmatrix; \
-try: ldmatrix(snps=['rs3','rs4'], pop='BAD', token='dummy'); print('UNEXPECTED SUCCESS'); \
-except Exception as e: print(type(e).__name__, e)"
+PYTHONPATH=. python - <<'PY'
+from ldlinkpy.endpoints.ldmatrix import ldmatrix
+try:
+    ldmatrix(snps=["rs3", "rs4"], pop="BAD", token="dummy")
+    print("UNEXPECTED SUCCESS")
+except Exception as e:
+    print(type(e).__name__, e)
+PY
 ```
 
 E) Invalid `r2d`:
 
 ```bash
-PYTHONPATH=. python -c "from ldlinkpy.endpoints.ldmatrix import ldmatrix; \
-try: ldmatrix(snps=['rs3','rs4'], r2d='r', token='dummy'); print('UNEXPECTED SUCCESS'); \
-except Exception as e: print(type(e).__name__, e)"
+PYTHONPATH=. python - <<'PY'
+from ldlinkpy.endpoints.ldmatrix import ldmatrix
+try:
+    ldmatrix(snps=["rs3", "rs4"], r2d="r", token="dummy")
+    print("UNEXPECTED SUCCESS")
+except Exception as e:
+    print(type(e).__name__, e)
+PY
 ```
 
 F) Invalid `genome_build`:
 
 ```bash
-PYTHONPATH=. python -c "from ldlinkpy.endpoints.ldmatrix import ldmatrix; \
-try: ldmatrix(snps=['rs3','rs4'], genome_build='hg19', token='dummy'); print('UNEXPECTED SUCCESS'); \
-except Exception as e: print(type(e).__name__, e)"
+PYTHONPATH=. python - <<'PY'
+from ldlinkpy.endpoints.ldmatrix import ldmatrix
+try:
+    ldmatrix(snps=["rs3", "rs4"], genome_build="hg19", token="dummy")
+    print("UNEXPECTED SUCCESS")
+except Exception as e:
+    print(type(e).__name__, e)
+PY
 ```
 
 G) Invalid `file` type:
 
 ```bash
-PYTHONPATH=. python -c "from ldlinkpy.endpoints.ldmatrix import ldmatrix; \
-try: ldmatrix(snps=['rs3','rs4'], file=123, token='dummy'); print('UNEXPECTED SUCCESS'); \
-except Exception as e: print(type(e).__name__, e)"
+PYTHONPATH=. python - <<'PY'
+from ldlinkpy.endpoints.ldmatrix import ldmatrix
+try:
+    ldmatrix(snps=["rs3", "rs4"], file=123, token="dummy")
+    print("UNEXPECTED SUCCESS")
+except Exception as e:
+    print(type(e).__name__, e)
+PY
 ```
 
 H) Missing token (neither argument nor env var):
 
 ```bash
-env -u LDLINK_TOKEN PYTHONPATH=. python -c "from ldlinkpy.endpoints.ldmatrix import ldmatrix; \
-try: ldmatrix(snps=['rs3','rs4']); print('UNEXPECTED SUCCESS'); \
-except Exception as e: print(type(e).__name__, e)"
+env -u LDLINK_TOKEN PYTHONPATH=. python - <<'PY'
+from ldlinkpy.endpoints.ldmatrix import ldmatrix
+try:
+    ldmatrix(snps=["rs3", "rs4"])
+    print("UNEXPECTED SUCCESS")
+except Exception as e:
+    print(type(e).__name__, e)
+PY
 ```
 
 Notes:
