@@ -100,8 +100,9 @@ def ldmatrix(
 
     r2d_norm = validate_r2d(r2d)
     genome_build_norm = validate_genome_build(genome_build)
-    if not (file is False or isinstance(file, str)):
-        raise ValidationError("file must be a string path or False.")
+    if file is not False:
+        if not isinstance(file, str) or not file.strip():
+            raise ValidationError("file must be False or a non-empty string path.")
 
     return_type_norm = str(return_type).strip().lower()
     if return_type_norm not in {"dataframe", "raw"}:

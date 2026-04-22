@@ -310,3 +310,10 @@ def test_ldmatrix_rejects_bad_variant_format() -> None:
 
     with pytest.raises(ValidationError, match="Invalid variant format"):
         ldmatrix_mod.ldmatrix(snps=["rs1", "bad_variant"], token="tok")
+
+
+def test_ldmatrix_rejects_blank_file_path() -> None:
+    from ldlinkpy.endpoints import ldmatrix as ldmatrix_mod
+
+    with pytest.raises(ValidationError, match="non-empty string path"):
+        ldmatrix_mod.ldmatrix(snps=["rs1", "rs2"], token="tok", file="   ")
