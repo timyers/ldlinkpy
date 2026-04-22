@@ -269,6 +269,42 @@ def test_ldmatrix_raw_file_writes_creates_parent_dirs(
     assert "rs11" in out.read_text(encoding="utf-8")
 
 
+def test_ldmatrix_preserves_api_root_positional_order(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    from ldlinkpy.endpoints import ldmatrix as ldmatrix_mod
+
+    calls: Dict[str, Any] = {}
+
+    def fake_http_request(
+        endpoint: str,
+        *,
+        params: Optional[Dict[str, Any]] = None,
+        json_body: Optional[Dict[str, Any]] = None,
+        headers: Optional[Dict[str, str]] = None,
+        token: Optional[str] = None,
+        api_root: str,
+        method: str = "GET",
+        timeout: float = 60.0,
+    ) -> str:
+        calls["api_root"] = api_root
+        return "\trs1\trs2\nrs1\t1\t0.2\nrs2\t0.2\t1\n"
+
+    monkeypatch.setattr(ldmatrix_mod, "parse_matrix", _parse_matrix_tsv)
+    monkeypatch.setattr(ldmatrix_mod, "http_request", fake_http_request)
+
+    ldmatrix_mod.ldmatrix(
+        ["rs1", "rs2"],
+        "CEU",
+        "r2",
+        "grch37",
+        "tok",
+        "https://example.invalid/LDlinkRest",
+    )
+
+    assert calls["api_root"] == "https://example.invalid/LDlinkRest"
+
+
 def test_ldmatrix_rejects_bad_variant_format() -> None:
     from ldlinkpy.endpoints import ldmatrix as ldmatrix_mod
 

@@ -62,6 +62,7 @@ def ldmatrix(
     api_root: str = DEFAULT_API_ROOT,
     return_type: str = "dataframe",
     request_method: str = "auto",
+    file: Union[str, bool] = False,
 ) -> Union[pd.DataFrame, Any]:
     """
     Call the LDlink 'ldmatrix' endpoint.
@@ -87,6 +88,8 @@ def ldmatrix(
         "dataframe" to parse with parse_matrix; otherwise returns the raw response.
     request_method:
         "auto" (GET if len(snps)<=300 else POST), or "get", or "post".
+    file:
+        Optional output path. If False (default), does not write a file.
 
     Returns
     -------
