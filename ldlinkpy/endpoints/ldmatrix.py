@@ -57,7 +57,7 @@ def ldmatrix(
     pop: Union[str, Sequence[str]] = "CEU",
     r2d: str = "r2",
     genome_build: str = "grch37",
-    token: Optional[str] = None,
+    token: Optional[str] = None,    
     api_root: str = DEFAULT_API_ROOT,
     return_type: str = "dataframe",
     request_method: str = "auto",
@@ -79,6 +79,8 @@ def ldmatrix(
         "grch37", "grch38", or "grch38_high_coverage".
     token:
         LDlink API token. If None, reads environment variable LDLINK_TOKEN.
+    file:
+        Optional output path. If False (default), does not write a file.
     api_root:
         Base LDlink REST API root.
     return_type:
