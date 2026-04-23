@@ -1,166 +1,105 @@
 from __future__ import annotations
 
-from typing import Any, Mapping, Sequence
+import pytest
 
-import pandas as pd
-
-from ldlinkpy import DEFAULT_API_ROOT
-from ldlinkpy.http import request
-from ldlinkpy.validators import (
-    normalize_snps,
-    validate_genome_build,
-    validate_r2d,
-    validate_threshold,
-)
+from ldlinkpy.endpoints.ldtrait import ldtrait
 
 
-def _pick_records_field(obj: Mapping[str, Any]) -> Any:
-    """
-    Try common field names that might contain a list of JSON records.
-    """
-    for key in (
-        "records",
-        "Record",
-        "data",
-        "Data",
-        "results",
-        "Results",
-        "result",
-        "Result",
-        "ldtrait",
-        "LDtrait",
-        "LDTRAIT",
-        "associations",
-        "Associations",
-        "variants",
-        "Variants",
-    ):
-        if key in obj:
-            return obj[key]
-    return None
+def test_ldtrait_posts_expected_body_and_parses_tsv(monkeypatch: pytest.MonkeyPatch) -> None:
+    captured: dict[str, object] = {}
 
+    def fake_request(  # type: ignore[no-untyped-def]
+        endpoint: str,
+        *,
+        params: dict | None = None,
+        json_body: dict | None = None,
+        headers: dict | None = None,
+        token: str | None = None,
+        api_root: str,
+        method: str = "GET",
+        timeout: float = 180.0,
+    ) -> str:
+        captured["method"] = method
+        captured["endpoint"] = endpoint
+        captured["token"] = token
+        captured["params"] = params
+        captured["json_body"] = json_body
+        captured["headers"] = headers
+        captured["timeout"] = timeout
 
-def _json_to_dataframe(payload: Any) -> pd.DataFrame:
-    """
-    Coerce LDtrait JSON into a DataFrame when it is list-like or contains a clear records field.
-    """
-    if isinstance(payload, pd.DataFrame):
-        return payload
+        return "RS_Number\tR2\nrs3\t0.99\n"
 
-    if isinstance(payload, list):
-        if len(payload) == 0:
-            return pd.DataFrame()
-        if all(isinstance(x, Mapping) for x in payload):
-            return pd.DataFrame(payload)
-        raise RuntimeError(
-            "LDtrait JSON response is a list but not a list of objects; cannot coerce to DataFrame."
-        )
+    monkeypatch.setattr("ldlinkpy.endpoints.ldtrait.request", fake_request)
+    monkeypatch.setenv("LDLINK_TOKEN", "TESTTOKEN")
 
-    if isinstance(payload, Mapping):
-        # Sometimes API returns an embedded TSV string even when JSON-parsed
-        for key in ("output", "Output", "text", "Text", "tsv", "TSV"):
-            if key in payload and isinstance(payload[key], str):
-                try:
-                    from ldlinkpy.parsing import parse_tsv
-
-                    return parse_tsv(payload[key])
-                except Exception as e:  # pragma: no cover
-                    raise RuntimeError(
-                        "LDtrait response contained a text field but it could not be parsed as TSV."
-                    ) from e
-
-        records = _pick_records_field(payload)
-        if records is not None:
-            if isinstance(records, list) and all(isinstance(x, Mapping) for x in records):
-                return pd.DataFrame(records)
-            if isinstance(records, list) and len(records) == 0:
-                return pd.DataFrame()
-            if isinstance(records, Mapping):
-                return pd.DataFrame(records)
-
-        for err_key in ("error", "Error", "message", "Message", "detail", "Detail"):
-            if err_key in payload:
-                raise RuntimeError(
-                    f"LDtrait returned JSON that does not contain records. "
-                    f"Found '{err_key}': {payload[err_key]!r}"
-                )
-
-        raise RuntimeError(
-            "LDtrait returned JSON but it does not look like a list of records and no clear records field "
-            "was found, so it cannot be coerced to a DataFrame. Use return_type='raw' to inspect the payload."
-        )
-
-    raise RuntimeError(
-        f"LDtrait returned unsupported JSON type {type(payload).__name__}; cannot coerce to DataFrame."
+    df = ldtrait(
+        snps=["rs3", "chr7:24966446"],
+        pop=["YRI", "CEU"],
+        r2d="r2",
+        r2d_threshold=0.2,
+        win_size=0,
+        genome_build="grch38",
     )
 
+    assert captured["method"] == "POST"
+    assert captured["endpoint"] == "ldtrait"
+    assert captured["token"] == "TESTTOKEN"
+    assert isinstance(captured["params"], dict)
+    assert captured["json_body"] is None
 
-def ldtrait(
-    snps: str | Sequence[str],
-    pop: str = "CEU",
-    r2d: str = "r2",
-    r2d_threshold: float = 0.1,
-    win_size: int = 500000,
-    genome_build: str = "grch37",
-    token: str | None = None,
-    api_root: str = DEFAULT_API_ROOT,
-    return_type: str = "dataframe",
-    request_method: str = "auto",
-) -> pd.DataFrame | Any:
-    """
-    Query LDtrait from the LDlink REST API.
-    """
-    if return_type not in {"dataframe", "raw"}:
-        raise ValueError("return_type must be 'dataframe' or 'raw'.")
+    params = captured["params"]
+    assert isinstance(params, dict)
+    assert params["snps"] == "rs3\nchr7:24966446"
+    assert params["pop"] == "YRI+CEU"
+    assert params["r2_d"] == "r2"
+    assert params["r2_d_threshold"] == "0.2"
+    assert params["window"] == "0"
+    assert params["genome_build"] == "grch38"
 
-    request_method_norm = str(request_method).strip().lower()
-    if request_method_norm not in {"auto", "post", "get"}:
-        raise ValueError("request_method must be 'auto', 'post', or 'get'.")
+    assert list(df.columns) == ["RS_Number", "R2"]
+    assert df.loc[0, "RS_Number"] == "rs3"
 
-    snp_list = normalize_snps(snps)
-    validate_r2d(r2d)
 
-    # validators.validate_threshold expects (name, value)
-    validate_threshold("r2d_threshold", r2d_threshold)
+def test_ldtrait_get_mode_calls_ldtraitget(monkeypatch: pytest.MonkeyPatch) -> None:
+    captured: dict[str, object] = {}
 
-    validate_genome_build(genome_build)
+    def fake_request(  # type: ignore[no-untyped-def]
+        endpoint: str,
+        *,
+        params: dict | None = None,
+        json_body: dict | None = None,
+        headers: dict | None = None,
+        token: str | None = None,
+        api_root: str,
+        method: str = "GET",
+        timeout: float = 180.0,
+    ) -> str:
+        captured["method"] = method
+        captured["endpoint"] = endpoint
+        captured["params"] = params
+        return "A\tB\n1\t2\n"
 
-    if not isinstance(win_size, int) or win_size <= 0:
-        raise ValueError("win_size must be a positive integer.")
+    monkeypatch.setattr("ldlinkpy.endpoints.ldtrait.request", fake_request)
+    monkeypatch.setenv("LDLINK_TOKEN", "TESTTOKEN")
 
-    params: dict[str, Any] = {
-        "snps": ",".join(snp_list),
-        "pop": pop,
-        "r2_d": r2d,
-        "r2_d_threshold": r2d_threshold,
-        "window": win_size,
-        "genome_build": genome_build,
-    }
+    _ = ldtrait(snps="rs3", request_method="get")
 
-    method = "POST" if request_method_norm in {"auto", "post"} else "GET"
+    assert captured["method"] == "GET"
+    assert captured["endpoint"] == "ldtraitget"
 
-    payload = request(
-        endpoint="ldtrait",
-        params=params,
-        token=token,
-        api_root=api_root,
-        method=method,
-        request_method=request_method_norm,
-    )
 
-    if return_type == "raw":
-        return payload
+def test_ldtrait_validates_parity_constraints() -> None:
+    with pytest.raises(ValueError, match="Input is between 1 to 50 variants"):
+        ldtrait(snps=[f"rs{i}" for i in range(60)], token="tok")
 
-    if isinstance(payload, str):
-        from ldlinkpy.parsing import parse_tsv
+    with pytest.raises(ValueError, match="Invalid query format for variant"):
+        ldtrait(snps=["not-a-snp"], token="tok")
 
-        try:
-            return parse_tsv(payload)
-        except Exception as e:
-            raise RuntimeError(
-                "LDtrait returned text that could not be parsed as TSV. "
-                "Use return_type='raw' to inspect the response."
-            ) from e
+    with pytest.raises(ValueError, match="Not a valid population code"):
+        ldtrait(snps="rs3", pop="BAD", token="tok")
 
-    return _json_to_dataframe(payload)
-    
+    with pytest.raises(ValueError, match="Window size must be between 0 and 1000000 bp"):
+        ldtrait(snps="rs3", win_size=1_000_001, token="tok")
+
+    with pytest.raises(ValueError, match="Invalid input for file option"):
+        ldtrait(snps="rs3", file=123, token="tok")  # type: ignore[arg-type]
