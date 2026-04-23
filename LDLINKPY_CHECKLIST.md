@@ -82,17 +82,9 @@ This checklist tracks the remaining work to finish, document, release, and publi
 - [ ] Write examples
 - [ ] Publish to PyPI
 
-## Suggested repo location
+## Note
 
-For now, the simplest choice is to keep this file in the **repo root** as:
+- Keep this checklist in the `repo root` since this is the only planning file.
+- Move to **`docs/`** if it starts collecting multiple project notes, checklists, or publication planning files.
 
-`LDLINKPY_CHECKLIST.md`
 
-If you later add more planning or project-management files, move it into a small docs-style folder such as:
-
-`docs/LDLINKPY_CHECKLIST.md`
-
-A good rule is:
-
-- use the **repo root** when this is the only planning file
-- use **`docs/`** when you start collecting multiple project notes, checklists, or publication planning files
