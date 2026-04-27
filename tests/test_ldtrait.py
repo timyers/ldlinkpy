@@ -90,6 +90,33 @@ def test_ldtrait_get_mode_calls_ldtraitget(monkeypatch: pytest.MonkeyPatch) -> N
     assert captured["endpoint"] == "ldtraitget"
 
 
+def test_ldtrait_accepts_plus_delimited_pop_string(monkeypatch: pytest.MonkeyPatch) -> None:
+    captured: dict[str, object] = {}
+
+    def fake_request(  # type: ignore[no-untyped-def]
+        endpoint: str,
+        *,
+        params: dict | None = None,
+        json_body: dict | None = None,
+        headers: dict | None = None,
+        token: str | None = None,
+        api_root: str,
+        method: str = "GET",
+        timeout: float = 180.0,
+    ) -> str:
+        captured["params"] = params
+        return "A\tB\n1\t2\n"
+
+    monkeypatch.setattr("ldlinkpy.endpoints.ldtrait.request", fake_request)
+    monkeypatch.setenv("LDLINK_TOKEN", "TESTTOKEN")
+
+    _ = ldtrait(snps="rs3", pop="CEU+YRI")
+
+    params = captured["params"]
+    assert isinstance(params, dict)
+    assert params["pop"] == "CEU+YRI"
+
+
 def test_ldtrait_validates_parity_constraints() -> None:
     with pytest.raises(ValueError, match="Input is between 1 to 50 variants"):
         ldtrait(snps=[f"rs{i}" for i in range(60)], token="tok")

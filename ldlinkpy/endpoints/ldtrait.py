@@ -57,9 +57,11 @@ _CHR_COORD_RE = re.compile(r"^chr(\d{1,2}|x|y):(\d{1,9})$", flags=re.IGNORECASE)
 
 def _normalize_pop(pop: str | Sequence[str]) -> str:
     if isinstance(pop, str):
-        raw_items = [pop]
+        raw_items = [p for p in pop.split("+")]
     elif isinstance(pop, Sequence):
-        raw_items = [str(p) for p in pop]
+        raw_items = []
+        for p in pop:
+            raw_items.extend(str(p).split("+"))
     else:
         raise ValueError("pop must be a population code string or a sequence of population code strings.")
 
