@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import json
 import re
 from pathlib import Path
 from typing import Any, Mapping, Sequence
@@ -268,8 +269,11 @@ def ldtrait(
     )
 
     if return_type == "raw":
-        if isinstance(payload, str) and file is not False and isinstance(file, str):
-            Path(file).write_text(payload, encoding="utf-8")
+        if file is not False and isinstance(file, str):
+            if isinstance(payload, str):
+                Path(file).write_text(payload, encoding="utf-8")
+            elif isinstance(payload, (Mapping, list)):
+                Path(file).write_text(json.dumps(payload, ensure_ascii=False, indent=2), encoding="utf-8")
         return payload
 
     # DataFrame coercion:
