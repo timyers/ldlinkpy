@@ -175,6 +175,7 @@ def ldtrait(
     file: str | bool = False,
     api_root: str = DEFAULT_API_ROOT,
     return_type: str = "dataframe",
+    on_no_hits: str = "empty",
     request_method: str = "auto",
     timeout: float = 600.0,
 ) -> pd.DataFrame | Any:
@@ -203,6 +204,9 @@ def ldtrait(
         Base API root URL.
     return_type
         "dataframe" (default) or "raw".
+    on_no_hits
+        Behavior when LDtrait reports no GWAS matches. "empty" returns an empty DataFrame;
+        "raise" raises RuntimeError.
     request_method
         "auto" (default), "post", or "get". Prefer POST by default for robustness.
 
@@ -214,6 +218,8 @@ def ldtrait(
     """
     if return_type not in {"dataframe", "raw"}:
         raise ValueError("return_type must be 'dataframe' or 'raw'.")
+    if on_no_hits not in {"empty", "raise"}:
+        raise ValueError("on_no_hits must be 'empty' or 'raise'.")
 
     request_method_norm = str(request_method).strip().lower()
     if request_method_norm not in {"auto", "post", "get"}:
@@ -228,7 +234,7 @@ def ldtrait(
     threshold = validate_threshold("r2d_threshold", r2d_threshold)
     gb = validate_genome_build(genome_build)
 
-    if not isinstance(win_size, int) or win_size < 0 or win_size > 1_000_000:
+    if isinstance(win_size, bool) or not isinstance(win_size, int) or win_size < 0 or win_size > 1_000_000:
         raise ValueError("Window size must be between 0 and 1000000 bp.")
 
     token_value = ensure_token(token)
@@ -283,6 +289,18 @@ def ldtrait(
             ) from e
 
     # JSON (dict/list) auto-parsed by http layer
+    if isinstance(payload, Mapping):
+        no_hits_text = "No entries in the GWAS Catalog are identified using the LDtrait search criteria."
+        for err_key in ("error", "Error", "message", "Message", "detail", "Detail"):
+            msg = payload.get(err_key)
+            if isinstance(msg, str) and no_hits_text in msg:
+                if on_no_hits == "empty":
+                    empty = pd.DataFrame()
+                    if file is not False and isinstance(file, str):
+                        empty.to_csv(file, sep="\t", index=False)
+                    return empty
+                break
+
     df = _json_to_dataframe(payload)
     if file is not False and isinstance(file, str):
         df.to_csv(file, sep="\t", index=False)

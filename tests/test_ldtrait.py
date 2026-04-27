@@ -101,5 +101,53 @@ def test_ldtrait_validates_parity_constraints() -> None:
     with pytest.raises(ValueError, match="Window size must be between 0 and 1000000 bp"):
         ldtrait(snps="rs3", win_size=1_000_001, token="tok")
 
+    with pytest.raises(ValueError, match="Window size must be between 0 and 1000000 bp"):
+        ldtrait(snps="rs3", win_size=False, token="tok")  # type: ignore[arg-type]
+
     with pytest.raises(ValueError, match="Invalid input for file option"):
         ldtrait(snps="rs3", file=123, token="tok")  # type: ignore[arg-type]
+
+    with pytest.raises(ValueError, match="on_no_hits must be 'empty' or 'raise'"):
+        ldtrait(snps="rs3", on_no_hits="bad", token="tok")  # type: ignore[arg-type]
+
+
+def test_ldtrait_no_hits_returns_empty_dataframe_by_default(monkeypatch: pytest.MonkeyPatch) -> None:
+    def fake_request(  # type: ignore[no-untyped-def]
+        endpoint: str,
+        *,
+        params: dict | None = None,
+        json_body: dict | None = None,
+        headers: dict | None = None,
+        token: str | None = None,
+        api_root: str,
+        method: str = "GET",
+        timeout: float = 180.0,
+    ) -> dict[str, str]:
+        return {"error": "No entries in the GWAS Catalog are identified using the LDtrait search criteria."}
+
+    monkeypatch.setattr("ldlinkpy.endpoints.ldtrait.request", fake_request)
+    monkeypatch.setenv("LDLINK_TOKEN", "TESTTOKEN")
+
+    df = ldtrait(snps="rs3")
+    assert df.empty
+
+
+def test_ldtrait_no_hits_can_raise(monkeypatch: pytest.MonkeyPatch) -> None:
+    def fake_request(  # type: ignore[no-untyped-def]
+        endpoint: str,
+        *,
+        params: dict | None = None,
+        json_body: dict | None = None,
+        headers: dict | None = None,
+        token: str | None = None,
+        api_root: str,
+        method: str = "GET",
+        timeout: float = 180.0,
+    ) -> dict[str, str]:
+        return {"error": "No entries in the GWAS Catalog are identified using the LDtrait search criteria."}
+
+    monkeypatch.setattr("ldlinkpy.endpoints.ldtrait.request", fake_request)
+    monkeypatch.setenv("LDLINK_TOKEN", "TESTTOKEN")
+
+    with pytest.raises(RuntimeError, match="does not contain records"):
+        ldtrait(snps="rs3", on_no_hits="raise")
