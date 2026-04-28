@@ -189,9 +189,9 @@ def ldtrait(
     r2d_threshold: float = 0.1,
     win_size: int = 500000,
     genome_build: str = "grch37",
-    token: str | None = None,
+    token: str | None = None,    
     api_root: str = DEFAULT_API_ROOT,
-    return_type: str = "dataframe",
+    return_type: str = "dataframe",    
     request_method: str = "auto",
     timeout: float = 600.0,
     *,
@@ -217,10 +217,15 @@ def ldtrait(
         "grch37" or "grch38".
     token
         LDlink token. If None, reads LDLINK_TOKEN from environment.
+    file
+        Optional output file path. If False, no file is written.
     api_root
         Base API root URL.
     return_type
         "dataframe" (default) or "raw".
+    on_no_hits
+        Behavior when LDtrait reports no GWAS matches. "empty" returns an empty DataFrame;
+        "raise" raises RuntimeError.
     request_method
         "auto" (default), "post", or "get". Prefer POST by default for robustness.
     file
@@ -319,6 +324,13 @@ def ldtrait(
                 "LDtrait returned text that could not be parsed as TSV. "
                 "Use return_type='raw' to inspect the response."
             ) from e
+
+    # JSON (dict/list) auto-parsed by http layer
+    if has_no_hits and on_no_hits == "empty":
+        empty = pd.DataFrame()
+        if file is not False and isinstance(file, str):
+            empty.to_csv(file, sep="\t", index=False)
+        return empty
 
     df = _json_to_dataframe(payload)
     if file is not False and isinstance(file, str):
