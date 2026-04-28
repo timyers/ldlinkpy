@@ -875,3 +875,182 @@ Notes:
 - We intentionally follow the LDlink API Access guidance for LDmatrix request sizing (`GET` up to `300` SNPs, `POST` up to `2500` SNPs) when sources disagree.
 - `request_method='auto'` uses `GET` when `len(snps) <= 300`, otherwise `POST`.
 - LDmatrix POST payloads use newline-delimited SNP strings (for example, `"rs3\\nrs4"`).
+
+### `ldtrait` command-line examples (0–11)
+
+Set your token once in your shell:
+
+```bash
+export LDLINK_TOKEN="YOUR_TOKEN_HERE"
+```
+
+0) One-time setup (repo root):
+
+```bash
+cd /workspace/ldlinkpy
+PYTHONPATH=. python -c "import os; print('LDLINK_TOKEN set:', bool(os.getenv('LDLINK_TOKEN')))"
+```
+
+1) Basic default call (minimal):
+
+```bash
+PYTHONPATH=. python - <<'PY'
+from ldlinkpy.endpoints.ldtrait import ldtrait
+df = ldtrait(snps="rs456")
+print(type(df), df.shape)
+print(df.head(3))
+PY
+```
+
+2) `snps` variations (single, multiple, mixed rsID + chr coord):
+
+```bash
+PYTHONPATH=. python - <<'PY'
+from ldlinkpy.endpoints.ldtrait import ldtrait
+df = ldtrait(snps=["rs456", "chr7:24966446"], pop="YRI")
+print(df.shape)
+PY
+```
+
+3) `pop` variations (single and multiple):
+
+```bash
+PYTHONPATH=. python - <<'PY'
+from ldlinkpy.endpoints.ldtrait import ldtrait
+print(ldtrait(snps="rs456", pop="CEU").shape)
+print(ldtrait(snps="rs456", pop=["YRI","CEU","EUR"]).shape)
+PY
+```
+
+4) `r2d` and `r2d_threshold` variations:
+
+```bash
+PYTHONPATH=. python - <<'PY'
+from ldlinkpy.endpoints.ldtrait import ldtrait
+print(ldtrait(snps="rs456", r2d="r2", r2d_threshold=0.1).shape)
+print(ldtrait(snps="rs456", r2d="d", r2d_threshold=0.8).shape)
+print(ldtrait(snps="rs456", r2d_threshold=0).shape)
+print(ldtrait(snps="rs456", r2d_threshold=1).shape)
+PY
+```
+
+5) `win_size` edge cases:
+
+```bash
+PYTHONPATH=. python - <<'PY'
+from ldlinkpy.endpoints.ldtrait import ldtrait
+print(ldtrait(snps="rs456", win_size=0).shape)
+print(ldtrait(snps="rs456", win_size=1_000_000).shape)
+PY
+```
+
+6) `genome_build` options:
+
+```bash
+PYTHONPATH=. python - <<'PY'
+from ldlinkpy.endpoints.ldtrait import ldtrait
+for gb in ["grch37", "grch38", "grch38_high_coverage"]:
+    print(gb, "->", ldtrait(snps="rs456", genome_build=gb).shape)
+PY
+```
+
+7) `token` usage (env var vs explicit argument):
+
+```bash
+PYTHONPATH=. python - <<'PY'
+import os
+from ldlinkpy.endpoints.ldtrait import ldtrait
+tok = os.environ["LDLINK_TOKEN"]
+print(ldtrait(snps="rs456", token=None).shape)
+print(ldtrait(snps="rs456", token=tok).shape)
+PY
+```
+
+8) `request_method` modes (POST default, explicit POST, GET):
+
+```bash
+PYTHONPATH=. python - <<'PY'
+from ldlinkpy.endpoints.ldtrait import ldtrait
+print("auto:", ldtrait(snps="rs456", request_method="auto").shape)
+print("post:", ldtrait(snps="rs456", request_method="post").shape)
+print("get:", ldtrait(snps="rs456", request_method="get").shape)
+PY
+```
+
+9) `return_type` and `file` behavior:
+
+```bash
+mkdir -p tmp
+PYTHONPATH=. python - <<'PY'
+from ldlinkpy.endpoints.ldtrait import ldtrait
+print(type(ldtrait(snps="rs456", return_type="dataframe", file=False)).__name__)
+print(type(ldtrait(snps="rs456", return_type="dataframe", file="tmp/ldtrait_df.tsv")).__name__)
+raw = ldtrait(snps="rs456", return_type="raw", file="tmp/ldtrait_raw.json")
+print(type(raw).__name__)
+PY
+ls -lh tmp/ldtrait_df.tsv tmp/ldtrait_raw.json
+```
+
+10) Negative tests (expected errors):
+
+```bash
+PYTHONPATH=. python - <<'PY'
+from ldlinkpy.endpoints.ldtrait import ldtrait
+tests = [
+    ("invalid snp format", dict(snps="bad_variant")),
+    ("too many snps", dict(snps=[f"rs{i}" for i in range(1, 52)])),
+    ("invalid pop", dict(snps="rs456", pop="BADPOP")),
+    ("invalid r2d", dict(snps="rs456", r2d="r")),
+    ("threshold < 0", dict(snps="rs456", r2d_threshold=-0.1)),
+    ("threshold > 1", dict(snps="rs456", r2d_threshold=1.1)),
+    ("win_size < 0", dict(snps="rs456", win_size=-1)),
+    ("win_size > 1_000_000", dict(snps="rs456", win_size=1_000_001)),
+    ("win_size bool", dict(snps="rs456", win_size=False)),
+    ("invalid genome_build", dict(snps="rs456", genome_build="hg19")),
+    ("invalid return_type", dict(snps="rs456", return_type="json")),
+    ("invalid request_method", dict(snps="rs456", request_method="put")),
+    ("invalid file type", dict(snps="rs456", file=123)),
+    ("invalid on_no_hits", dict(snps="rs456", on_no_hits="bad")),
+]
+for name, kwargs in tests:
+    try:
+        ldtrait(**kwargs, token="dummy_token_for_validation_path")
+        print(f"[UNEXPECTED PASS] {name}")
+    except Exception as e:
+        print(f"[OK ERROR] {name}: {type(e).__name__}: {e}")
+PY
+```
+
+11) Quick all-in-one smoke script:
+
+```bash
+PYTHONPATH=. python - <<'PY'
+import os
+from ldlinkpy.endpoints.ldtrait import ldtrait
+
+tok = os.environ.get("LDLINK_TOKEN")
+if not tok:
+    raise SystemExit("Set LDLINK_TOKEN first.")
+
+cases = [
+    dict(snps="rs456"),
+    dict(snps=["rs456", "chr7:24966446"], pop=["YRI","CEU"]),
+    dict(snps=["rs456", "chr7:24966446"], pop=["YRI+CEU"]),
+    dict(snps="rs456", pop="YRI+CEU"),
+    dict(snps="rs456", r2d="d", r2d_threshold=0.5),
+    dict(snps="rs456", win_size=0),
+    dict(snps="rs456", win_size=1_000_000),
+    dict(snps="rs456", genome_build="grch38"),
+    dict(snps="rs456", genome_build="grch38_high_coverage"),
+    dict(snps="rs456", request_method="get"),
+    dict(snps="rs456", return_type="raw"),
+]
+
+for i, kw in enumerate(cases, start=1):
+    out = ldtrait(token=tok, **kw)
+    if hasattr(out, "shape"):
+        print(f"Case {i}: DataFrame shape={out.shape}")
+    else:
+        print(f"Case {i}: type={type(out).__name__}, len={len(out) if isinstance(out, str) else 'n/a'}")
+PY
+```
