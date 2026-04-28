@@ -169,6 +169,9 @@ def _json_to_dataframe(payload: Any) -> pd.DataFrame:
 
 
 def _has_no_hits_message(payload: Any) -> bool:
+    if isinstance(payload, str):
+        return _NO_HITS_TEXT in payload
+
     if not isinstance(payload, Mapping):
         return False
 
@@ -299,6 +302,12 @@ def ldtrait(
             elif isinstance(payload, (Mapping, list)):
                 Path(file).write_text(json.dumps(payload, ensure_ascii=False, indent=2), encoding="utf-8")
         return payload
+
+    if has_no_hits and on_no_hits == "empty":
+        empty = pd.DataFrame()
+        if file is not False and isinstance(file, str):
+            empty.to_csv(file, sep="\t", index=False)
+        return empty
 
     # DataFrame coercion:
     if isinstance(payload, str):
