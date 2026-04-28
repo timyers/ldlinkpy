@@ -229,7 +229,7 @@ def test_ldtrait_no_hits_can_raise(monkeypatch: pytest.MonkeyPatch) -> None:
     monkeypatch.setattr("ldlinkpy.endpoints.ldtrait.request", fake_request)
     monkeypatch.setenv("LDLINK_TOKEN", "TESTTOKEN")
 
-    with pytest.raises(RuntimeError, match="does not contain records"):
+    with pytest.raises(RuntimeError, match="no GWAS Catalog matches"):
         ldtrait(snps="rs3", on_no_hits="raise")
 
 
@@ -256,3 +256,24 @@ def test_ldtrait_raw_json_payload_writes_file(monkeypatch: pytest.MonkeyPatch, t
     assert payload == {"error": "No entries in the GWAS Catalog are identified using the LDtrait search criteria."}
     assert out_file.exists()
     assert json.loads(out_file.read_text(encoding="utf-8")) == payload
+
+
+def test_ldtrait_no_hits_raise_applies_in_raw_mode(monkeypatch: pytest.MonkeyPatch) -> None:
+    def fake_request(  # type: ignore[no-untyped-def]
+        endpoint: str,
+        *,
+        params: dict | None = None,
+        json_body: dict | None = None,
+        headers: dict | None = None,
+        token: str | None = None,
+        api_root: str,
+        method: str = "GET",
+        timeout: float = 180.0,
+    ) -> dict[str, str]:
+        return {"error": "No entries in the GWAS Catalog are identified using the LDtrait search criteria."}
+
+    monkeypatch.setattr("ldlinkpy.endpoints.ldtrait.request", fake_request)
+    monkeypatch.setenv("LDLINK_TOKEN", "TESTTOKEN")
+
+    with pytest.raises(RuntimeError, match="no GWAS Catalog matches"):
+        ldtrait(snps="rs3", return_type="raw", on_no_hits="raise")

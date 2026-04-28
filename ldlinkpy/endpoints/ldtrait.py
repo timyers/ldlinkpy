@@ -53,6 +53,7 @@ _VALID_POP_CODES: set[str] = {
 
 _RSID_RE = re.compile(r"^rs\d{1,}$", flags=re.IGNORECASE)
 _CHR_COORD_RE = re.compile(r"^chr(\d{1,2}|x|y):(\d{1,9})$", flags=re.IGNORECASE)
+_NO_HITS_TEXT = "No entries in the GWAS Catalog are identified using the LDtrait search criteria."
 
 
 def _normalize_pop(pop: str | Sequence[str]) -> str:
@@ -167,6 +168,17 @@ def _json_to_dataframe(payload: Any) -> pd.DataFrame:
     )
 
 
+def _has_no_hits_message(payload: Any) -> bool:
+    if not isinstance(payload, Mapping):
+        return False
+
+    for err_key in ("error", "Error", "message", "Message", "detail", "Detail"):
+        msg = payload.get(err_key)
+        if isinstance(msg, str) and _NO_HITS_TEXT in msg:
+            return True
+    return False
+
+
 def ldtrait(
     snps: str | Sequence[str],
     pop: str | Sequence[str] = "CEU",
@@ -276,6 +288,10 @@ def ldtrait(
         timeout=timeout,
     )
 
+    has_no_hits = _has_no_hits_message(payload)
+    if has_no_hits and on_no_hits == "raise":
+        raise RuntimeError(f"LDtrait returned no GWAS Catalog matches: {_NO_HITS_TEXT}")
+
     if return_type == "raw":
         if file is not False and isinstance(file, str):
             if isinstance(payload, str):
@@ -301,17 +317,11 @@ def ldtrait(
             ) from e
 
     # JSON (dict/list) auto-parsed by http layer
-    if isinstance(payload, Mapping):
-        no_hits_text = "No entries in the GWAS Catalog are identified using the LDtrait search criteria."
-        for err_key in ("error", "Error", "message", "Message", "detail", "Detail"):
-            msg = payload.get(err_key)
-            if isinstance(msg, str) and no_hits_text in msg:
-                if on_no_hits == "empty":
-                    empty = pd.DataFrame()
-                    if file is not False and isinstance(file, str):
-                        empty.to_csv(file, sep="\t", index=False)
-                    return empty
-                break
+    if has_no_hits and on_no_hits == "empty":
+        empty = pd.DataFrame()
+        if file is not False and isinstance(file, str):
+            empty.to_csv(file, sep="\t", index=False)
+        return empty
 
     df = _json_to_dataframe(payload)
     if file is not False and isinstance(file, str):
