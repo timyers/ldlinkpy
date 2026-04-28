@@ -4,6 +4,7 @@ import json
 
 import pytest
 
+from ldlinkpy import DEFAULT_API_ROOT
 from ldlinkpy.endpoints.ldtrait import ldtrait
 
 
@@ -88,6 +89,56 @@ def test_ldtrait_get_mode_calls_ldtraitget(monkeypatch: pytest.MonkeyPatch) -> N
 
     assert captured["method"] == "GET"
     assert captured["endpoint"] == "ldtraitget"
+
+
+def test_ldtrait_old_positional_contract_still_works(monkeypatch: pytest.MonkeyPatch) -> None:
+    captured: dict[str, object] = {}
+
+    def fake_request(  # type: ignore[no-untyped-def]
+        endpoint: str,
+        *,
+        params: dict | None = None,
+        json_body: dict | None = None,
+        headers: dict | None = None,
+        token: str | None = None,
+        api_root: str,
+        method: str = "GET",
+        timeout: float = 180.0,
+    ) -> str:
+        captured["endpoint"] = endpoint
+        captured["api_root"] = api_root
+        captured["method"] = method
+        captured["token"] = token
+        captured["timeout"] = timeout
+        return "A\tB\n1\t2\n"
+
+    monkeypatch.setattr("ldlinkpy.endpoints.ldtrait.request", fake_request)
+
+    raw = ldtrait(
+        "rs3",
+        "CEU",
+        "r2",
+        0.1,
+        500000,
+        "grch37",
+        "TOK",
+        "https://example.test/LDlinkRest",
+        "raw",
+        "get",
+        12.5,
+    )
+
+    assert isinstance(raw, str)
+    assert captured["endpoint"] == "ldtraitget"
+    assert captured["api_root"] == "https://example.test/LDlinkRest"
+    assert captured["method"] == "GET"
+    assert captured["token"] == "TOK"
+    assert captured["timeout"] == 12.5
+
+
+def test_ldtrait_new_options_are_keyword_only() -> None:
+    with pytest.raises(TypeError):
+        ldtrait("rs3", "CEU", "r2", 0.1, 500000, "grch37", "TOK", DEFAULT_API_ROOT, "dataframe", "auto", 600.0, False)
 
 
 def test_ldtrait_accepts_plus_delimited_pop_string(monkeypatch: pytest.MonkeyPatch) -> None:

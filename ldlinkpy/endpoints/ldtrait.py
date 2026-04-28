@@ -181,6 +181,9 @@ def ldtrait(
     on_no_hits: str = "empty",
     request_method: str = "auto",
     timeout: float = 600.0,
+    *,
+    file: str | bool = False,
+    on_no_hits: str = "empty",
 ) -> pd.DataFrame | Any:
     """
     Query LDtrait from the LDlink REST API.
@@ -212,6 +215,11 @@ def ldtrait(
         "raise" raises RuntimeError.
     request_method
         "auto" (default), "post", or "get". Prefer POST by default for robustness.
+    file
+        Optional output file path. If False, no file is written.
+    on_no_hits
+        Behavior when LDtrait reports no GWAS matches. "empty" returns an empty DataFrame;
+        "raise" raises RuntimeError.
 
     Returns
     -------
