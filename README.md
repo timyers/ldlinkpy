@@ -1054,3 +1054,12 @@ for i, kw in enumerate(cases, start=1):
         print(f"Case {i}: type={type(out).__name__}, len={len(out) if isinstance(out, str) else 'n/a'}")
 PY
 ```
+
+Notes:
+
+- `pop` accepts either list form (`["YRI", "CEU"]`) or `+`-delimited string (`"YRI+CEU"`).
+- `request_method="auto"` currently uses POST behavior for `ldtrait` (GET is available via `request_method="get"`).
+- `on_no_hits="empty"` returns an empty DataFrame; use `on_no_hits="raise"` for strict failure behavior.
+- `return_type="raw"` may return text or JSON; if `file` is set, output is written accordingly.
+- `win_size` must be an integer from `0` to `1_000_000` (booleans are rejected).
+- For token handling, pass `token=` or set `LDLINK_TOKEN` in your environment.
