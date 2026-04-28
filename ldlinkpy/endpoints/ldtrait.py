@@ -1,6 +1,9 @@
 from __future__ import annotations
 
-from typing import Any, Iterable, Mapping, Sequence
+import json
+import re
+from pathlib import Path
+from typing import Any, Mapping, Sequence
 
 import pandas as pd
 
@@ -13,7 +16,71 @@ from ldlinkpy.validators import (
     validate_r2d,
     validate_threshold,
 )
+_VALID_POP_CODES: set[str] = {
+    "YRI",
+    "LWK",
+    "GWD",
+    "MSL",
+    "ESN",
+    "ASW",
+    "ACB",
+    "MXL",
+    "PUR",
+    "CLM",
+    "PEL",
+    "CHB",
+    "JPT",
+    "CHS",
+    "CDX",
+    "KHV",
+    "CEU",
+    "TSI",
+    "FIN",
+    "GBR",
+    "IBS",
+    "GIH",
+    "PJL",
+    "BEB",
+    "STU",
+    "ITU",
+    "ALL",
+    "AFR",
+    "AMR",
+    "EAS",
+    "EUR",
+    "SAS",
+}
 
+_RSID_RE = re.compile(r"^rs\d{1,}$", flags=re.IGNORECASE)
+_CHR_COORD_RE = re.compile(r"^chr(\d{1,2}|x|y):(\d{1,9})$", flags=re.IGNORECASE)
+
+
+def _normalize_pop(pop: str | Sequence[str]) -> str:
+    if isinstance(pop, str):
+        raw_items = [p for p in pop.split("+")]
+    elif isinstance(pop, Sequence):
+        raw_items = []
+        for p in pop:
+            raw_items.extend(str(p).split("+"))
+    else:
+        raise ValueError("pop must be a population code string or a sequence of population code strings.")
+
+    pops = [p.strip().upper() for p in raw_items if str(p).strip()]
+    if not pops:
+        raise ValueError("pop must contain at least one population code.")
+    if any(p not in _VALID_POP_CODES for p in pops):
+        raise ValueError("Not a valid population code.")
+    return "+".join(pops)
+
+
+def _validate_snps_for_ldtrait(snps: list[str]) -> list[str]:
+    if len(snps) < 1 or len(snps) > 50:
+        raise ValueError("Input is between 1 to 50 variants.")
+
+    for snp in snps:
+        if not (_RSID_RE.match(snp) or _CHR_COORD_RE.match(snp)):
+            raise ValueError(f"Invalid query format for variant: {snp}.")
+    return snps
 
 
 def _pick_records_field(obj: Mapping[str, Any]) -> Any:
@@ -102,7 +169,7 @@ def _json_to_dataframe(payload: Any) -> pd.DataFrame:
 
 def ldtrait(
     snps: str | Sequence[str],
-    pop: str = "CEU",
+    pop: str | Sequence[str] = "CEU",
     r2d: str = "r2",
     r2d_threshold: float = 0.1,
     win_size: int = 500000,
@@ -112,6 +179,9 @@ def ldtrait(
     return_type: str = "dataframe",
     request_method: str = "auto",
     timeout: float = 600.0,
+    *,
+    file: str | bool = False,
+    on_no_hits: str = "empty",
 ) -> pd.DataFrame | Any:
     """
     Query LDtrait from the LDlink REST API.
@@ -119,9 +189,9 @@ def ldtrait(
     Parameters
     ----------
     snps
-        SNP rsID(s). Either a single string (optionally comma/space separated) or a list of rsIDs.
+        Between 1 and 50 variants, each an rsID or coordinate like "chr7:24966446".
     pop
-        1000G population code (e.g., "CEU", "EUR", "AFR").
+        One or more 1000G population codes (e.g., "CEU", "EUR", "AFR").
     r2d
         "r2" or "d".
     r2d_threshold
@@ -138,6 +208,11 @@ def ldtrait(
         "dataframe" (default) or "raw".
     request_method
         "auto" (default), "post", or "get". Prefer POST by default for robustness.
+    file
+        Optional output file path. If False, no file is written.
+    on_no_hits
+        Behavior when LDtrait reports no GWAS matches. "empty" returns an empty DataFrame;
+        "raise" raises RuntimeError.
 
     Returns
     -------
@@ -147,28 +222,34 @@ def ldtrait(
     """
     if return_type not in {"dataframe", "raw"}:
         raise ValueError("return_type must be 'dataframe' or 'raw'.")
+    if on_no_hits not in {"empty", "raise"}:
+        raise ValueError("on_no_hits must be 'empty' or 'raise'.")
 
     request_method_norm = str(request_method).strip().lower()
     if request_method_norm not in {"auto", "post", "get"}:
         raise ValueError("request_method must be 'auto', 'post', or 'get'.")
 
-    snp_list = normalize_snps(snps)
-    validate_r2d(r2d)
-    validate_threshold("r2d_threshold", r2d_threshold)
-    validate_genome_build(genome_build)
+    if not (file is False or isinstance(file, str)):
+        raise ValueError("Invalid input for file option.")
 
-    if not isinstance(win_size, int) or win_size <= 0:
-        raise ValueError("win_size must be a positive integer.")
+    snp_list = _validate_snps_for_ldtrait(normalize_snps(snps))
+    pop_joined = _normalize_pop(pop)
+    r2d_norm = validate_r2d(r2d)
+    threshold = validate_threshold("r2d_threshold", r2d_threshold)
+    gb = validate_genome_build(genome_build)
+
+    if isinstance(win_size, bool) or not isinstance(win_size, int) or win_size < 0 or win_size > 1_000_000:
+        raise ValueError("Window size must be between 0 and 1000000 bp.")
 
     token_value = ensure_token(token)
 
     params: dict[str, Any] = {
         "snps": "\n".join(snp_list),
-        "pop": str(pop),
-        "r2_d": str(r2d),
-        "r2_d_threshold": str(r2d_threshold),
+        "pop": pop_joined,
+        "r2_d": str(r2d_norm),
+        "r2_d_threshold": str(threshold),
         "window": str(win_size),
-        "genome_build": str(genome_build),
+        "genome_build": str(gb),
     }
 
     # Choose correct endpoint. Per LDlink docs:
@@ -184,13 +265,18 @@ def ldtrait(
     payload = request(
         endpoint=endpoint,
         params=params,
-        token=token,
+        token=token_value,
         api_root=api_root,
         method=method,
         timeout=timeout,
     )
 
     if return_type == "raw":
+        if file is not False and isinstance(file, str):
+            if isinstance(payload, str):
+                Path(file).write_text(payload, encoding="utf-8")
+            elif isinstance(payload, (Mapping, list)):
+                Path(file).write_text(json.dumps(payload, ensure_ascii=False, indent=2), encoding="utf-8")
         return payload
 
     # DataFrame coercion:
@@ -199,7 +285,10 @@ def ldtrait(
         from ldlinkpy.parsing import parse_tsv
 
         try:
-            return parse_tsv(payload)
+            df = parse_tsv(payload)
+            if file is not False and isinstance(file, str):
+                df.to_csv(file, sep="\t", index=False)
+            return df
         except Exception as e:
             raise RuntimeError(
                 "LDtrait returned text that could not be parsed as TSV. "
@@ -207,4 +296,19 @@ def ldtrait(
             ) from e
 
     # JSON (dict/list) auto-parsed by http layer
-    return _json_to_dataframe(payload)
+    if isinstance(payload, Mapping):
+        no_hits_text = "No entries in the GWAS Catalog are identified using the LDtrait search criteria."
+        for err_key in ("error", "Error", "message", "Message", "detail", "Detail"):
+            msg = payload.get(err_key)
+            if isinstance(msg, str) and no_hits_text in msg:
+                if on_no_hits == "empty":
+                    empty = pd.DataFrame()
+                    if file is not False and isinstance(file, str):
+                        empty.to_csv(file, sep="\t", index=False)
+                    return empty
+                break
+
+    df = _json_to_dataframe(payload)
+    if file is not False and isinstance(file, str):
+        df.to_csv(file, sep="\t", index=False)
+    return df
