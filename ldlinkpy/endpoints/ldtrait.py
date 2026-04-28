@@ -175,8 +175,10 @@ def ldtrait(
     win_size: int = 500000,
     genome_build: str = "grch37",
     token: str | None = None,
+    file: str | bool = False,
     api_root: str = DEFAULT_API_ROOT,
     return_type: str = "dataframe",
+    on_no_hits: str = "empty",
     request_method: str = "auto",
     timeout: float = 600.0,
     *,
@@ -202,10 +204,15 @@ def ldtrait(
         "grch37" or "grch38".
     token
         LDlink token. If None, reads LDLINK_TOKEN from environment.
+    file
+        Optional output file path. If False, no file is written.
     api_root
         Base API root URL.
     return_type
         "dataframe" (default) or "raw".
+    on_no_hits
+        Behavior when LDtrait reports no GWAS matches. "empty" returns an empty DataFrame;
+        "raise" raises RuntimeError.
     request_method
         "auto" (default), "post", or "get". Prefer POST by default for robustness.
     file
