@@ -287,10 +287,20 @@ def ldexpress(
     token: str | None = None,
     file: str | bool = False,
     api_root: str = DEFAULT_API_ROOT,
+    on_no_hits: str = "empty",
 ) -> pd.DataFrame:
     """
     Query LDlink LDexpress (GTEx eQTL) endpoint.
+
+    Parameters
+    ----------
+    on_no_hits
+        Behavior when LDexpress reports no GTEx matches. "empty" returns an empty
+        DataFrame; "raise" raises LDlinkError.
     """
+    if on_no_hits not in {"empty", "raise"}:
+        raise ValueError("on_no_hits must be 'empty' or 'raise'.")
+
     tok = ensure_token(token)
 
     variants = _normalize_variants(snps)
@@ -332,6 +342,13 @@ def ldexpress(
                 or str(payload.get("warning"))
                 or str(payload)
             )
+            if "no entries in gtex" in msg.lower() and on_no_hits == "empty":
+                out = pd.DataFrame()
+                if isinstance(file, str) and file.strip() and file.strip().upper() != "FALSE":
+                    out_path = Path(file)
+                    out_path.parent.mkdir(parents=True, exist_ok=True)
+                    out.to_csv(out_path, sep="", index=False)
+                return out
             raise LDlinkError(msg)
         raise LDlinkError(str(payload))
 

@@ -1257,4 +1257,4 @@ Notes:
 - `genome_build` supports `grch37`, `grch38`, and `grch38_high_coverage`.
 - `file` can be a path string to save TSV output.
 - `api_root` can be overridden for alternate LDlink deployments/tests.
-- API results are data-dependent by SNP, build, population, tissue, and thresholds. Some combinations may return “No entries in GTEx are identified using the LDexpress search criteria”; in those cases `ldexpress` raises a clear error message.
+- API results are data-dependent by SNP, build, population, tissue, and thresholds. Some combinations may return “No entries in GTEx are identified using the LDexpress search criteria”; by default `ldexpress` returns an empty DataFrame (`on_no_hits="empty"`), or use `on_no_hits="raise"` for strict failure behavior.

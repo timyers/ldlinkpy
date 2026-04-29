@@ -145,3 +145,51 @@ def test_ldexpress_raises_clean_error_on_json_payload(monkeypatch: pytest.Monkey
 
     with pytest.raises(LDlinkError, match="No entries found for genome build grch38"):
         ldexpress(snps="rs429358", genome_build="grch38", tissue="WHO_BLO")
+
+
+def test_ldexpress_no_hits_returns_empty_dataframe_by_default(monkeypatch: pytest.MonkeyPatch) -> None:
+    def fake_request(  # type: ignore[no-untyped-def]
+        endpoint: str,
+        *,
+        params: dict | None = None,
+        json_body: dict | None = None,
+        headers: dict | None = None,
+        token: str | None = None,
+        api_root: str,
+        method: str = "GET",
+        timeout: float = 180.0,
+    ) -> dict[str, str]:
+        return {"error": "No entries in GTEx are identified using the LDexpress search criteria."}
+
+    monkeypatch.setattr("ldlinkpy.endpoints.ldexpress.request", fake_request)
+    monkeypatch.setenv("LDLINK_TOKEN", "TESTTOKEN")
+
+    df = ldexpress(snps="rs456", win_size=0)
+    assert df.empty
+
+
+def test_ldexpress_no_hits_raises_when_requested(monkeypatch: pytest.MonkeyPatch) -> None:
+    def fake_request(  # type: ignore[no-untyped-def]
+        endpoint: str,
+        *,
+        params: dict | None = None,
+        json_body: dict | None = None,
+        headers: dict | None = None,
+        token: str | None = None,
+        api_root: str,
+        method: str = "GET",
+        timeout: float = 180.0,
+    ) -> dict[str, str]:
+        return {"error": "No entries in GTEx are identified using the LDexpress search criteria."}
+
+    monkeypatch.setattr("ldlinkpy.endpoints.ldexpress.request", fake_request)
+    monkeypatch.setenv("LDLINK_TOKEN", "TESTTOKEN")
+
+    with pytest.raises(LDlinkError, match="No entries in GTEx"):
+        ldexpress(snps="rs456", win_size=0, on_no_hits="raise")
+
+
+def test_ldexpress_on_no_hits_must_be_valid(monkeypatch: pytest.MonkeyPatch) -> None:
+    monkeypatch.setenv("LDLINK_TOKEN", "TESTTOKEN")
+    with pytest.raises(ValueError, match="on_no_hits must be 'empty' or 'raise'."):
+        ldexpress(snps="rs456", on_no_hits="nope")
