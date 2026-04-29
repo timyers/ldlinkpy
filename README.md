@@ -1063,3 +1063,198 @@ Notes:
 - `return_type="raw"` may return text or JSON; if `file` is set, output is written accordingly.
 - `win_size` must be an integer from `0` to `1_000_000` (booleans are rejected).
 - For token handling, pass `token=` or set `LDLINK_TOKEN` in your environment.
+
+### `ldexpress` command-line examples (0–10)
+
+Set your token once in your shell:
+
+```bash
+export LDLINK_TOKEN="YOUR_TOKEN_HERE"
+```
+
+0) One-time setup (repo root):
+
+```bash
+cd /workspace/ldlinkpy
+PYTHONPATH=. python -c "import os; print('LDLINK_TOKEN set:', bool(os.getenv('LDLINK_TOKEN')))"
+```
+
+1) Basic default call (minimal):
+
+```bash
+PYTHONPATH=. python - <<'PY'
+from ldlinkpy.endpoints.ldexpress import ldexpress
+df = ldexpress(snps="rs456")
+print(type(df), df.shape)
+print(df.head(3))
+PY
+```
+
+2) `snps` variations (single, multiple, mixed rsID + chr coord):
+
+```bash
+PYTHONPATH=. python - <<'PY'
+from ldlinkpy.endpoints.ldexpress import ldexpress
+df = ldexpress(
+    snps=["rs456", "chr7:24966446"],
+    pop=["YRI", "CEU"],
+    tissue=["ADI_SUB", "WHO_BLO"],
+)
+print(df.shape)
+print(df[["Query","Tissue"]].head(5))
+PY
+```
+
+3) `tissue` modes (ALL, full names, abbreviations, mixed):
+
+```bash
+PYTHONPATH=. python - <<'PY'
+from ldlinkpy.endpoints.ldexpress import ldexpress
+print("ALL ->", ldexpress(snps="rs456", tissue="ALL").shape)
+print("full names ->", ldexpress(snps="rs456", tissue=["Whole_Blood","Adipose_Subcutaneous"]).shape)
+print("abbrev ->", ldexpress(snps="rs456", tissue=["WHO_BLO","ADI_SUB"]).shape)
+print("mixed ->", ldexpress(snps="rs456", tissue=["WHO_BLO","Adipose_Visceral_Omentum"]).shape)
+PY
+```
+
+4) `r2d`, `r2d_threshold`, `p_threshold`, and `win_size` variations:
+
+```bash
+PYTHONPATH=. python - <<'PY'
+from ldlinkpy.endpoints.ldexpress import ldexpress
+print(ldexpress(snps="rs456", r2d="r2", r2d_threshold=0.1, p_threshold=0.1, win_size=500000).shape)
+print(ldexpress(snps="rs456", r2d="d", r2d_threshold=0.8, p_threshold=0.05, win_size=100000).shape)
+print(ldexpress(snps="rs456", r2d_threshold=0, p_threshold=0, win_size=0).shape)
+print(ldexpress(snps="rs456", r2d_threshold=1, p_threshold=1, win_size=1_000_000).shape)
+PY
+```
+
+5) `genome_build` options:
+
+```bash
+PYTHONPATH=. python - <<'PY'
+from ldlinkpy.endpoints.ldexpress import ldexpress
+for gb in ["grch37", "grch38", "grch38_high_coverage"]:
+    print("\n---", gb, "---")
+    try:
+        df = ldexpress(snps="rs456", genome_build=gb, tissue="WHO_BLO")
+        pos_cols = [c for c in df.columns if c.startswith("Position_")]
+        print("Position column:", pos_cols[0] if pos_cols else "none")
+        print("rows:", len(df))
+    except Exception as e:
+        print(type(e).__name__, e)
+PY
+```
+
+6) `token` usage (env var vs explicit argument):
+
+```bash
+PYTHONPATH=. python - <<'PY'
+import os
+from ldlinkpy.endpoints.ldexpress import ldexpress
+tok = os.environ["LDLINK_TOKEN"]
+print(ldexpress(snps="rs456", tissue="WHO_BLO", token=None).shape)
+print(ldexpress(snps="rs456", tissue="WHO_BLO", token=tok).shape)
+PY
+```
+
+7) `file` output behavior:
+
+```bash
+mkdir -p tmp
+PYTHONPATH=. python - <<'PY'
+from ldlinkpy.endpoints.ldexpress import ldexpress
+out = "tmp/ldexpress_df.tsv"
+df = ldexpress(snps="rs456", tissue="WHO_BLO", file=out)
+print("saved:", out, "shape:", df.shape)
+PY
+ls -lh tmp/ldexpress_df.tsv
+head -n 5 tmp/ldexpress_df.tsv
+```
+
+8) `api_root` override behavior:
+
+```bash
+PYTHONPATH=. python - <<'PY'
+from ldlinkpy.endpoints.ldexpress import ldexpress
+df = ldexpress(
+    snps="rs456",
+    tissue="WHO_BLO",
+    api_root="https://ldlink.nih.gov/LDlinkRest",
+)
+print(df.shape)
+PY
+```
+
+9) Negative tests (expected validation errors):
+
+```bash
+PYTHONPATH=. python - <<'PY'
+from ldlinkpy.endpoints.ldexpress import ldexpress
+tests = [
+    ("invalid snp format", dict(snps="bad_variant")),
+    ("too many snps", dict(snps=[f"rs{i}" for i in range(1, 12)])),
+    ("invalid pop", dict(snps="rs456", pop="BADPOP")),
+    ("invalid tissue", dict(snps="rs456", tissue="adi_sub")),
+    ("invalid r2d", dict(snps="rs456", r2d="x")),
+    ("r2d_threshold < 0", dict(snps="rs456", r2d_threshold=-0.1)),
+    ("r2d_threshold > 1", dict(snps="rs456", r2d_threshold=1.1)),
+    ("p_threshold < 0", dict(snps="rs456", p_threshold=-0.1)),
+    ("p_threshold > 1", dict(snps="rs456", p_threshold=1.1)),
+    ("win_size < 0", dict(snps="rs456", win_size=-1)),
+    ("win_size > 1_000_000", dict(snps="rs456", win_size=1_000_001)),
+    ("invalid genome_build", dict(snps="rs456", genome_build="hg19")),
+]
+for name, kwargs in tests:
+    try:
+        ldexpress(**kwargs, token="dummy_token_for_validation_path")
+        print(f"[UNEXPECTED PASS] {name}")
+    except Exception as e:
+        print(f"[OK ERROR] {name}: {type(e).__name__}: {e}")
+PY
+```
+
+10) Quick all-in-one smoke script:
+
+```bash
+PYTHONPATH=. python - <<'PY'
+import os
+from ldlinkpy.endpoints.ldexpress import ldexpress
+
+tok = os.environ.get("LDLINK_TOKEN")
+if not tok:
+    raise SystemExit("Set LDLINK_TOKEN first.")
+
+cases = [
+    dict(snps="rs456"),
+    dict(snps=["rs456", "chr7:24966446"], pop=["YRI","CEU"], tissue=["WHO_BLO","ADI_SUB"]),
+    dict(snps="rs456", r2d="d", r2d_threshold=0.5),
+    dict(snps="rs456", p_threshold=0.05),
+    dict(snps="rs456", win_size=0),
+    dict(snps="rs456", win_size=1_000_000),
+    dict(snps="rs456", genome_build="grch37"),
+    dict(snps="rs456", genome_build="grch38"),
+    dict(snps="rs456", genome_build="grch38_high_coverage"),
+]
+
+for i, kw in enumerate(cases, start=1):
+    try:
+        out = ldexpress(token=tok, **kw)
+        print(f"Case {i}: DataFrame shape={out.shape}")
+    except Exception as e:
+        print(f"Case {i}: {type(e).__name__}: {e}")
+PY
+```
+
+Notes:
+
+- `snps` supports 1–10 variants (rsID or chromosome coordinate like `chr7:24966446`).
+- `pop` accepts one code (`"CEU"`) or multiple codes (`["YRI","CEU"]`).
+- `tissue` accepts `ALL`, LDexpress tissue names (for example, `Whole_Blood`), and abbreviations (for example, `WHO_BLO`); case sensitive.
+- `r2d` must be `r2` or `d`.
+- `r2d_threshold` and `p_threshold` must be within `[0, 1]`.
+- `win_size` must be an integer within `[0, 1_000_000]`.
+- `genome_build` supports `grch37`, `grch38`, and `grch38_high_coverage`.
+- `file` can be a path string to save TSV output.
+- `api_root` can be overridden for alternate LDlink deployments/tests.
+- API results are data-dependent by SNP, build, population, tissue, and thresholds. Some combinations may return “No entries in GTEx are identified using the LDexpress search criteria”; in those cases `ldexpress` raises a clear error message.
