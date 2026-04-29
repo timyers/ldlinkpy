@@ -2,7 +2,8 @@ from __future__ import annotations
 
 import re
 import warnings
-from typing import List, Sequence, Union
+from pathlib import Path
+from typing import Any, List, Sequence, Union
 
 import pandas as pd
 
@@ -284,6 +285,8 @@ def ldexpress(
     win_size: int = 500000,
     genome_build: str = "grch37",
     token: str | None = None,
+    file: str | bool = False,
+    api_root: str = DEFAULT_API_ROOT,
 ) -> pd.DataFrame:
     """
     Query LDlink LDexpress (GTEx eQTL) endpoint.
@@ -314,11 +317,30 @@ def ldexpress(
     text = request(
         endpoint="/ldexpress",
         method="POST",
-        api_root=DEFAULT_API_ROOT,
+        api_root=api_root,
         token=tok,
         params={"token": tok},
         json_body=json_body,
     )
 
+    if isinstance(text, (dict, list)):
+        payload: Any = text
+        if isinstance(payload, dict):
+            msg = (
+                str(payload.get("error"))
+                or str(payload.get("message"))
+                or str(payload.get("warning"))
+                or str(payload)
+            )
+            raise LDlinkError(msg)
+        raise LDlinkError(str(payload))
+
     df = parse_tsv(text)
-    return _coerce_clean_output(df, genome_build=genome_build)
+    out = _coerce_clean_output(df, genome_build=genome_build)
+
+    if isinstance(file, str) and file.strip() and file.strip().upper() != "FALSE":
+        out_path = Path(file)
+        out_path.parent.mkdir(parents=True, exist_ok=True)
+        out.to_csv(out_path, sep="\t", index=False)
+
+    return out
