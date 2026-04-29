@@ -3,7 +3,7 @@ from __future__ import annotations
 import re
 import warnings
 from pathlib import Path
-from typing import List, Sequence, Union
+from typing import Any, List, Sequence, Union
 
 import pandas as pd
 
@@ -322,6 +322,18 @@ def ldexpress(
         params={"token": tok},
         json_body=json_body,
     )
+
+    if isinstance(text, (dict, list)):
+        payload: Any = text
+        if isinstance(payload, dict):
+            msg = (
+                str(payload.get("error"))
+                or str(payload.get("message"))
+                or str(payload.get("warning"))
+                or str(payload)
+            )
+            raise LDlinkError(msg)
+        raise LDlinkError(str(payload))
 
     df = parse_tsv(text)
     out = _coerce_clean_output(df, genome_build=genome_build)
