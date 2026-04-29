@@ -1,8 +1,11 @@
 from __future__ import annotations
 
+from pathlib import Path
+
 import pytest
 
 from ldlinkpy.endpoints.ldexpress import ldexpress
+from ldlinkpy.exceptions import LDlinkError
 
 
 def test_ldexpress_posts_expected_body_and_parses_tsv(monkeypatch: pytest.MonkeyPatch) -> None:
@@ -96,3 +99,49 @@ def test_ldexpress_all_tissue_expands(monkeypatch: pytest.MonkeyPatch) -> None:
     assert isinstance(body, dict)
     assert body["tissues"] != "ALL"
     assert "+" in body["tissues"]
+
+def test_ldexpress_writes_output_file(monkeypatch: pytest.MonkeyPatch, tmp_path: Path) -> None:
+    def fake_request(  # type: ignore[no-untyped-def]
+        endpoint: str,
+        *,
+        params: dict | None = None,
+        json_body: dict | None = None,
+        headers: dict | None = None,
+        token: str | None = None,
+        api_root: str,
+        method: str = "GET",
+        timeout: float = 180.0,
+    ) -> str:
+        return "A\tB\n1\t2\n"
+
+    monkeypatch.setattr("ldlinkpy.endpoints.ldexpress.request", fake_request)
+    monkeypatch.setenv("LDLINK_TOKEN", "TESTTOKEN")
+
+    out_file = tmp_path / "ldexpress.tsv"
+    df = ldexpress(snps="rs429358", file=str(out_file))
+
+    assert out_file.exists()
+    saved = out_file.read_text()
+    assert "A\tB" in saved
+    assert df.shape == (1, 2)
+
+
+def test_ldexpress_raises_clean_error_on_json_payload(monkeypatch: pytest.MonkeyPatch) -> None:
+    def fake_request(  # type: ignore[no-untyped-def]
+        endpoint: str,
+        *,
+        params: dict | None = None,
+        json_body: dict | None = None,
+        headers: dict | None = None,
+        token: str | None = None,
+        api_root: str,
+        method: str = "GET",
+        timeout: float = 180.0,
+    ) -> dict[str, str]:
+        return {"error": "No entries found for genome build grch38"}
+
+    monkeypatch.setattr("ldlinkpy.endpoints.ldexpress.request", fake_request)
+    monkeypatch.setenv("LDLINK_TOKEN", "TESTTOKEN")
+
+    with pytest.raises(LDlinkError, match="No entries found for genome build grch38"):
+        ldexpress(snps="rs429358", genome_build="grch38", tissue="WHO_BLO")
