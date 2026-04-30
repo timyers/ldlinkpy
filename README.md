@@ -125,11 +125,6 @@ ldproxy("rs7412", pop="CEU")
 - You can also pass `token="your_token_here"` directly to functions as an argument if you prefer not to use an environment variable.
 
 ## Longer usage examples to use from local repo root
-### LDtrait notes
-
-- **Recommended:** use `request_method="auto"` (POST). This is the default and is the most reliable.
-- **Optional:** `request_method="get"` uses the `ldtraitget` endpoint. In some environments this may fail due to network/TLS issues. If you hit errors with GET, switch back to POST.
-
 ### `ldproxy` command-line examples (1–7)
 
 Set your token once in your shell:
