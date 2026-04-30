@@ -24,7 +24,6 @@ Using a virtual environment is also the standard recommendation.
 
 ### Requirements
 - Python 3.10 or newer
-- Git
 
 ### macOS
 
@@ -34,14 +33,14 @@ rm -rf .venv
 # Create new virtual environment
 python3 -m venv .venv
 ./.venv/bin/python -m pip install --upgrade pip
-./.venv/bin/python -m pip install "git+https://github.com/timyers/ldlinkpy.git"
+./.venv/bin/python -m pip install "https://github.com/timyers/ldlinkpy/archive/refs/heads/main.zip"
 ```
 
 ### Windows (Powershell)
 ```powershell
 py -m venv .venv
 .\.venv\Scripts\python -m pip install --upgrade pip
-.\.venv\Scripts\python -m pip install "git+https://github.com/timyers/ldlinkpy.git"
+.\.venv\Scripts\python -m pip install "https://github.com/timyers/ldlinkpy/archive/refs/heads/main.zip"
 ```
 
 ## Quick Start
