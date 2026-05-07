@@ -80,14 +80,13 @@ This checklist tracks the remaining work to finish, document, release, and publi
 
 ## Immediate next steps
 
-- [ ] Finish remaining package functions
+- [x] Finish remaining package functions
 - [ ] Finish tests
-- [ ] Write the README
-- [ ] Write examples
+- [x] Write the README
+- [x] Write examples
 - [ ] Publish to PyPI
 
 ## Note
 
 - Keep this checklist in the `repo root` since this is the only planning file.
 - Move to **`docs/`** if it starts collecting multiple project notes, checklists, or publication planning files.
-
