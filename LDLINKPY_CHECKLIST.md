@@ -16,12 +16,13 @@ This checklist tracks the remaining work to finish, document, release, and publi
 
 ## 2. Testing
 
-- [ ] Add pytest coverage for every public function
+- [x] Add pytest coverage for every public function
 - [ ] Mock all HTTP responses
+  - [ ] Replace or isolate the real API smoke-style test in `tests/test_ldproxy_batch.py`
 - [ ] Confirm tests never call the real LDlink API
-- [ ] Add tests for invalid inputs
-- [ ] Add tests for API error handling
-- [ ] Add tests for response parsing and returned objects
+- [x] Add tests for invalid inputs
+- [x] Add tests for API error handling
+- [x] Add tests for response parsing and returned objects
 - [ ] Run the full test suite in a fresh virtual environment
 - [ ] Add GitHub Actions CI
 
