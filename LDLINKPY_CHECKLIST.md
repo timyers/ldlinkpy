@@ -25,6 +25,7 @@ This checklist tracks the remaining work to finish, document, release, and publi
 - [x] Add tests for response parsing and returned objects
 - [ ] Run the full test suite in a fresh virtual environment
 - [ ] Add GitHub Actions CI
+- [ ] Recruit humans using Windows and macOS for testing
 
 ## 3. Documentation
 
@@ -59,6 +60,7 @@ This checklist tracks the remaining work to finish, document, release, and publi
 - [ ] Add a contributing guide
 - [ ] Add issue templates
 - [ ] Add a pull request template
+- [ ] Move GitHub repository from personal account to senior PI account or organization
 - [ ] Tag a stable release
 
 ## 7. Visibility and adoption
