@@ -11,7 +11,7 @@ Project status: Work in progress. Feedback and contributions are welcome.
 
 ## Introduction
 
-LDlink is an interactive suite of web-based tools for querying germline variants in human population groups of interest and generating linkage disequilibrium (LD) tables and plots. Population genotype data comes from Phase 3 (Version 5) of the 1000 Genomes Project, and variant RS numbers are indexed based on dbSNP 155.
+LDlink is an interactive suite of web-based tools for investigating linkage disequilibrium (LD) across ancestral population groups. LDlink uses publicly available 1000 Genomes Project reference haplotypes to calculate population-specific LD, accepts variants as RefSNP (RS) numbers or genomic positions, and references dbSNP for RS identifiers and bi-allelic variant information. Depending on the module, LDlink also incorporates data from resources such as UCSC RefSeq, RegulomeDB, genetic maps, the GTEx Portal, the GWAS Catalog, and FORGEdb.
 
 `LDlinkPy` is a Python client for the LDlink REST API. It helps researchers query LDlink programmatically, work with results as pandas DataFrames, and build reproducible LD workflows from Python.
 
