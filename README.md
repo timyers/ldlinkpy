@@ -142,6 +142,10 @@ Most endpoint functions return pandas DataFrames by default. Some functions supp
 - [API reference](docs/api_reference.md): public functions, parameters, return types, and common exceptions.
 - [Longer usage examples](docs/examples.md): endpoint-by-endpoint command-line examples for local development and exploratory testing.
 
+## Authorship
+
+`LDlinkPy` was conceived and overseen by Timothy Myers and Mitchel Machiela, with code and documentation assistance from ChatGPT 5.2 Thinking (OpenAI) and Codex (OpenAI). Additional authors and contributors may be added as the project develops.
+
 ## Relationship To LDlinkR
 
 `LDlinkPy` is intended to provide Python access to the major LDlink workflows familiar to LDlinkR users. Function names and behavior are generally aligned where practical, while using Python conventions such as pandas DataFrames and keyword arguments.
