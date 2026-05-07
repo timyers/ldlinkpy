@@ -4,7 +4,7 @@ This checklist tracks the remaining work to finish, document, release, and publi
 
 ## 1. Finish the package
 
-- [ ] Complete all planned endpoint functions
+- [x] Complete all planned endpoint functions
 - [ ] Make public function names and arguments consistent
 - [ ] Finalize input validation and exception messages
 - [ ] Confirm sequential-only request behavior is enforced client-wide
