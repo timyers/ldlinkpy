@@ -1,0 +1,1144 @@
+# LDlinkPy Longer Usage Examples
+
+These examples are intended for users who want more than the quick start in the README. They assume you are running commands from the repository root, either from a local checkout or an editable development install.
+
+Most examples require a valid LDlink API token. Set it once in your shell before running endpoint examples:
+
+```bash
+export LDLINK_TOKEN="YOUR_TOKEN_HERE"
+```
+
+On Windows PowerShell:
+
+```powershell
+$env:LDLINK_TOKEN="YOUR_TOKEN_HERE"
+```
+
+## `ldproxy` command-line examples (1-7)
+
+Set your token once in your shell:
+
+```bash
+export LDLINK_TOKEN="YOUR_TOKEN_HERE"
+```
+
+1) Basic call (defaults: `r2d='r2'`, `win_size=500000`, `genome_build='grch37'`):
+
+```bash
+PYTHONPATH=. python -c "from ldlinkpy import ldproxy; df=ldproxy(snp='rs7412', pop='CEU', token=None); print(df.head().to_string(index=False))"
+```
+
+2) Multiple populations as a list:
+
+```bash
+PYTHONPATH=. python -c "from ldlinkpy import ldproxy; df=ldproxy(snp='rs7412', pop=['CEU','YRI'], token=None); print(df[['RS_Number','Coord','R2']].head().to_string(index=False))"
+```
+
+3) Use D' (`r2d='d'`) instead of R2:
+
+```bash
+PYTHONPATH=. python -c "from ldlinkpy import ldproxy; df=ldproxy(snp='rs429358', pop='EUR', r2d='d', token=None); print(df.head().to_string(index=False))"
+```
+
+4) Smaller window size (`win_size=100000`):
+
+```bash
+PYTHONPATH=. python -c "from ldlinkpy import ldproxy; df=ldproxy(snp='rs429358', pop='EUR', win_size=100000, token=None); print(df.head().to_string(index=False))"
+```
+
+5) GRCh38 build:
+
+```bash
+PYTHONPATH=. python -c "from ldlinkpy import ldproxy; df=ldproxy(snp='rs7412', pop='CEU', genome_build='grch38', token=None); print(df.head().to_string(index=False))"
+```
+
+6) GRCh38 high coverage build:
+
+```bash
+PYTHONPATH=. python -c "from ldlinkpy import ldproxy; df=ldproxy(snp='rs7412', pop='CEU', genome_build='grch38_high_coverage', token=None); print(df.head().to_string(index=False))"
+```
+
+7) Raw text output (`return_type='raw'`) with explicit token argument:
+
+```bash
+PYTHONPATH=. python -c "from ldlinkpy import ldproxy; txt=ldproxy(snp='rs7412', pop='CEU', genome_build='grch37', return_type='raw', token='YOUR_TOKEN_HERE'); print('\n'.join(txt.splitlines()[:10]))"
+```
+
+Notes:
+
+- `snp` accepts an rsID query variant (for example, `rs7412` or `rs429358`).
+- `pop` accepts one code (string) or multiple codes (list).
+- `r2d` must be `r2` or `d`.
+- `genome_build` supports `grch37`, `grch38`, and `grch38_high_coverage`.
+- `return_type` supports `dataframe` (default) or `raw`.
+
+## `ldhap` command-line examples (1-4)
+
+Set your token once in your shell:
+
+```bash
+export LDLINK_TOKEN="YOUR_TOKEN_HERE"
+```
+
+1) Haplotype table (default):
+
+```bash
+PYTHONPATH=. python -c "from ldlinkpy import ldhap; df=ldhap(snps=['rs3','rs4'], pop=['CEU','YRI'], table_type='haplotype', genome_build='grch37', token=None); print(df.head().to_string(index=False))"
+```
+
+2) Variant table:
+
+```bash
+PYTHONPATH=. python -c "from ldlinkpy import ldhap; df=ldhap(snps=['rs3','rs4'], pop='CEU', table_type='variant', genome_build='grch38', token=None); print(df.head().to_string(index=False))"
+```
+
+3) Both tables:
+
+```bash
+PYTHONPATH=. python -c "from ldlinkpy import ldhap; out=ldhap(snps=['rs3','rs4'], pop=['CEU','YRI'], table_type='both', genome_build='grch37', token=None); print('Variant table:'); print(out['variant'].head().to_string(index=False)); print(''); print('Haplotype table:'); print(out['haplotype'].head().to_string(index=False))"
+```
+
+4) Merged table:
+
+```bash
+PYTHONPATH=. python -c "from ldlinkpy import ldhap; df=ldhap(snps=['rs3','rs4'], pop=['CEU','YRI'], table_type='merged', genome_build='grch37', token=None); print(df.head().to_string(index=False))"
+```
+
+Notes:
+
+- `snps` supports 1-30 variants (rsID or chromosome coordinate like `chr7:24966446`).
+- `pop` accepts a string or a list of valid 1000G population codes.
+- `genome_build` supports `grch37`, `grch38`, and `grch38_high_coverage`.
+- `table_type` supports `haplotype`, `variant`, `both`, and `merged`.
+
+## `snpclip` command-line examples (1-8)
+
+Set your token once in your shell:
+
+```bash
+export LDLINK_TOKEN="YOUR_TOKEN_HERE"
+```
+
+1) Basic default call (CEU, default thresholds):
+
+```bash
+PYTHONPATH=. python -c "from ldlinkpy import snpclip; df=snpclip(snps=['rs3','rs4'], token=None); print(df.head().to_string(index=False))"
+```
+
+2) Multiple populations:
+
+```bash
+PYTHONPATH=. python -c "from ldlinkpy import snpclip; df=snpclip(snps=['rs3','rs4','rs148890987'], pop=['CEU','YRI','CHB'], token=None); print(df.head(10).to_string(index=False))"
+```
+
+3) Custom thresholds:
+
+```bash
+PYTHONPATH=. python -c "from ldlinkpy import snpclip; df=snpclip(snps=['rs3','rs4'], r2_threshold=0.2, maf_threshold=0.05, token=None); print(df.to_string(index=False))"
+```
+
+4) GRCh38 build:
+
+```bash
+PYTHONPATH=. python -c "from ldlinkpy import snpclip; df=snpclip(snps=['rs3','rs4'], genome_build='grch38', token=None); print(df.head().to_string(index=False))"
+```
+
+5) GRCh38 high coverage + explicit token argument:
+
+```bash
+PYTHONPATH=. python -c "from ldlinkpy import snpclip; df=snpclip(snps=['rs3','rs4'], genome_build='grch38_high_coverage', token='YOUR_TOKEN_HERE'); print(df.head().to_string(index=False))"
+```
+
+6) Save output to a TSV file:
+
+```bash
+mkdir -p tmp
+PYTHONPATH=. python -c "from ldlinkpy import snpclip; df=snpclip(snps=['rs3','rs4'], pop='CEU', token=None, file='tmp/snpclip_rs3_rs4.tsv'); print('saved', len(df), 'rows')"
+```
+
+7) Raw mode (no DataFrame parsing):
+
+```bash
+PYTHONPATH=. python -c "from ldlinkpy import snpclip; out=snpclip(snps=['rs3','rs4'], token=None, return_type='raw'); print(type(out)); print(str(out)[:500])"
+```
+
+8) Coordinate-style variant input:
+
+```bash
+PYTHONPATH=. python -c "from ldlinkpy import snpclip; df=snpclip(snps=['chr7:24966446','chr7:24966584'], pop='CEU', token=None); print(df.head().to_string(index=False))"
+```
+
+## `ldpop` command-line examples (1-4)
+
+Set your token once in your shell:
+
+```bash
+export LDLINK_TOKEN="YOUR_TOKEN_HERE"
+```
+
+1) Quick test (defaults: `pop='CEU'`, `r2d='r2'`, `genome_build='grch37'`):
+
+```bash
+PYTHONPATH=. python -c "from ldlinkpy import ldpop; df=ldpop(var1='rs3', var2='rs4', token=None); print(df.to_string(index=False))"
+```
+
+2) Multiple populations + D-prime output:
+
+```bash
+PYTHONPATH=. python -c "from ldlinkpy import ldpop; df=ldpop(var1='rs3', var2='rs4', pop=['CEU','YRI','CHB'], r2d='d', token=None); print(df.to_string(index=False))"
+```
+
+3) Coordinate input + GRCh38 (using a variant present in 1000G):
+
+```bash
+PYTHONPATH=. python -c "from ldlinkpy import ldpop; df=ldpop(var1='chr13:31872705', var2='rs4', pop='CEU', r2d='r2', genome_build='grch38', token=None); print(df.to_string(index=False))"
+```
+
+4) Save output to a TSV file:
+
+```bash
+PYTHONPATH=. python -c "from ldlinkpy import ldpop; ldpop(var1='rs3', var2='rs4', pop='CEU', token=None, file='tmp/ldpop_rs3_rs4.tsv'); print('saved tmp/ldpop_rs3_rs4.tsv')"
+```
+
+## `SNPchip` command-line examples (1-8)
+
+Used to find commercial genotyping chip arrays for variants. Input is a list of between 1 - 5000 variants (one per line) and desired commercial chip arrays to search. Input variants do not need to be on the same chromosome.
+
+**Arguments**
+
+- `snps` (required): one rsID or chromosome coordinate string, or a list of those values; valid formats include `rs3` and `chr7:24966446`; supports 1-5000 variants.
+- `chip` (optional, default: `"ALL"`): one platform code or a list of platform codes; special values: `ALL`, `ALL_Illumina`, `ALL_Affy`.
+- `genome_build` (optional, default: `"grch37"`): one of `grch37`, `grch38`, `grch38_high_coverage`.
+- `token` (optional): LDlink token string. If omitted (`None`), `LDLINK_TOKEN` environment variable is used.
+- `api_root` (optional): custom LDlink API root URL (default is package `DEFAULT_API_ROOT`).
+- `return_type` (optional, default: `"dataframe"`): `"dataframe"` for parsed output or `"raw"` for raw response text.
+
+Output is a data frame of query variant rows (RS number), genomic coordinate (GRCh37) and genotyping chip array columns. The presence of a `1` designates the variant is present on the respective commercial genotyping array and a `0` indicates that it is not present on the genotyping array.
+
+Set your token once in your shell:
+
+```bash
+export LDLINK_TOKEN="YOUR_TOKEN_HERE"
+```
+1) Basic call (defaults: `chip='ALL'`, `genome_build='grch37'`):
+
+```bash
+PYTHONPATH=. python -c "from ldlinkpy import snpchip; df=snpchip(['rs3','rs4']); print(df)"
+```
+
+2) Mixed rsID and coordinate query:
+
+```bash
+PYTHONPATH=. python -c "from ldlinkpy import snpchip; df=snpchip(['chr7:24966446','rs148890987']); print(df)"
+```
+
+3) Affymetrix-only search (`ALL_Affy`):
+
+```bash
+PYTHONPATH=. python -c "from ldlinkpy import snpchip; df=snpchip(['rs3','rs4'], chip='ALL_Illumina', genome_build='grch38'); print(df)"
+```
+5) Explicit platform list:
+
+```bash
+python -c "from ldlinkpy import snpchip; df=snpchip(['rs3','rs4'], chip=['A_SNP5.0','A_SNP6.0','I_1M']); print(df)"
+```
+
+6) Raw response output:
+
+```bash
+PYTHONPATH=. python -c "from ldlinkpy import snpchip; out=snpchip(['rs3','rs4'], return_type='raw'); print(type(out)); print(str(out)[:500])"
+```
+
+7) Explicit token argument (using `rs4`):
+
+```bash
+PYTHONPATH=. python -c "from ldlinkpy import snpchip; df=snpchip(['rs4'], token='YOUR_TOKEN_HERE'); print(df)"
+```
+
+8) Save DataFrame to TSV:
+
+```bash
+PYTHONPATH=. python -c "from ldlinkpy import snpchip; df=snpchip(['rs3','rs4']); df.to_csv('tmp/snpchip_output.tsv', sep='\t', index=False); print('wrote tmp/snpchip_output.tsv')"
+```
+
+## `list_chip_platforms` / `list_chips` command-line examples
+
+Provides a data frame listing the names and abbreviation codes for available commercial SNP Chip Arrays from Illumina and Affymetrix.
+These lookup helpers are local, packaged-data utilities (no network calls).
+
+1) Show first 10 chip mappings via `list_chip_platforms`:
+
+```bash
+PYTHONPATH=. python -c "from ldlinkpy import list_chip_platforms; df=list_chip_platforms(); print(df.head(10).to_string(index=False))"
+```
+
+2) Show chip mappings via `list_chips`:
+
+```bash
+PYTHONPATH=. python -c "from ldlinkpy import list_chips; df=list_chips(); print(df)"
+```
+
+3) Confirm row count and column order:
+
+```bash
+PYTHONPATH=. python -c "from ldlinkpy import list_chip_platforms; df=list_chip_platforms(); print('rows=', len(df)); print('columns=', df.columns.tolist())"
+```
+
+4) Find one specific platform code (`I_GSA-v1`):
+
+```bash
+PYTHONPATH=. python -c "from ldlinkpy import list_chip_platforms; df=list_chip_platforms(); print(df.loc[df['chip_code']=='I_GSA-v1'].to_string(index=False))"
+```
+
+5) Verify the alias `list_chips` returns the same table:
+
+```bash
+PYTHONPATH=. python -c "from ldlinkpy import list_chip_platforms, list_chips; import pandas.testing as pdt; pdt.assert_frame_equal(list_chip_platforms(), list_chips()); print('list_chips alias matches list_chip_platforms')"
+```
+
+6) Export packaged lookup data to CSV:
+
+```bash
+PYTHONPATH=. python -c "from ldlinkpy import list_chips; df=list_chips(); df.to_csv('tmp/chip_platforms.csv', index=False); print('wrote tmp/chip_platforms.csv with', len(df), 'rows')"
+```
+
+7) Build a quick code->name dictionary and print selected entries:
+
+```bash
+PYTHONPATH=. python -c "from ldlinkpy import list_chips; df=list_chips(); d=dict(zip(df['chip_code'], df['chip_name'])); print('I_100 =>', d['I_100']); print('A_PMRA =>', d['A_PMRA']); print('A_UKBA =>', d['A_UKBA'])"
+```
+
+8) List only Affymetrix chip platforms:
+
+```bash
+PYTHONPATH=. python -c "from ldlinkpy import list_chips; df=list_chips(); print(df[df['chip_code'].str.startswith('A_')].to_string(index=False))"
+```
+
+## `list_pop` command-line examples
+
+Provides a data frame listing the available reference populations from the 1000 Genomes Project, continental or super-populations (e.g. European, African, Admixed American) and sub-populations (e.g Finnish, Gambian, Peruvian)
+These lookup helpers are local, packaged-data utilities (no network calls).
+
+1) Show first 10 population mappings:
+
+```bash
+PYTHONPATH=. python -c "from ldlinkpy import list_pop; df=list_pop(); print(df.head(10).to_string(index=False))"
+```
+
+2) Confirm row count and column order:
+
+```bash
+PYTHONPATH=. python -c "from ldlinkpy import list_pop; df=list_pop(); print('rows=', len(df)); print('columns=', df.columns.tolist())"
+```
+
+3) Find one specific population code (`YRI`):
+
+```bash
+PYTHONPATH=. python -c "from ldlinkpy import list_pop; df=list_pop(); print(df.loc[df['pop_code']=='YRI'].to_string(index=False))"
+```
+
+4) Build a quick pop_code -> (super_pop_code, pop_name) mapping and print selected entries:
+
+```bash
+PYTHONPATH=. python -c "from ldlinkpy import list_pop; df=list_pop(); d={r.pop_code:(r.super_pop_code, r.pop_name) for r in df.itertuples(index=False)}; print('ALL =>', d['ALL']); print('YRI =>', d['YRI']); print('CEU =>', d['CEU'])"
+```
+
+5) List only EAS sub-populations:
+
+```bash
+PYTHONPATH=. python -c "from ldlinkpy import list_pop; df=list_pop(); print(df[df['super_pop_code']=='EAS'].to_string(index=False))"
+```
+
+6) Export packaged population lookup data to CSV:
+
+```bash
+PYTHONPATH=. python -c "from ldlinkpy import list_pop; df=list_pop(); df.to_csv('tmp/populations.csv', index=False); print('wrote tmp/populations.csv with', len(df), 'rows')"
+```
+
+## `list_gtex_tissues` command-line examples
+
+Provides a data frame listing the GTEx full names, LDexpress full names (without spaces) and acceptable abbreviation codes of the 54 non-diseased tissue sites collected for the GTEx Portal and used as input for the LDexpress.
+These lookup helpers are local, packaged-data utilities (no network calls).
+
+1) Show first 10 GTEx tissue mappings:
+
+```bash
+PYTHONPATH=. python -c "from ldlinkpy import list_gtex_tissues; df=list_gtex_tissues(); print(df.head(10).to_string(index=False))"
+```
+
+2) Confirm row count and column order:
+
+```bash
+PYTHONPATH=. python -c "from ldlinkpy import list_gtex_tissues; df=list_gtex_tissues(); print('rows=', len(df)); print('columns=', df.columns.tolist())"
+```
+
+3) Find one specific tissue code (`Whole Blood`):
+
+```bash
+PYTHONPATH=. python -c "from ldlinkpy import list_gtex_tissues; df=list_gtex_tissues(); print(df.loc[df['tissue_name_gtex']=='Whole Blood'].to_string(index=False))"
+```
+
+4) Build a quick GTEx -> (LDexpress name, abbreviation) mapping and print selected entries:
+
+```bash
+PYTHONPATH=. python -c "from ldlinkpy import list_gtex_tissues; df=list_gtex_tissues(); d={r.tissue_name_gtex:(r.tissue_name_ldexpress, r.tissue_abbrev_ldexpress) for r in df.itertuples(index=False)}; print('Whole Blood =>', d['Whole Blood']); print('Adipose - Visceral (Omentum) =>', d['Adipose - Visceral (Omentum)']); print('Select All Tissues =>', d['Select All Tissues'])"
+```
+
+5) List only tissues with names starting with `Brain -`:
+
+```bash
+PYTHONPATH=. python -c "from ldlinkpy import list_gtex_tissues; df=list_gtex_tissues(); print(df[df['tissue_name_gtex'].str.startswith('Brain -')].to_string(index=False))"
+```
+
+6) Export packaged GTEx lookup data to CSV:
+
+```bash
+PYTHONPATH=. python -c "from ldlinkpy import list_gtex_tissues; df=list_gtex_tissues(); df.to_csv('tmp/gtex_tissues.csv', index=False); print('wrote tmp/gtex_tissues.csv with', len(df), 'rows')"
+```
+
+
+## `ldproxy_batch` command-line examples (0-7)
+
+Set your token once in your shell:
+
+```bash
+export LDLINK_TOKEN="YOUR_TOKEN_HERE"
+```
+
+0) One-time sanity check from repo root:
+
+```bash
+cd /workspace/ldlinkpy
+mkdir -p tmp
+PYTHONPATH=. python -c "import os; print('LDLINK_TOKEN set:', bool(os.getenv('LDLINK_TOKEN')))"
+```
+
+1) Basic real batch call (separate output files, defaults):
+
+```bash
+PYTHONPATH=. python -c "from ldlinkpy import ldproxy_batch; files=ldproxy_batch(snp=['rs3','rs7412','rs429358'], pop='CEU', token=None); print('written files:'); [print(' -', f) for f in files]"
+```
+
+2) Combined append mode + multiple populations:
+
+```bash
+PYTHONPATH=. python -c "from ldlinkpy import ldproxy_batch; files=ldproxy_batch(snp=['rs3','rs7412','rs429358'], pop=['CEU','YRI'], r2d='r2', append=True, genome_build='grch37', win_size=100000, token=None); print(files)"
+```
+
+3) D-prime output (`r2d='d'`):
+
+```bash
+PYTHONPATH=. python -c "from ldlinkpy import ldproxy_batch; files=ldproxy_batch(snp=['rs3','rs7412'], pop='CEU', r2d='d', append=False, genome_build='grch37', win_size=50000, token=None); print(files)"
+```
+
+4) CSV/newline string SNP input:
+
+```bash
+PYTHONPATH=. python -c "from ldlinkpy import ldproxy_batch; files=ldproxy_batch(snp='rs3,rs7412\\nrs429358', pop='CEU', append=False, genome_build='grch37', win_size=50000, token=None); print(files)"
+```
+
+5) DataFrame SNP input:
+
+```bash
+PYTHONPATH=. python -c "import pandas as pd; from ldlinkpy import ldproxy_batch; snp_df=pd.DataFrame(['rs3','rs7412','rs429358']); files=ldproxy_batch(snp=snp_df, pop='CEU', append=False, genome_build='grch37', win_size=50000, token=None); print(files)"
+```
+
+6) Test alternate genome builds:
+
+```bash
+PYTHONPATH=. python -c "from ldlinkpy import ldproxy_batch; [print(gb, '->', ldproxy_batch(snp=['rs3','rs7412'], pop='CEU', append=True, genome_build=gb, win_size=50000, token=None)) for gb in ['grch37','grch38','grch38_high_coverage']]"
+```
+
+7) `win_size` boundary checks (1 and 1,000,000):
+
+```bash
+PYTHONPATH=. python -c "from ldlinkpy import ldproxy_batch; [print('win_size', w, '->', ldproxy_batch(snp=['rs3','rs7412'], pop='CEU', append=True, genome_build='grch37', win_size=w, token=None)) for w in [1,1000000]]"
+```
+
+Notes:
+
+- `ldproxy_batch` writes output files to your current working directory.
+- With `append=False` (default), one file is written per query SNP: `<snp>_<genome_build>.txt`.
+- With `append=True`, one combined file is written: `combined_query_snp_list_<genome_build>.txt`.
+- Real API usage requires a valid `LDLINK_TOKEN`.
+- `snp` accepts newline/CSV strings, lists/iterables, and pandas DataFrames.
+- Supported `genome_build` values are `grch37`, `grch38`, and `grch38_high_coverage`.
+- `win_size` must be an integer greater than `0` and less than or equal to `1,000,000`.
+
+
+## `ldpair` command-line examples (0-12)
+
+Set your token once in your shell:
+
+```bash
+export LDLINK_TOKEN="YOUR_TOKEN_HERE"
+```
+
+0) One-time sanity check from repo root:
+
+```bash
+cd /workspace/ldlinkpy
+mkdir -p tmp
+PYTHONPATH=. python -c "import os; print('LDLINK_TOKEN set:', bool(os.getenv('LDLINK_TOKEN')))"
+```
+
+1) Basic single-pair call (defaults: `pop='CEU'`, `genome_build='grch37'`, `output='table'`):
+
+```bash
+PYTHONPATH=. python -c "from ldlinkpy import ldpair; df=ldpair(var1='rs3', var2='rs4', token=None); print(type(df).__name__); print(df.head(25).to_string(index=False))"
+```
+
+2) Text output:
+
+```bash
+PYTHONPATH=. python -c "from ldlinkpy import ldpair; txt=ldpair(var1='rs3', var2='rs4', output='text', token=None); print(type(txt).__name__); print('\n'.join(txt.splitlines()[:30]))"
+```
+
+3) Multiple populations as list:
+
+```bash
+PYTHONPATH=. python -c "from ldlinkpy import ldpair; df=ldpair(var1='rs3', var2='rs4', pop=['CEU','YRI'], token=None); print(df.head(30).to_string(index=False))"
+```
+
+4) Coordinate input (`chr:pos`) mixed with rsID:
+
+```bash
+PYTHONPATH=. python -c "from ldlinkpy import ldpair; out=ldpair(var1='chr7:24966446', var2='rs4', pop='CEU', genome_build='grch37', output='text', token=None); print('\n'.join(out.splitlines()[:30]))"
+```
+
+5) GRCh38 build:
+
+```bash
+PYTHONPATH=. python -c "from ldlinkpy import ldpair; out=ldpair(var1='rs3', var2='rs4', genome_build='grch38', output='text', token=None); print('\n'.join(out.splitlines()[:30]))"
+```
+
+6) GRCh38 high-coverage build:
+
+```bash
+PYTHONPATH=. python -c "from ldlinkpy import ldpair; out=ldpair(var1='rs3', var2='rs4', genome_build='grch38_high_coverage', output='text', token=None); print('\n'.join(out.splitlines()[:30]))"
+```
+
+7) Save parsed table output to TSV:
+
+```bash
+PYTHONPATH=. python -c "from ldlinkpy import ldpair; df=ldpair(var1='rs3', var2='rs4', output='table', file='tmp/ldpair_table.tsv', token=None); print('rows=', len(df)); print('wrote tmp/ldpair_table.tsv')"
+```
+
+8) Save text output to file:
+
+```bash
+PYTHONPATH=. python -c "from ldlinkpy import ldpair; txt=ldpair(var1='rs3', var2='rs4', output='text', file='tmp/ldpair_text.txt', token=None); print('chars=', len(txt)); print('wrote tmp/ldpair_text.txt')"
+```
+
+9) Batch mode with multiple SNP pairs (`snp_pairs`):
+
+```bash
+PYTHONPATH=. python -c "from ldlinkpy import ldpair; out=ldpair(snp_pairs=[('rs3','rs4'),('rs7412','rs429358')], pop='CEU', genome_build='grch37', token=None); print(type(out).__name__); print(str(out)[:800])"
+```
+
+10) Force POST for a single pair (`request_method='post'`):
+
+```bash
+PYTHONPATH=. python -c "from ldlinkpy import ldpair; out=ldpair(snp_pairs=[('rs3','rs4')], request_method='post', token=None); print(type(out).__name__); print(str(out)[:800])"
+```
+
+11) Explicit token argument (instead of env var):
+
+```bash
+PYTHONPATH=. python -c "from ldlinkpy import ldpair; out=ldpair(var1='rs3', var2='rs4', output='text', token='YOUR_TOKEN_HERE'); print('\n'.join(out.splitlines()[:30]))"
+```
+
+12) Quick validation checks (expected errors):
+
+```bash
+PYTHONPATH=. python -c "from ldlinkpy import ldpair; \
+cases=[ \
+  ('bad var1', dict(var1='bad', var2='rs4')), \
+  ('bad pop', dict(var1='rs3', var2='rs4', pop='BAD')), \
+  ('bad genome_build', dict(var1='rs3', var2='rs4', genome_build='hg19')), \
+  ('bad output', dict(var1='rs3', var2='rs4', output='json')), \
+  ('get with multi snp_pairs', dict(snp_pairs=[('rs3','rs4'),('rs7412','rs429358')], request_method='get')) \
+]; \
+for name, kwargs in cases: \
+  try: ldpair(token=None, **kwargs); print(name, '-> UNEXPECTED SUCCESS'); \
+  except Exception as e: print(name, '->', type(e).__name__, str(e))"
+```
+
+Notes:
+
+- `var1` and `var2` accept rsIDs (for example, `rs3`) or coordinate format like `chr7:24966446`.
+- `pop` accepts one population code (`\"CEU\"`) or multiple codes (`[\"CEU\", \"YRI\"]`).
+- `output` accepts `table` (DataFrame) or `text` (raw response text).
+- `file` accepts a file path string or `False` (default, no file writing).
+- `genome_build` accepts `grch37`, `grch38`, and `grch38_high_coverage`.
+- You can call with either (`var1`, `var2`) or `snp_pairs=[(...),(...)]`, but not both in the same call.
+
+## `ldmatrix` command-line examples (0-9 + negative tests)
+
+Set your token once in your shell:
+
+```bash
+export LDLINK_TOKEN="YOUR_TOKEN_HERE"
+```
+
+0) One-time sanity check from repo root:
+
+```bash
+cd /workspace/ldlinkpy
+mkdir -p tmp
+PYTHONPATH=. python -c "import os; print('LDLINK_TOKEN set:', bool(os.getenv('LDLINK_TOKEN')))"
+```
+
+1) Minimal happy path (defaults: `pop='CEU'`, `r2d='r2'`, `genome_build='grch37'`, `file=False`):
+
+```bash
+PYTHONPATH=. python -c "from ldlinkpy.endpoints.ldmatrix import ldmatrix; df=ldmatrix(snps=['rs3','rs4'], token=None); print(type(df).__name__, df.shape); print(df.head())"
+```
+
+2) `snps` as chromosome coordinate + rsID:
+
+```bash
+PYTHONPATH=. python -c "from ldlinkpy.endpoints.ldmatrix import ldmatrix; df=ldmatrix(snps=['chr13:32444611','rs11147477'], pop='CEU', r2d='r2', token=None); print(df.head())"
+```
+
+3) `pop` as multiple populations (list):
+
+```bash
+PYTHONPATH=. python -c "from ldlinkpy.endpoints.ldmatrix import ldmatrix; df=ldmatrix(snps=['rs3','rs4'], pop=['YRI','CEU'], token=None); print(df.head())"
+```
+
+4) `r2d='d'` path:
+
+```bash
+PYTHONPATH=. python -c "from ldlinkpy.endpoints.ldmatrix import ldmatrix; df=ldmatrix(snps=['rs3','rs4'], pop='CEU', r2d='d', token=None); print(df.head())"
+```
+
+5) Each `genome_build` option:
+
+```bash
+PYTHONPATH=. python -c "from ldlinkpy.endpoints.ldmatrix import ldmatrix; [print(gb, '->', ldmatrix(snps=['rs3','rs4'], pop='CEU', r2d='r2', genome_build=gb, token=None).shape) for gb in ['grch37','grch38','grch38_high_coverage']]"
+```
+
+6) `file` output for dataframe return:
+
+```bash
+PYTHONPATH=. python -c "from ldlinkpy.endpoints.ldmatrix import ldmatrix; out='tmp/ldmatrix_df.tsv'; df=ldmatrix(snps=['rs3','rs4'], token=None, file=out, return_type='dataframe'); print('saved:', out, 'rows:', len(df))"
+ls -lh tmp/ldmatrix_df.tsv
+head -n 5 tmp/ldmatrix_df.tsv
+```
+
+7) `return_type='raw'` + `file` output:
+
+```bash
+PYTHONPATH=. python -c "from ldlinkpy.endpoints.ldmatrix import ldmatrix; out='tmp/ldmatrix_raw.txt'; raw=ldmatrix(snps=['rs3','rs4'], token=None, return_type='raw', file=out); print(type(raw).__name__, 'saved:', out)"
+ls -lh tmp/ldmatrix_raw.txt
+head -n 5 tmp/ldmatrix_raw.txt
+```
+
+8) Force request method `get`:
+
+```bash
+PYTHONPATH=. python -c "from ldlinkpy.endpoints.ldmatrix import ldmatrix; df=ldmatrix(snps=['rs3','rs4'], token=None, request_method='get'); print(df.shape)"
+```
+
+9) Force request method `post`:
+
+```bash
+PYTHONPATH=. python -c "from ldlinkpy.endpoints.ldmatrix import ldmatrix; df=ldmatrix(snps=['rs3','rs4'], token=None, request_method='post'); print(df.shape)"
+```
+
+Negative tests (expected errors):
+
+A) Too few SNPs (`<2`):
+
+```bash
+PYTHONPATH=. python - <<'PY'
+from ldlinkpy.endpoints.ldmatrix import ldmatrix
+try:
+    ldmatrix(snps=["rs3"], token="dummy")
+    print("UNEXPECTED SUCCESS")
+except Exception as e:
+    print(type(e).__name__, e)
+PY
+```
+
+B) Too many SNPs (`>2500`):
+
+```bash
+PYTHONPATH=. python - <<'PY'
+from ldlinkpy.endpoints.ldmatrix import ldmatrix
+snps = [f"rs{i}" for i in range(1, 2502)]
+try:
+    ldmatrix(snps=snps, token="dummy")
+    print("UNEXPECTED SUCCESS")
+except Exception as e:
+    print(type(e).__name__, e)
+PY
+```
+
+C) Bad SNP format:
+
+```bash
+PYTHONPATH=. python - <<'PY'
+from ldlinkpy.endpoints.ldmatrix import ldmatrix
+try:
+    ldmatrix(snps=["rs3", "not_a_variant"], token="dummy")
+    print("UNEXPECTED SUCCESS")
+except Exception as e:
+    print(type(e).__name__, e)
+PY
+```
+
+D) Invalid pop code:
+
+```bash
+PYTHONPATH=. python - <<'PY'
+from ldlinkpy.endpoints.ldmatrix import ldmatrix
+try:
+    ldmatrix(snps=["rs3", "rs4"], pop="BAD", token="dummy")
+    print("UNEXPECTED SUCCESS")
+except Exception as e:
+    print(type(e).__name__, e)
+PY
+```
+
+E) Invalid `r2d`:
+
+```bash
+PYTHONPATH=. python - <<'PY'
+from ldlinkpy.endpoints.ldmatrix import ldmatrix
+try:
+    ldmatrix(snps=["rs3", "rs4"], r2d="r", token="dummy")
+    print("UNEXPECTED SUCCESS")
+except Exception as e:
+    print(type(e).__name__, e)
+PY
+```
+
+F) Invalid `genome_build`:
+
+```bash
+PYTHONPATH=. python - <<'PY'
+from ldlinkpy.endpoints.ldmatrix import ldmatrix
+try:
+    ldmatrix(snps=["rs3", "rs4"], genome_build="hg19", token="dummy")
+    print("UNEXPECTED SUCCESS")
+except Exception as e:
+    print(type(e).__name__, e)
+PY
+```
+
+G) Invalid `file` type:
+
+```bash
+PYTHONPATH=. python - <<'PY'
+from ldlinkpy.endpoints.ldmatrix import ldmatrix
+try:
+    ldmatrix(snps=["rs3", "rs4"], file=123, token="dummy")
+    print("UNEXPECTED SUCCESS")
+except Exception as e:
+    print(type(e).__name__, e)
+PY
+```
+
+H) Missing token (neither argument nor env var):
+
+```bash
+env -u LDLINK_TOKEN PYTHONPATH=. python - <<'PY'
+from ldlinkpy.endpoints.ldmatrix import ldmatrix
+try:
+    ldmatrix(snps=["rs3", "rs4"])
+    print("UNEXPECTED SUCCESS")
+except Exception as e:
+    print(type(e).__name__, e)
+PY
+```
+
+Notes:
+
+- We intentionally follow the LDlink API Access guidance for LDmatrix request sizing (`GET` up to `300` SNPs, `POST` up to `2500` SNPs) when sources disagree.
+- `request_method='auto'` uses `GET` when `len(snps) <= 300`, otherwise `POST`.
+- LDmatrix POST payloads use newline-delimited SNP strings (for example, `"rs3\\nrs4"`).
+
+## `ldtrait` command-line examples (0-11)
+
+Set your token once in your shell:
+
+```bash
+export LDLINK_TOKEN="YOUR_TOKEN_HERE"
+```
+
+0) One-time setup (repo root):
+
+```bash
+cd /workspace/ldlinkpy
+PYTHONPATH=. python -c "import os; print('LDLINK_TOKEN set:', bool(os.getenv('LDLINK_TOKEN')))"
+```
+
+1) Basic default call (minimal):
+
+```bash
+PYTHONPATH=. python - <<'PY'
+from ldlinkpy.endpoints.ldtrait import ldtrait
+df = ldtrait(snps="rs456")
+print(type(df), df.shape)
+print(df.head(3))
+PY
+```
+
+2) `snps` variations (single, multiple, mixed rsID + chr coord):
+
+```bash
+PYTHONPATH=. python - <<'PY'
+from ldlinkpy.endpoints.ldtrait import ldtrait
+df = ldtrait(snps=["rs456", "chr7:24966446"], pop="YRI")
+print(df.shape)
+PY
+```
+
+3) `pop` variations (single and multiple):
+
+```bash
+PYTHONPATH=. python - <<'PY'
+from ldlinkpy.endpoints.ldtrait import ldtrait
+print(ldtrait(snps="rs456", pop="CEU").shape)
+print(ldtrait(snps="rs456", pop=["YRI","CEU","EUR"]).shape)
+PY
+```
+
+4) `r2d` and `r2d_threshold` variations:
+
+```bash
+PYTHONPATH=. python - <<'PY'
+from ldlinkpy.endpoints.ldtrait import ldtrait
+print(ldtrait(snps="rs456", r2d="r2", r2d_threshold=0.1).shape)
+print(ldtrait(snps="rs456", r2d="d", r2d_threshold=0.8).shape)
+print(ldtrait(snps="rs456", r2d_threshold=0).shape)
+print(ldtrait(snps="rs456", r2d_threshold=1).shape)
+PY
+```
+
+5) `win_size` edge cases:
+
+```bash
+PYTHONPATH=. python - <<'PY'
+from ldlinkpy.endpoints.ldtrait import ldtrait
+print(ldtrait(snps="rs456", win_size=0).shape)
+print(ldtrait(snps="rs456", win_size=1_000_000).shape)
+PY
+```
+
+6) `genome_build` options:
+
+```bash
+PYTHONPATH=. python - <<'PY'
+from ldlinkpy.endpoints.ldtrait import ldtrait
+for gb in ["grch37", "grch38", "grch38_high_coverage"]:
+    print(gb, "->", ldtrait(snps="rs456", genome_build=gb).shape)
+PY
+```
+
+7) `token` usage (env var vs explicit argument):
+
+```bash
+PYTHONPATH=. python - <<'PY'
+import os
+from ldlinkpy.endpoints.ldtrait import ldtrait
+tok = os.environ["LDLINK_TOKEN"]
+print(ldtrait(snps="rs456", token=None).shape)
+print(ldtrait(snps="rs456", token=tok).shape)
+PY
+```
+
+8) `request_method` modes (POST default, explicit POST, GET):
+
+```bash
+PYTHONPATH=. python - <<'PY'
+from ldlinkpy.endpoints.ldtrait import ldtrait
+print("auto:", ldtrait(snps="rs456", request_method="auto").shape)
+print("post:", ldtrait(snps="rs456", request_method="post").shape)
+print("get:", ldtrait(snps="rs456", request_method="get").shape)
+PY
+```
+
+9) `return_type` and `file` behavior:
+
+```bash
+mkdir -p tmp
+PYTHONPATH=. python - <<'PY'
+from ldlinkpy.endpoints.ldtrait import ldtrait
+print(type(ldtrait(snps="rs456", return_type="dataframe", file=False)).__name__)
+print(type(ldtrait(snps="rs456", return_type="dataframe", file="tmp/ldtrait_df.tsv")).__name__)
+raw = ldtrait(snps="rs456", return_type="raw", file="tmp/ldtrait_raw.json")
+print(type(raw).__name__)
+PY
+ls -lh tmp/ldtrait_df.tsv tmp/ldtrait_raw.json
+```
+
+10) Negative tests (expected errors):
+
+```bash
+PYTHONPATH=. python - <<'PY'
+from ldlinkpy.endpoints.ldtrait import ldtrait
+tests = [
+    ("invalid snp format", dict(snps="bad_variant")),
+    ("too many snps", dict(snps=[f"rs{i}" for i in range(1, 52)])),
+    ("invalid pop", dict(snps="rs456", pop="BADPOP")),
+    ("invalid r2d", dict(snps="rs456", r2d="r")),
+    ("threshold < 0", dict(snps="rs456", r2d_threshold=-0.1)),
+    ("threshold > 1", dict(snps="rs456", r2d_threshold=1.1)),
+    ("win_size < 0", dict(snps="rs456", win_size=-1)),
+    ("win_size > 1_000_000", dict(snps="rs456", win_size=1_000_001)),
+    ("win_size bool", dict(snps="rs456", win_size=False)),
+    ("invalid genome_build", dict(snps="rs456", genome_build="hg19")),
+    ("invalid return_type", dict(snps="rs456", return_type="json")),
+    ("invalid request_method", dict(snps="rs456", request_method="put")),
+    ("invalid file type", dict(snps="rs456", file=123)),
+    ("invalid on_no_hits", dict(snps="rs456", on_no_hits="bad")),
+]
+for name, kwargs in tests:
+    try:
+        ldtrait(**kwargs, token="dummy_token_for_validation_path")
+        print(f"[UNEXPECTED PASS] {name}")
+    except Exception as e:
+        print(f"[OK ERROR] {name}: {type(e).__name__}: {e}")
+PY
+```
+
+11) Quick all-in-one smoke script:
+
+```bash
+PYTHONPATH=. python - <<'PY'
+import os
+from ldlinkpy.endpoints.ldtrait import ldtrait
+
+tok = os.environ.get("LDLINK_TOKEN")
+if not tok:
+    raise SystemExit("Set LDLINK_TOKEN first.")
+
+cases = [
+    dict(snps="rs456"),
+    dict(snps=["rs456", "chr7:24966446"], pop=["YRI","CEU"]),
+    dict(snps=["rs456", "chr7:24966446"], pop=["YRI+CEU"]),
+    dict(snps="rs456", pop="YRI+CEU"),
+    dict(snps="rs456", r2d="d", r2d_threshold=0.5),
+    dict(snps="rs456", win_size=0),
+    dict(snps="rs456", win_size=1_000_000),
+    dict(snps="rs456", genome_build="grch38"),
+    dict(snps="rs456", genome_build="grch38_high_coverage"),
+    dict(snps="rs456", request_method="get"),
+    dict(snps="rs456", return_type="raw"),
+]
+
+for i, kw in enumerate(cases, start=1):
+    out = ldtrait(token=tok, **kw)
+    if hasattr(out, "shape"):
+        print(f"Case {i}: DataFrame shape={out.shape}")
+    else:
+        print(f"Case {i}: type={type(out).__name__}, len={len(out) if isinstance(out, str) else 'n/a'}")
+PY
+```
+
+Notes:
+
+- `pop` accepts either list form (`["YRI", "CEU"]`) or `+`-delimited string (`"YRI+CEU"`).
+- `request_method="auto"` currently uses POST behavior for `ldtrait` (GET is available via `request_method="get"`).
+- `on_no_hits="empty"` returns an empty DataFrame; use `on_no_hits="raise"` for strict failure behavior.
+- `return_type="raw"` may return text or JSON; if `file` is set, output is written accordingly.
+- `win_size` must be an integer from `0` to `1_000_000` (booleans are rejected).
+- For token handling, pass `token=` or set `LDLINK_TOKEN` in your environment.
+
+## `ldexpress` command-line examples (0-10)
+
+Set your token once in your shell:
+
+```bash
+export LDLINK_TOKEN="YOUR_TOKEN_HERE"
+```
+
+0) One-time setup (repo root):
+
+```bash
+cd /workspace/ldlinkpy
+PYTHONPATH=. python -c "import os; print('LDLINK_TOKEN set:', bool(os.getenv('LDLINK_TOKEN')))"
+```
+
+1) Basic default call (minimal):
+
+```bash
+PYTHONPATH=. python - <<'PY'
+from ldlinkpy.endpoints.ldexpress import ldexpress
+df = ldexpress(snps="rs456")
+print(type(df), df.shape)
+print(df.head(3))
+PY
+```
+
+2) `snps` variations (single, multiple, mixed rsID + chr coord):
+
+```bash
+PYTHONPATH=. python - <<'PY'
+from ldlinkpy.endpoints.ldexpress import ldexpress
+df = ldexpress(
+    snps=["rs456", "chr7:24966446"],
+    pop=["YRI", "CEU"],
+    tissue=["ADI_SUB", "WHO_BLO"],
+)
+print(df.shape)
+print(df[["Query","Tissue"]].head(5))
+PY
+```
+
+3) `tissue` modes (ALL, full names, abbreviations, mixed):
+
+```bash
+PYTHONPATH=. python - <<'PY'
+from ldlinkpy.endpoints.ldexpress import ldexpress
+print("ALL ->", ldexpress(snps="rs456", tissue="ALL").shape)
+print("full names ->", ldexpress(snps="rs456", tissue=["Whole_Blood","Adipose_Subcutaneous"]).shape)
+print("abbrev ->", ldexpress(snps="rs456", tissue=["WHO_BLO","ADI_SUB"]).shape)
+print("mixed ->", ldexpress(snps="rs456", tissue=["WHO_BLO","Adipose_Visceral_Omentum"]).shape)
+PY
+```
+
+4) `r2d`, `r2d_threshold`, `p_threshold`, and `win_size` variations:
+
+```bash
+PYTHONPATH=. python - <<'PY'
+from ldlinkpy.endpoints.ldexpress import ldexpress
+print(ldexpress(snps="rs456", r2d="r2", r2d_threshold=0.1, p_threshold=0.1, win_size=500000).shape)
+print(ldexpress(snps="rs456", r2d="d", r2d_threshold=0.8, p_threshold=0.05, win_size=100000).shape)
+print(ldexpress(snps="rs456", r2d_threshold=0, p_threshold=0, win_size=0).shape)
+print(ldexpress(snps="rs456", r2d_threshold=1, p_threshold=1, win_size=1_000_000).shape)
+PY
+```
+
+5) `genome_build` options:
+
+```bash
+PYTHONPATH=. python - <<'PY'
+from ldlinkpy.endpoints.ldexpress import ldexpress
+for gb in ["grch37", "grch38", "grch38_high_coverage"]:
+    print("\n---", gb, "---")
+    try:
+        df = ldexpress(snps="rs456", genome_build=gb, tissue="WHO_BLO")
+        pos_cols = [c for c in df.columns if c.startswith("Position_")]
+        print("Position column:", pos_cols[0] if pos_cols else "none")
+        print("rows:", len(df))
+    except Exception as e:
+        print(type(e).__name__, e)
+PY
+```
+
+6) `token` usage (env var vs explicit argument):
+
+```bash
+PYTHONPATH=. python - <<'PY'
+import os
+from ldlinkpy.endpoints.ldexpress import ldexpress
+tok = os.environ["LDLINK_TOKEN"]
+print(ldexpress(snps="rs456", tissue="WHO_BLO", token=None).shape)
+print(ldexpress(snps="rs456", tissue="WHO_BLO", token=tok).shape)
+PY
+```
+
+7) `file` output behavior:
+
+```bash
+mkdir -p tmp
+PYTHONPATH=. python - <<'PY'
+from ldlinkpy.endpoints.ldexpress import ldexpress
+out = "tmp/ldexpress_df.tsv"
+df = ldexpress(snps="rs456", tissue="WHO_BLO", file=out)
+print("saved:", out, "shape:", df.shape)
+PY
+ls -lh tmp/ldexpress_df.tsv
+head -n 5 tmp/ldexpress_df.tsv
+```
+
+8) `api_root` override behavior:
+
+```bash
+PYTHONPATH=. python - <<'PY'
+from ldlinkpy.endpoints.ldexpress import ldexpress
+df = ldexpress(
+    snps="rs456",
+    tissue="WHO_BLO",
+    api_root="https://ldlink.nih.gov/LDlinkRest",
+)
+print(df.shape)
+PY
+```
+
+9) Negative tests (expected validation errors):
+
+```bash
+PYTHONPATH=. python - <<'PY'
+from ldlinkpy.endpoints.ldexpress import ldexpress
+tests = [
+    ("invalid snp format", dict(snps="bad_variant")),
+    ("too many snps", dict(snps=[f"rs{i}" for i in range(1, 12)])),
+    ("invalid pop", dict(snps="rs456", pop="BADPOP")),
+    ("invalid tissue", dict(snps="rs456", tissue="adi_sub")),
+    ("invalid r2d", dict(snps="rs456", r2d="x")),
+    ("r2d_threshold < 0", dict(snps="rs456", r2d_threshold=-0.1)),
+    ("r2d_threshold > 1", dict(snps="rs456", r2d_threshold=1.1)),
+    ("p_threshold < 0", dict(snps="rs456", p_threshold=-0.1)),
+    ("p_threshold > 1", dict(snps="rs456", p_threshold=1.1)),
+    ("win_size < 0", dict(snps="rs456", win_size=-1)),
+    ("win_size > 1_000_000", dict(snps="rs456", win_size=1_000_001)),
+    ("invalid genome_build", dict(snps="rs456", genome_build="hg19")),
+]
+for name, kwargs in tests:
+    try:
+        ldexpress(**kwargs, token="dummy_token_for_validation_path")
+        print(f"[UNEXPECTED PASS] {name}")
+    except Exception as e:
+        print(f"[OK ERROR] {name}: {type(e).__name__}: {e}")
+PY
+```
+
+10) Quick all-in-one smoke script:
+
+```bash
+PYTHONPATH=. python - <<'PY'
+import os
+from ldlinkpy.endpoints.ldexpress import ldexpress
+
+tok = os.environ.get("LDLINK_TOKEN")
+if not tok:
+    raise SystemExit("Set LDLINK_TOKEN first.")
+
+cases = [
+    dict(snps="rs456"),
+    dict(snps=["rs456", "chr7:24966446"], pop=["YRI","CEU"], tissue=["WHO_BLO","ADI_SUB"]),
+    dict(snps="rs456", r2d="d", r2d_threshold=0.5),
+    dict(snps="rs456", p_threshold=0.05),
+    dict(snps="rs456", win_size=0),
+    dict(snps="rs456", win_size=1_000_000),
+    dict(snps="rs456", genome_build="grch37"),
+    dict(snps="rs456", genome_build="grch38"),
+    dict(snps="rs456", genome_build="grch38_high_coverage"),
+]
+
+for i, kw in enumerate(cases, start=1):
+    try:
+        out = ldexpress(token=tok, **kw)
+        print(f"Case {i}: DataFrame shape={out.shape}")
+    except Exception as e:
+        print(f"Case {i}: {type(e).__name__}: {e}")
+PY
+```
+
+Notes:
+
+- `snps` supports 1-10 variants (rsID or chromosome coordinate like `chr7:24966446`).
+- `pop` accepts one code (`"CEU"`) or multiple codes (`["YRI","CEU"]`).
+- `tissue` accepts `ALL`, LDexpress tissue names (for example, `Whole_Blood`), and abbreviations (for example, `WHO_BLO`); case sensitive.
+- `r2d` must be `r2` or `d`.
+- `r2d_threshold` and `p_threshold` must be within `[0, 1]`.
+- `win_size` must be an integer within `[0, 1_000_000]`.
+- `genome_build` supports `grch37`, `grch38`, and `grch38_high_coverage`.
+- `file` can be a path string to save TSV output.
+- `api_root` can be overridden for alternate LDlink deployments/tests.
+- API results are data-dependent by SNP, build, population, tissue, and thresholds. Some combinations may return "No entries in GTEx are identified using the LDexpress search criteria"; by default `ldexpress` returns an empty DataFrame (`on_no_hits="empty"`), or use `on_no_hits="raise"` for strict failure behavior.

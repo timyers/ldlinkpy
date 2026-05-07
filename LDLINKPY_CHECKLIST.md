@@ -28,13 +28,13 @@ This checklist tracks the remaining work to finish, document, release, and publi
 
 ## 3. Documentation
 
-- [ ] Write a clear `README.md`
+- [x] Write a clear `README.md`
 - [x] Add installation instructions
 - [x] Add a quick start section
 - [x] Document token setup with `LDLINK_TOKEN`
-- [ ] Document each public function and its parameters
-- [ ] Document return types and common exceptions
-- [ ] Add a parity note comparing LDlinkPy to LDlinkR where appropriate
+- [x] Document each public function and its parameters
+- [x] Document return types and common exceptions
+- [x] Add a parity note comparing LDlinkPy to LDlinkR where appropriate
 
 ## 4. Examples
 
