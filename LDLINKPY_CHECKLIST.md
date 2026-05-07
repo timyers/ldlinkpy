@@ -8,6 +8,7 @@ This checklist tracks the remaining work to finish, document, release, and publi
 - [ ] Make public function names and arguments consistent
 - [ ] Finalize input validation and exception messages
 - [ ] Confirm sequential-only request behavior is enforced client-wide
+  - [ ] Move `ldproxy` off per-instance `LDlinkClient` locking or otherwise confirm it shares the global request lock
 - [ ] Standardize return types and output formatting
 - [ ] Remove dead code, duplication, and temporary workarounds
 - [ ] Verify package metadata and version number
