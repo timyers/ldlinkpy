@@ -29,9 +29,9 @@ This checklist tracks the remaining work to finish, document, release, and publi
 ## 3. Documentation
 
 - [ ] Write a clear `README.md`
-- [ ] Add installation instructions
-- [ ] Add a quick start section
-- [ ] Document token setup with `LDLINK_TOKEN`
+- [x] Add installation instructions
+- [x] Add a quick start section
+- [x] Document token setup with `LDLINK_TOKEN`
 - [ ] Document each public function and its parameters
 - [ ] Document return types and common exceptions
 - [ ] Add a parity note comparing LDlinkPy to LDlinkR where appropriate
