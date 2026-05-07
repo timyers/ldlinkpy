@@ -11,7 +11,7 @@ This checklist tracks the remaining work to finish, document, release, and publi
 - [ ] Standardize return types and output formatting
 - [ ] Remove dead code, duplication, and temporary workarounds
 - [ ] Verify package metadata and version number
-- [ ] Confirm license selection and `LICENSE` file
+- [x] Confirm license selection and `LICENSE` file
 
 ## 2. Testing
 
@@ -86,5 +86,4 @@ This checklist tracks the remaining work to finish, document, release, and publi
 
 - Keep this checklist in the `repo root` since this is the only planning file.
 - Move to **`docs/`** if it starts collecting multiple project notes, checklists, or publication planning files.
-
 
