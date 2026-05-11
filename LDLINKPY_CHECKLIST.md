@@ -66,7 +66,7 @@ This checklist tracks the remaining work to finish, document, release, and publi
 ## 7. Visibility and adoption
 
 - [ ] Request a link or announcement on the official LDlink website
-- [ ] Prepare a short project description for GitHub and PyPI
+- [x] Prepare a short project description for GitHub and PyPI
 - [ ] Share with early users for testing and feedback
 
 ## 8. Review and publication
