@@ -61,6 +61,7 @@ This checklist tracks the remaining work to finish, document, release, and publi
 - [ ] Add issue templates
 - [ ] Add a pull request template
 - [ ] Move GitHub repository from personal account to senior PI account or organization
+- [x] Add `official` remote and sync `main` to both GitHub remotes
 - [ ] Tag a stable release
 
 ## 7. Visibility and adoption
