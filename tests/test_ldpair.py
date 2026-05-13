@@ -5,6 +5,36 @@ import pytest
 import ldlinkpy.endpoints.ldpair as ldpair_mod
 
 
+LDPAIR_TEXT_REPORT = """Query SNPs:
+rs7742053 (chr6:6841452)
+rs17142617 (chr6:6838025)
+
+EUR Haplotypes:
+               rs17142617
+               A       G
+             -----------------
+           A | 1     | 120   | 121   (0.12)
+rs7742053    -----------------
+           C | 881   | 4     | 885   (0.88)
+             -----------------
+               882     124     1006
+              (0.877) (0.123)
+
+          C_A: 881 (0.876)
+          A_G: 120 (0.119)
+          C_G: 4 (0.004)
+          A_A: 1 (0.001)
+
+          D': 0.9906
+          R2: 0.9543
+      Chi-sq: 959.9763
+     p-value: <0.0001
+
+rs7742053(A) allele is correlated with rs17142617(G) allele
+rs7742053(C) allele is correlated with rs17142617(A) allele
+"""
+
+
 def test_ldpair_single_pair_get_returns_dataframe(monkeypatch):
     def fake_http_request(
         path,
@@ -30,6 +60,47 @@ def test_ldpair_single_pair_get_returns_dataframe(monkeypatch):
     assert df.loc[0, "SNP_A"] == "rs1"
     assert df.loc[0, "SNP_B"] == "rs2"
     assert float(df.loc[0, "R2"]) == pytest.approx(0.42)
+
+
+def test_ldpair_single_pair_text_report_returns_rectangular_dataframe(monkeypatch):
+    monkeypatch.setattr(ldpair_mod, "http_request", lambda *args, **kwargs: LDPAIR_TEXT_REPORT)
+
+    df = ldpair_mod.ldpair(
+        var1="rs7742053",
+        var2="rs17142617",
+        pop="EUR",
+        genome_build="grch37",
+        output="table",
+    )
+
+    assert list(df.columns) == [
+        "SNP_A",
+        "Coord_A",
+        "SNP_B",
+        "Coord_B",
+        "Population",
+        "Dprime",
+        "R2",
+        "ChiSq",
+        "PValue",
+        "Haplotypes",
+        "Correlated_Alleles",
+    ]
+    assert df.shape == (1, 11)
+    assert df.loc[0, "SNP_A"] == "rs7742053"
+    assert df.loc[0, "Coord_A"] == "chr6:6841452"
+    assert df.loc[0, "SNP_B"] == "rs17142617"
+    assert df.loc[0, "Coord_B"] == "chr6:6838025"
+    assert df.loc[0, "Population"] == "EUR"
+    assert df.loc[0, "Dprime"] == "0.9906"
+    assert df.loc[0, "R2"] == "0.9543"
+    assert df.loc[0, "ChiSq"] == "959.9763"
+    assert df.loc[0, "PValue"] == "<0.0001"
+    assert "C_A=881 (0.876)" in df.loc[0, "Haplotypes"]
+    assert (
+        "rs7742053(A) allele is correlated with rs17142617(G) allele"
+        in df.loc[0, "Correlated_Alleles"]
+    )
 
 
 def test_ldpair_multiple_pairs_post_returns_parsed_json(monkeypatch):
@@ -122,6 +193,25 @@ def test_ldpair_writes_output_file(tmp_path, monkeypatch):
     assert out_file.exists()
     assert "SNP_A\tSNP_B\tR2" in out_file.read_text(encoding="utf-8")
     assert df.shape == (1, 3)
+
+
+def test_ldpair_writes_text_report_table_as_tsv(tmp_path, monkeypatch):
+    monkeypatch.setattr(ldpair_mod, "http_request", lambda *args, **kwargs: LDPAIR_TEXT_REPORT)
+
+    out_file = tmp_path / "ldpair_table.tsv"
+    df = ldpair_mod.ldpair(
+        var1="rs7742053",
+        var2="rs17142617",
+        pop="EUR",
+        token="x",
+        file=str(out_file),
+    )
+
+    written = out_file.read_text(encoding="utf-8")
+    assert written.startswith("SNP_A\tCoord_A\tSNP_B\tCoord_B\tPopulation")
+    assert "Query SNPs:" not in written
+    assert "0.9543" in written
+    assert df.shape == (1, 11)
 
 
 def test_ldpair_validates_variant_pop_genome_build_and_file():

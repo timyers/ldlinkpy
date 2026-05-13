@@ -52,6 +52,18 @@ _AVAIL_POP: set[str] = {
     "SAS",
 }
 _AVAIL_GENOME_BUILD = {"grch37", "grch38", "grch38_high_coverage"}
+_QUERY_SNP_RE = re.compile(r"^(?P<snp>\S+)(?:\s+\((?P<coord>[^)]+)\))?$")
+_HAPLOTYPE_SECTION_RE = re.compile(r"^\s*(?P<population>\S+)\s+Haplotypes:\s*$")
+_HAPLOTYPE_RE = re.compile(
+    r"^\s*(?P<haplotype>\S+):\s+(?P<count>\d+)\s+\((?P<frequency>[^)]+)\)\s*$"
+)
+_STAT_RE = re.compile(r"^\s*(?P<label>D'|R2|Chi-sq|p-value):\s*(?P<value>\S+)\s*$")
+_STAT_COLUMNS = {
+    "D'": "Dprime",
+    "R2": "R2",
+    "Chi-sq": "ChiSq",
+    "p-value": "PValue",
+}
 
 
 def _normalize_pair(a: str, b: str) -> SnpPair:
@@ -119,6 +131,94 @@ def _normalize_snp_pairs(snp_pairs: SnpPairsLike) -> List[List[str]]:
         raise ValueError("snp_pairs must contain at least one pair.")
 
     return out
+
+
+def _parse_query_snp_line(line: str) -> tuple[str, str]:
+    match = _QUERY_SNP_RE.match(line.strip())
+    if not match:
+        return line.strip(), ""
+    return match.group("snp"), match.group("coord") or ""
+
+
+def _parse_ldpair_text_report(text: str) -> pd.DataFrame | None:
+    """Parse LDpair's human-readable GET report into a rectangular table."""
+    lines = [line.rstrip() for line in text.splitlines()]
+    stripped = [line.strip() for line in lines]
+
+    try:
+        query_idx = stripped.index("Query SNPs:")
+    except ValueError:
+        return None
+
+    query_lines = [line for line in stripped[query_idx + 1 :] if line]
+    if len(query_lines) < 2:
+        return None
+
+    snp_a, coord_a = _parse_query_snp_line(query_lines[0])
+    snp_b, coord_b = _parse_query_snp_line(query_lines[1])
+
+    section_starts = [
+        (idx, match.group("population"))
+        for idx, line in enumerate(lines)
+        if (match := _HAPLOTYPE_SECTION_RE.match(line))
+    ]
+    if not section_starts:
+        return None
+
+    rows: list[dict[str, str]] = []
+    for section_num, (start_idx, population) in enumerate(section_starts):
+        end_idx = (
+            section_starts[section_num + 1][0]
+            if section_num + 1 < len(section_starts)
+            else len(lines)
+        )
+        section_lines = lines[start_idx + 1 : end_idx]
+
+        haplotypes: list[str] = []
+        correlated: list[str] = []
+        row: dict[str, str] = {
+            "SNP_A": snp_a,
+            "Coord_A": coord_a,
+            "SNP_B": snp_b,
+            "Coord_B": coord_b,
+            "Population": population,
+        }
+
+        for line in section_lines:
+            hap_match = _HAPLOTYPE_RE.match(line)
+            if hap_match:
+                haplotypes.append(
+                    f"{hap_match.group('haplotype')}={hap_match.group('count')} "
+                    f"({hap_match.group('frequency')})"
+                )
+                continue
+
+            stat_match = _STAT_RE.match(line)
+            if stat_match:
+                row[_STAT_COLUMNS[stat_match.group("label")]] = stat_match.group("value")
+                continue
+
+            if " allele is correlated with " in line:
+                correlated.append(line.strip())
+
+        row["Haplotypes"] = "; ".join(haplotypes)
+        row["Correlated_Alleles"] = "; ".join(correlated)
+        rows.append(row)
+
+    columns = [
+        "SNP_A",
+        "Coord_A",
+        "SNP_B",
+        "Coord_B",
+        "Population",
+        "Dprime",
+        "R2",
+        "ChiSq",
+        "PValue",
+        "Haplotypes",
+        "Correlated_Alleles",
+    ]
+    return pd.DataFrame(rows, columns=columns)
 
 
 def ldpair(
@@ -205,7 +305,10 @@ def ldpair(
                 out_path.write_text(text_out, encoding="utf-8")
             return text_out
 
-        data_out = parse_tsv(cast(str, text))
+        text_out = cast(str, text)
+        data_out = _parse_ldpair_text_report(text_out)
+        if data_out is None:
+            data_out = parse_tsv(text_out)
         if out_path is not None:
             data_out.to_csv(out_path, sep="\t", index=False)
         return data_out
