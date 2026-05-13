@@ -23,7 +23,7 @@ This checklist tracks the remaining work to finish, document, release, and publi
 - [x] Add tests for invalid inputs
 - [x] Add tests for API error handling
 - [x] Add tests for response parsing and returned objects
-- [ ] Run the full test suite in a fresh virtual environment
+- [x] Run the full test suite in a fresh virtual environment
 - [ ] Add GitHub Actions CI
 - [ ] Recruit humans using Windows and macOS for testing
 
