@@ -142,7 +142,7 @@ Most endpoint functions return pandas DataFrames by default. Some functions supp
 
 ## Authorship
 
-`LDlinkPy` was conceived and overseen by Timothy Myers and Mitchel Machiela, with code and documentation assistance from ChatGPT 5.2 Thinking (OpenAI) and Codex (OpenAI). Additional authors and contributors may be added as the project develops.
+`LDlinkPy` was conceived and overseen by xxxxx xxxxx, with code and documentation assistance from ChatGPT 5.2 Thinking (OpenAI) and Codex (OpenAI). Additional authors and contributors may be added as the project develops.
 
 ## Relationship To LDlinkR
 
