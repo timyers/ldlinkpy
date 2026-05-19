@@ -54,6 +54,8 @@ python examples/rreb1_summarize_haplotype_feasibility.py --make-plots
 
 The second script reads local CSV files only. It does not call LDlink, does not require `LDLINK_TOKEN`, and does not use external annotations.
 
+See [rreb1_haplotype_feasibility_grch37_report.md](rreb1_haplotype_feasibility_grch37_report.md) for a curated example of the generated Markdown report as it renders on GitHub. The generated CSV files referenced in that report are created locally under `examples/output/` and are not committed by default.
+
 The script writes CSV source files for:
 
 - `LDpair` results for key published SNP pairs in EUR
