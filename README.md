@@ -139,6 +139,7 @@ Most endpoint functions return pandas DataFrames by default. Some functions supp
 
 - [API reference](docs/api_reference.md): public functions, parameters, return types, and common exceptions.
 - [Longer usage examples](docs/examples.md): endpoint-by-endpoint command-line examples for local development and exploratory testing.
+- [End-to-end examples](examples/README.md): includes an LDlinkPy-only workflow examining population-specific LD, haplotype structure, and optional SNPchip coverage for published SNP tags at the Ewing sarcoma 6p25.1/RREB1 susceptibility locus.
 
 ## Authorship
 

@@ -12,3 +12,4 @@ build/
 
 # local scratch/output
 /tmp/
+examples/output/

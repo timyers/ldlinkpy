@@ -41,7 +41,7 @@ This checklist tracks the remaining work to finish, document, release, and publi
 
 - [ ] Create small example scripts or notebooks
 - [x] Add at least one example for each major endpoint
-- [ ] Add one end-to-end workflow example
+- [x] Add one end-to-end workflow example
 - [x] Keep examples simple, realistic, and reproducible
 - [ ] Confirm examples are useful for biomedical research users
 
