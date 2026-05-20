@@ -1,6 +1,5 @@
 from __future__ import annotations
 
-import os
 from pathlib import Path
 
 import pandas as pd
@@ -99,41 +98,36 @@ def test_ldproxy_batch_validates_genome_build_and_window() -> None:
         ldproxy_batch(snp="rs1", win_size=1_000_001)
 
 
-def test_ldproxy_batch_real_api_calls_with_multiple_rsids(tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> None:
-    """Real integration test against LDlink API (requires LDLINK_TOKEN)."""
-    token = os.getenv("LDLINK_TOKEN")
-    if not token:
-        pytest.skip("LDLINK_TOKEN not set; skipping real API integration test.")
+def test_ldproxy_batch_append_handles_multiple_rsids_without_real_api(
+    monkeypatch: pytest.MonkeyPatch, tmp_path: Path
+) -> None:
+    from ldlinkpy.endpoints import ldproxy_batch as ldproxy_batch_mod
 
-    from ldlinkpy.endpoints.ldproxy_batch import ldproxy_batch
-
+    calls: list[dict[str, object]] = []
     monkeypatch.chdir(tmp_path)
 
+    def fake_ldproxy(**kwargs):
+        calls.append(kwargs)
+        return pd.DataFrame(
+            {
+                "RS_Number": [kwargs["snp"], "rsX"],
+                "Coord": ["1:100", "1:101"],
+            }
+        )
+
+    monkeypatch.setattr(ldproxy_batch_mod, "ldproxy", fake_ldproxy)
+
     snps = ["rs3", "rs7412"]
-    try:
-        files = ldproxy_batch(
-            snp=snps,
-            pop="CEU",
-            r2d="r2",
-            token=token,
-            append=True,
-            genome_build="grch37",
-            win_size=50000,
-        )
-    except Exception as exc:  # pragma: no cover - environment/network dependent
-        msg = str(exc)
-        network_markers = (
-            "ProxyError",
-            "Tunnel connection failed",
-            "Max retries exceeded",
-            "Name or service not known",
-            "Temporary failure in name resolution",
-            "Connection refused",
-            "timed out",
-        )
-        if any(marker in msg for marker in network_markers):
-            pytest.skip(f"LDlink API not reachable from this environment: {exc}")
-        raise
+    files = ldproxy_batch_mod.ldproxy_batch(
+        snp=snps,
+        pop="CEU",
+        r2d="r2",
+        token="TESTTOKEN",
+        append=True,
+        genome_build="grch37",
+        win_size=50000,
+        api_root="https://example.invalid/LDlinkRest",
+    )
 
     combined = tmp_path / "combined_query_snp_list_grch37.txt"
     assert files == [str(combined)]
@@ -143,3 +137,12 @@ def test_ldproxy_batch_real_api_calls_with_multiple_rsids(tmp_path: Path, monkey
     assert "query_snp" in text
     assert "rs3" in text
     assert "rs7412" in text
+
+    assert [call["snp"] for call in calls] == snps
+    for call in calls:
+        assert call["pop"] == "CEU"
+        assert call["r2d"] == "r2"
+        assert call["token"] == "TESTTOKEN"
+        assert call["win_size"] == 50000
+        assert call["api_root"] == "https://example.invalid/LDlinkRest"
+        assert call["return_type"] == "dataframe"
