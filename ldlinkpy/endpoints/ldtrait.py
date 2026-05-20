@@ -16,6 +16,7 @@ from ldlinkpy.validators import (
     validate_r2d,
     validate_threshold,
 )
+
 _VALID_POP_CODES: set[str] = {
     "YRI",
     "LWK",

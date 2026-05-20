@@ -3,7 +3,6 @@ from __future__ import annotations
 
 import os
 import re
-from typing import Iterable
 
 from .exceptions import TokenMissingError, ValidationError
 

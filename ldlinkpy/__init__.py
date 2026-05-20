@@ -4,17 +4,16 @@ DEFAULT_API_ROOT = "https://ldlink.nih.gov/LDlinkRest"
 __version__ = "0.4.2"
 
 from ldlinkpy.client import LDlinkClient
-from ldlinkpy.endpoints.ldpair import ldpair
+from ldlinkpy.endpoints.ldexpress import ldexpress
+from ldlinkpy.endpoints.ldhap import ldhap
 from ldlinkpy.endpoints.ldmatrix import ldmatrix
+from ldlinkpy.endpoints.ldpair import ldpair
+from ldlinkpy.endpoints.ldpop import ldpop
 from ldlinkpy.endpoints.ldproxy import ldproxy
 from ldlinkpy.endpoints.ldproxy_batch import ldproxy_batch
 from ldlinkpy.endpoints.ldtrait import ldtrait
-from ldlinkpy.endpoints.ldmatrix import ldmatrix
-from ldlinkpy.endpoints.ldexpress import ldexpress
-from ldlinkpy.endpoints.ldhap import ldhap
-from ldlinkpy.endpoints.ldpop import ldpop
-from ldlinkpy.endpoints.snpclip import snpclip
 from ldlinkpy.endpoints.snpchip import snpchip
+from ldlinkpy.endpoints.snpclip import snpclip
 from ldlinkpy.lookups import (
     list_chip_platforms,
     list_chips,

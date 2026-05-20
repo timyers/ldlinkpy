@@ -4,7 +4,6 @@ import pytest
 
 import ldlinkpy.endpoints.ldpair as ldpair_mod
 
-
 LDPAIR_TEXT_REPORT = """Query SNPs:
 rs7742053 (chr6:6841452)
 rs17142617 (chr6:6838025)

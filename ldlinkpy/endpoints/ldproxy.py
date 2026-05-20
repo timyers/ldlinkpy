@@ -9,7 +9,6 @@ import pandas as pd
 from ldlinkpy import DEFAULT_API_ROOT
 from ldlinkpy.client import LDlinkClient
 
-
 _VALID_GENOME_BUILDS = {"grch37", "grch38", "grch38_high_coverage"}
 _VALID_R2D = {"r2", "d"}
 _AVAIL_POP: set[str] = {

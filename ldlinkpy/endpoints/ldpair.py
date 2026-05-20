@@ -11,7 +11,6 @@ from .. import DEFAULT_API_ROOT
 from ..http import request as http_request
 from ..parsing import is_json_response, parse_tsv
 
-
 SnpPair = Tuple[str, str]
 SnpPairsLike = Sequence[Union[SnpPair, Sequence[str]]]
 

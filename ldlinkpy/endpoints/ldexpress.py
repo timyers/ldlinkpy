@@ -11,7 +11,12 @@ from .. import DEFAULT_API_ROOT
 from ..exceptions import LDlinkError, ValidationError
 from ..http import request
 from ..parsing import parse_tsv
-from ..validators import ensure_token, validate_genome_build, validate_r2d, validate_threshold
+from ..validators import (
+    ensure_token,
+    validate_genome_build,
+    validate_r2d,
+    validate_threshold,
+)
 
 # Population codes from LDlinkR `list_pop` utility (pop_code column)
 _AVAIL_POP: set[str] = {
@@ -270,7 +275,7 @@ def _coerce_clean_output(df: pd.DataFrame, genome_build: str) -> pd.DataFrame:
         first_col = df.iloc[:, 0].astype(str)
         warn_lines = [v for v in first_col if "warning" in v.lower()]
         for wl in warn_lines:
-            warnings.warn(wl, RuntimeWarning)
+            warnings.warn(wl, RuntimeWarning, stacklevel=2)
 
     return df
 

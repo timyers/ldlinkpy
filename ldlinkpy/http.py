@@ -120,7 +120,6 @@ def request(
     tok = ensure_token(token)
 
     method_u = method.upper()
-    endpoint_l = endpoint.lower().lstrip("/")
 
     # Build URL
     base = api_root.rstrip("/") + "/"

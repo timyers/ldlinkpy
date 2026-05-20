@@ -5,6 +5,7 @@ from typing import Any, Dict, Optional
 
 import pandas as pd
 import pytest
+
 from ldlinkpy.exceptions import ValidationError
 
 

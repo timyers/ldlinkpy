@@ -9,7 +9,6 @@ import pandas as pd
 
 from .exceptions import ParseError
 
-
 _JSON_LEADING_RE = re.compile(r"^\s*[\{\[]", re.DOTALL)
 _NUMERIC_TOKEN_RE = re.compile(r"^[+-]?(?:\d+(?:\.\d*)?|\.\d+)(?:[eE][+-]?\d+)?$")
 

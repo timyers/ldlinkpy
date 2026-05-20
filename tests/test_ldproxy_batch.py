@@ -7,7 +7,6 @@ import pandas as pd
 import pytest
 
 
-
 def test_ldproxy_batch_writes_one_file_per_snp(monkeypatch: pytest.MonkeyPatch, tmp_path: Path) -> None:
     from ldlinkpy.endpoints import ldproxy_batch as ldproxy_batch_mod
 
