@@ -64,8 +64,6 @@ This checklist tracks the remaining work to finish, document, release, and publi
 
 - [ ] Add `CITATION.cff`
 - [ ] Add a contributing guide
-- [ ] Add issue templates
-- [ ] Add a pull request template
 - [x] Move GitHub repository from personal account to senior PI account or organization
 - [x] Add `official` remote and sync `main` to both GitHub remotes
 - [ ] Tag a stable release
@@ -93,8 +91,13 @@ This checklist tracks the remaining work to finish, document, release, and publi
 - [x] Write examples
 - [ ] Publish to PyPI
 
+## Future to-do
+
+- [ ] Prepare a conda-forge recipe after the PyPI release is stable and there is user demand
+- [ ] Add issue templates if outside contribution volume increases
+- [ ] Add a pull request template if outside contribution volume increases
+
 ## Note
 
 - Keep this checklist in the `repo root` since this is the only planning file.
 - Move to **`docs/`** if it starts collecting multiple project notes, checklists, or publication planning files.
-- Future to-do: prepare a conda-forge recipe after the PyPI release is stable and there is user demand.
