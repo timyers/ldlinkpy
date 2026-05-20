@@ -28,8 +28,8 @@ This checklist tracks the remaining work to finish, document, release, and publi
 - [ ] Add Ruff linting gradually
   - [x] Fix duplicate, unused, and unsorted imports
   - [x] Review and fix low-risk Ruff style findings
-  - [ ] Decide which Ruff rules to enforce before release
-  - [ ] Run Ruff locally with no remaining enforced findings
+  - [x] Decide which Ruff rules to enforce before release
+  - [x] Run Ruff locally with no remaining enforced findings
   - [ ] Add Ruff lint checks to GitHub Actions CI
 - [ ] Recruit humans using Windows and macOS for testing
 
