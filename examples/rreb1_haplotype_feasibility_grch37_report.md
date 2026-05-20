@@ -18,7 +18,7 @@ The key practical question is: Can the published RREB1 SNP tags be evaluated as 
 
 - Input directory: `examples/output/rreb1_haplotype_feasibility_grch37`
 - Output directory: `examples/output/rreb1_haplotype_feasibility_grch37/summary`
-- Date/time: `2026-05-19T15:16:46.883319+00:00`
+- Date/time: `2026-05-20T17:46:38.734803+00:00`
 - Script name: `examples/rreb1_summarize_haplotype_feasibility.py`
 - No LDlink API calls were made.
 - No `LDLINK_TOKEN` was required.
@@ -45,11 +45,35 @@ The variant summary table is available as `rreb1_variant_summary.csv`.
 | SNPchip | 1 |
 | metadata | 1 |
 
+## Key findings
+
+- LDpair/LDpop outputs were available for rs7742053 and rs17142617. Observed R2 values ranged from 0.3972 to 1.0 across parsed LDpop rows, including 1000 Genomes subpopulations. Among the displayed super-population summaries, R2 ranged from 0.5524 in AFR to 0.9728 in SAS.
+- LDmatrix outputs were available for the 4-SNP RREB1 set across EUR, AFR, AMR, EAS, and SAS.
+- LDhap outputs were available for the 3-SNP haplotype markers across EUR, AFR, AMR, EAS, and SAS.
+- Some SNP pairs show high Dprime but lower R2, which should be interpreted cautiously for SNP-tagging feasibility.
+- SNPchip output detected coverage among queried SNPchip platforms for rs7742053 (10 platforms), rs17142617 (11 platforms). No coverage was detected among the queried SNPchip platforms for rs74781311 and rs2876045. SNPchip output suggests that the lead SNP and surrogate SNP are represented among queried SNPchip platforms, while two of the three haplotype markers were not detected among those platforms. This may limit direct genotyping-array use of the full 3-SNP haplotype and suggests that imputation or sequencing may be needed for some datasets.
+
 ## Pairwise LD summary
 
 LDpair and LDpop outputs summarize pairwise LD among the lead SNP, surrogate SNP, and 3-SNP haplotype markers. LDpair provides key pairwise LD in EUR, while LDpop provides population-specific pairwise LD summaries across 1000 Genomes populations.
 
+R2 and Dprime capture different aspects of linkage disequilibrium. For SNP-tagging feasibility, R2 is usually the more directly useful measure because it reflects how well one variant predicts another. High Dprime with low R2 can occur when alleles are rarely separated by recombination but have different allele frequencies, limiting tagging performance.
+
 The parsed pairwise LD table is available as `rreb1_pairwise_ld_summary.csv`.
+
+### Lead SNP / surrogate SNP LD by population
+
+| source_endpoint | population | variant_1 | variant_2 | r2 | dprime | source_file |
+| --- | --- | --- | --- | --- | --- | --- |
+| LDpop | ALL | rs7742053 | rs17142617 | 0.7555 | 0.9249 | ldpop_rs7742053_rs17142617_ALL.csv |
+| LDpop | AFR | rs7742053 | rs17142617 | 0.5524 | 0.8403 | ldpop_rs7742053_rs17142617_ALL.csv |
+| LDpop | AMR | rs7742053 | rs17142617 | 0.8778 | 0.9672 | ldpop_rs7742053_rs17142617_ALL.csv |
+| LDpop | EAS | rs7742053 | rs17142617 | 0.796 | 0.9318 | ldpop_rs7742053_rs17142617_ALL.csv |
+| LDpair | EUR | rs7742053 | rs17142617 | 0.9543 | 0.9906 | ldpair_rs7742053_rs17142617_EUR.csv |
+| LDpop | EUR | rs7742053 | rs17142617 | 0.9543 | 0.9906 | ldpop_rs7742053_rs17142617_ALL.csv |
+| LDpop | SAS | rs7742053 | rs17142617 | 0.9728 | 1.0 | ldpop_rs7742053_rs17142617_ALL.csv |
+
+### Broader pairwise LD preview
 
 | source_endpoint | variant_1 | variant_2 | population | r2 | dprime |
 | --- | --- | --- | --- | --- | --- |
@@ -94,6 +118,10 @@ No PNG plots were requested or generated.
 
 LDhap files summarize the 3-SNP haplotypes for `rs17142617`, `rs74781311`, and `rs2876045`.
 
+Note: LDhap reports SNP haplotypes using the alleles returned by LDlink for the queried variants. Before comparing these labels directly with the published ATT/GGT haplotypes from the RREB1 study, allele orientation and variant order should be confirmed against the source study.
+
+LDhap output may include only haplotypes returned by the LDlink endpoint, so rare haplotypes may not appear in this summary.
+
 The parsed haplotype frequency table is available as `rreb1_haplotype_frequency_summary.csv`.
 
 | population | haplotype | frequency | count |
@@ -125,23 +153,24 @@ SNPchip output was detected. The parsed summary is available in `rreb1_snpchip_s
 | rs74781311 | 0 |
 | rs7742053 | 10 |
 
+SNPchip output detected coverage among queried SNPchip platforms for rs7742053 (10 platforms), rs17142617 (11 platforms). No coverage was detected among the queried SNPchip platforms for rs74781311 and rs2876045. SNPchip output suggests that the lead SNP and surrogate SNP are represented among queried SNPchip platforms, while two of the three haplotype markers were not detected among those platforms. This may limit direct genotyping-array use of the full 3-SNP haplotype and suggests that imputation or sequencing may be needed for some datasets.
+
 ## Practical feasibility summary
 
 The practical feasibility table is available as `rreb1_practical_feasibility_summary.csv`.
 
 | question | summary | supporting_files | caveats |
 | --- | --- | --- | --- |
-| Does the published surrogate rs17142617 have LD evidence with the lead SNP rs7742053? | Lead/surrogate LD evidence is available; observed R2 values range from 0.3972 to 1 across available LDpair/LDpop summaries. | ldpair_rs7742053_rs17142617_EUR.csv; ldpop_rs7742053_rs17142617_ALL.csv | LD evidence supports SNP-tag feasibility only; it does not identify causal alleles or measure GGAA repeat length. |
+| Does the published surrogate rs17142617 have LD evidence with the lead SNP rs7742053? | Lead/surrogate LD evidence is available. Observed R2 values ranged from 0.3972 to 1.0 across parsed LDpop rows, including 1000 Genomes subpopulations. Among the displayed super-population summaries, R2 ranged from 0.5524 in AFR to 0.9728 in SAS. | ldpair_rs7742053_rs17142617_EUR.csv; ldpop_rs7742053_rs17142617_ALL.csv | LD evidence supports SNP-tag feasibility only; it does not identify causal alleles or measure GGAA repeat length. |
 | Are the 3 haplotype SNPs represented in the LDhap outputs? | LDhap output files were parsed into 3-SNP haplotype strings. | ldhap_rreb1_3snp_AFR.csv; ldhap_rreb1_3snp_AMR.csv; ldhap_rreb1_3snp_EAS.csv; ldhap_rreb1_3snp_EUR.csv; ldhap_rreb1_3snp_SAS.csv | LDhap summarizes SNP haplotypes, not GGAA microsatellite alleles. |
 | Are haplotype frequencies available across EUR, AFR, AMR, EAS, and SAS? | Haplotype summaries were detected for: AFR, AMR, EAS, EUR, SAS. | ldhap_rreb1_3snp_AFR.csv; ldhap_rreb1_3snp_AMR.csv; ldhap_rreb1_3snp_EAS.csv; ldhap_rreb1_3snp_EUR.csv; ldhap_rreb1_3snp_SAS.csv | Population coverage depends on the first-script LDhap outputs. |
 | Are LDmatrix outputs available across EUR, AFR, AMR, EAS, and SAS? | LDmatrix summaries were detected for: AFR, AMR, EAS, EUR, SAS. | ldmatrix_rreb1_4snp_AFR.csv; ldmatrix_rreb1_4snp_AMR.csv; ldmatrix_rreb1_4snp_EAS.csv; ldmatrix_rreb1_4snp_EUR.csv; ldmatrix_rreb1_4snp_SAS.csv | LD matrices provide source data for LD heatmaps or tables only. |
-| Is SNPchip coverage available for the 4-SNP set? | SNPchip coverage rows were detected; 21 variant-platform entries are marked present. | snpchip_rreb1_4snp.csv | Array coverage is practical feasibility information, not functional annotation. |
+| Is SNPchip coverage available for the 4-SNP set? | SNPchip output detected coverage among queried SNPchip platforms for rs7742053 (10 platforms), rs17142617 (11 platforms). No coverage was detected among the queried SNPchip platforms for rs74781311 and rs2876045. SNPchip output suggests that the lead SNP and surrogate SNP are represented among queried SNPchip platforms, while two of the three haplotype markers were not detected among those platforms. This may limit direct genotyping-array use of the full 3-SNP haplotype and suggests that imputation or sequencing may be needed for some datasets. | snpchip_rreb1_4snp.csv | Array coverage is practical feasibility information, not functional annotation. |
 
 The available files can support cautious SNP-based feasibility summaries for the published RREB1 SNP tags. They can describe LD, haplotype structure, population differences, and optional array coverage. They cannot establish causality or directly characterize the GGAA microsatellite allele lengths reported in the RREB1 study.
 
 ## Possible downstream figures and tables
 
-- LDlinkPy workflow diagram
 - ancestry-specific LD matrices or heatmaps for the RREB1 4-SNP set
 - haplotype frequency summaries across EUR, AFR, AMR, EAS, and SAS
 - tables comparing pairwise LD among published RREB1 SNP tags
@@ -155,3 +184,10 @@ The available files can support cautious SNP-based feasibility summaries for the
 - This report does not infer GGAA microsatellite length directly.
 - This report does not reproduce targeted long-read sequencing or functional experiments.
 - Values depend on the LDlink reference data and the output files generated by the first script.
+
+## References
+
+- Myers TA, Chanock SJ, Machiela MJ. LDlinkR: An R Package for Rapidly Calculating Linkage Disequilibrium Statistics in Diverse Populations. Frontiers in Genetics. 2020;11:157. doi:10.3389/fgene.2020.00157.
+- Lee OW, Rodrigues C, Lin S-H, et al. Targeted long-read sequencing of the Ewing sarcoma 6p25.1 susceptibility locus identifies germline-somatic interactions with EWSR1-FLI1 binding. American Journal of Human Genetics. 2023;110:427-441. doi:10.1016/j.ajhg.2023.01.017.
+- Machiela MJ, Chanock SJ. LDlink: a web-based application for exploring population-specific haplotype structure and linking correlated alleles of possible functional variants. Bioinformatics. 2015;31:3555-3557. doi:10.1093/bioinformatics/btv402.
+
