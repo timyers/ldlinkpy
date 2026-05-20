@@ -93,9 +93,9 @@ This checklist tracks the remaining work to finish, document, release, and publi
 
 ## Future to-do
 
-- [ ] Prepare a conda-forge recipe after the PyPI release is stable and there is user demand
-- [ ] Add issue templates if outside contribution volume increases
-- [ ] Add a pull request template if outside contribution volume increases
+- Prepare a conda-forge recipe after the PyPI release is stable and there is user demand
+- Add issue templates if outside contribution volume increases
+- Add a pull request template if outside contribution volume increases
 
 ## Note
 
