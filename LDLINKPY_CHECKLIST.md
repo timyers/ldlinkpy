@@ -25,7 +25,7 @@ This checklist tracks the remaining work to finish, document, release, and publi
 - [x] Add tests for response parsing and returned objects
 - [x] Run the full test suite in a fresh virtual environment
 - [x] Add GitHub Actions CI
-- [ ] Add Ruff linting gradually
+- [x] Add Ruff linting gradually
   - [x] Fix duplicate, unused, and unsorted imports
   - [x] Review and fix low-risk Ruff style findings
   - [x] Decide which Ruff rules to enforce before release
