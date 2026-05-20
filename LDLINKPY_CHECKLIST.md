@@ -39,11 +39,11 @@ This checklist tracks the remaining work to finish, document, release, and publi
 
 ## 4. Examples
 
-- [ ] Create small example scripts or notebooks
+- [x] Create small example scripts or notebooks
 - [x] Add at least one example for each major endpoint
 - [x] Add one end-to-end workflow example
 - [x] Keep examples simple, realistic, and reproducible
-- [ ] Confirm examples are useful for biomedical research users
+- [x] Confirm examples are useful for biomedical research users
 
 ## 5. Packaging and distribution
 
@@ -76,7 +76,7 @@ This checklist tracks the remaining work to finish, document, release, and publi
 - [ ] Address reviewer comments
 - [ ] Choose a target journal for the software paper
 - [ ] Draft the manuscript
-- [ ] Include a real-world use case
+- [x] Include a real-world use case
 - [ ] Submit the paper
 
 ## Immediate next steps
