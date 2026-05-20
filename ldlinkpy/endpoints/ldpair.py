@@ -2,8 +2,9 @@ from __future__ import annotations
 
 import json as _json
 import re
+from collections.abc import Sequence
 from pathlib import Path
-from typing import Any, Dict, List, Optional, Sequence, Tuple, Union, cast
+from typing import Any, cast
 
 import pandas as pd
 
@@ -11,8 +12,8 @@ from .. import DEFAULT_API_ROOT
 from ..http import request as http_request
 from ..parsing import is_json_response, parse_tsv
 
-SnpPair = Tuple[str, str]
-SnpPairsLike = Sequence[Union[SnpPair, Sequence[str]]]
+SnpPair = tuple[str, str]
+SnpPairsLike = Sequence[SnpPair | Sequence[str]]
 
 _RSID_RE = re.compile(r"^rs\d+$", flags=re.IGNORECASE)
 _CHR_COORD_RE = re.compile(r"^chr(\d{1,2}|x|y):(\d{1,9})$", flags=re.IGNORECASE)
@@ -112,13 +113,13 @@ def _resolve_output_path(file: str | bool) -> Path | None:
     return out_path
 
 
-def _normalize_snp_pairs(snp_pairs: SnpPairsLike) -> List[List[str]]:
+def _normalize_snp_pairs(snp_pairs: SnpPairsLike) -> list[list[str]]:
     if snp_pairs is None:
         raise ValueError("snp_pairs cannot be None.")
     if not isinstance(snp_pairs, (list, tuple)):
         raise TypeError("snp_pairs must be a list/tuple of 2-item pairs like [('rs1','rs2'), ...].")
 
-    out: List[List[str]] = []
+    out: list[list[str]] = []
     for i, pair in enumerate(snp_pairs):
         if not isinstance(pair, (list, tuple)) or len(pair) != 2:
             raise ValueError(f"snp_pairs[{i}] must be a 2-item pair (e.g., ('rs1','rs2')).")
@@ -221,17 +222,17 @@ def _parse_ldpair_text_report(text: str) -> pd.DataFrame | None:
 
 
 def ldpair(
-    var1: Optional[str] = None,
-    var2: Optional[str] = None,
-    snp_pairs: Optional[SnpPairsLike] = None,
+    var1: str | None = None,
+    var2: str | None = None,
+    snp_pairs: SnpPairsLike | None = None,
     pop: str | Sequence[str] = "CEU",
     genome_build: str = "grch37",
-    token: Optional[str] = None,
+    token: str | None = None,
     file: str | bool = False,
     api_root: str = DEFAULT_API_ROOT,
     output: str = "table",
     request_method: str = "auto",
-) -> Union[pd.DataFrame, str, Dict[str, Any], List[Any]]:
+) -> pd.DataFrame | str | dict[str, Any] | list[Any]:
     """
     Query LDlink LDpair.
 
@@ -296,7 +297,7 @@ def ldpair(
         # http_request may auto-parse JSON; for LDpair GET we expect text/TSV.
         if isinstance(text, (dict, list)):
             # Unexpected, but return as-is.
-            return cast(Union[Dict[str, Any], List[Any]], text)
+            return cast(dict[str, Any] | list[Any], text)
 
         if output == "text":
             text_out = cast(str, text)
@@ -330,11 +331,11 @@ def ldpair(
     if isinstance(resp, (dict, list)):
         if out_path is not None:
             out_path.write_text(_json.dumps(resp, ensure_ascii=False, indent=2), encoding="utf-8")
-        return cast(Union[Dict[str, Any], List[Any]], resp)
+        return cast(dict[str, Any] | list[Any], resp)
 
     text_resp = cast(str, resp)
     if is_json_response(text_resp):
-        parsed = cast(Union[Dict[str, Any], List[Any]], _json.loads(text_resp))
+        parsed = cast(dict[str, Any] | list[Any], _json.loads(text_resp))
         if out_path is not None:
             out_path.write_text(_json.dumps(parsed, ensure_ascii=False, indent=2), encoding="utf-8")
         return parsed

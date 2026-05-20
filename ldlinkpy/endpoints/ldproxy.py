@@ -1,8 +1,9 @@
 from __future__ import annotations
 
 import re
+from collections.abc import Iterable
 from io import StringIO
-from typing import Iterable, Union, overload
+from typing import overload
 
 import pandas as pd
 
@@ -50,7 +51,7 @@ _RSID_RE = re.compile(r"^rs\d+$", flags=re.IGNORECASE)
 _CHR_COORD_RE = re.compile(r"^chr(\d{1,2}|x|y):(\d{1,9})$", flags=re.IGNORECASE)
 
 
-def _normalize_pop(pop: Union[str, Iterable[str]]) -> str:
+def _normalize_pop(pop: str | Iterable[str]) -> str:
     if isinstance(pop, str):
         pop_vals = [pop]
     else:
@@ -76,7 +77,7 @@ def _validate_snp(snp: str) -> str:
 @overload
 def ldproxy(
     snp: str,
-    pop: Union[str, list[str]] = "CEU",
+    pop: str | list[str] = "CEU",
     r2d: str = "r2",
     token: str | None = None,
     file: str | bool = False,
@@ -90,7 +91,7 @@ def ldproxy(
 @overload
 def ldproxy(
     snp: str,
-    pop: Union[str, list[str]] = "CEU",
+    pop: str | list[str] = "CEU",
     r2d: str = "r2",
     token: str | None = None,
     file: str | bool = False,
@@ -103,7 +104,7 @@ def ldproxy(
 
 def ldproxy(
     snp: str,
-    pop: Union[str, list[str]] = "CEU",
+    pop: str | list[str] = "CEU",
     r2d: str = "r2",
     token: str | None = None,
     file: str | bool = False,

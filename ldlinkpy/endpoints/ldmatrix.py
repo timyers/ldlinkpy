@@ -1,8 +1,9 @@
 from __future__ import annotations
 
 import re
+from collections.abc import Sequence
 from pathlib import Path
-from typing import Any, Optional, Sequence, Union
+from typing import Any
 
 import pandas as pd
 
@@ -38,7 +39,7 @@ def _validate_ldmatrix_snps(snps: list[str]) -> list[str]:
     return snps
 
 
-def _normalize_pop(pop: Union[str, Sequence[str]]) -> str:
+def _normalize_pop(pop: str | Sequence[str]) -> str:
     if isinstance(pop, str):
         tokens = [p for p in re.split(r"[\s,+]+", pop.strip().upper()) if p]
     elif isinstance(pop, Sequence):
@@ -53,16 +54,16 @@ def _normalize_pop(pop: Union[str, Sequence[str]]) -> str:
 
 
 def ldmatrix(
-    snps: Union[str, Sequence[str]],
-    pop: Union[str, Sequence[str]] = "CEU",
+    snps: str | Sequence[str],
+    pop: str | Sequence[str] = "CEU",
     r2d: str = "r2",
     genome_build: str = "grch37",
-    token: Optional[str] = None,    
+    token: str | None = None,    
     api_root: str = DEFAULT_API_ROOT,
     return_type: str = "dataframe",
     request_method: str = "auto",
-    file: Union[str, bool] = False,
-) -> Union[pd.DataFrame, Any]:
+    file: str | bool = False,
+) -> pd.DataFrame | Any:
     """
     Call the LDlink 'ldmatrix' endpoint.
 

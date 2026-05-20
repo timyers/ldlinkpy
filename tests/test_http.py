@@ -1,8 +1,9 @@
 # tests/test_http.py
 from __future__ import annotations
 
+from collections.abc import Iterator
 from contextlib import contextmanager
-from typing import Any, Dict, Iterator, Optional
+from typing import Any
 
 import pytest
 import requests
@@ -18,15 +19,15 @@ class DummyResp:
 
 
 def test_token_is_added_to_params(monkeypatch: pytest.MonkeyPatch) -> None:
-    calls: Dict[str, Any] = {}
+    calls: dict[str, Any] = {}
 
     def fake_request(
         *,
         method: str,
         url: str,
-        params: Dict[str, Any],
-        json: Optional[Dict[str, Any]] = None,
-        headers: Optional[Dict[str, str]] = None,
+        params: dict[str, Any],
+        json: dict[str, Any] | None = None,
+        headers: dict[str, str] | None = None,
         timeout: float,
     ) -> DummyResp:
         calls["method"] = method
@@ -51,15 +52,15 @@ def test_token_is_added_to_params(monkeypatch: pytest.MonkeyPatch) -> None:
 
 
 def test_headers_are_forwarded(monkeypatch: pytest.MonkeyPatch) -> None:
-    calls: Dict[str, Any] = {}
+    calls: dict[str, Any] = {}
 
     def fake_request(
         *,
         method: str,
         url: str,
-        params: Dict[str, Any],
-        json: Optional[Dict[str, Any]] = None,
-        headers: Optional[Dict[str, str]] = None,
+        params: dict[str, Any],
+        json: dict[str, Any] | None = None,
+        headers: dict[str, str] | None = None,
         timeout: float,
     ) -> DummyResp:
         calls["headers"] = headers
@@ -90,9 +91,9 @@ def test_lock_wrapper_is_used(monkeypatch: pytest.MonkeyPatch) -> None:
         *,
         method: str,
         url: str,
-        params: Dict[str, Any],
-        json: Optional[Dict[str, Any]] = None,
-        headers: Optional[Dict[str, str]] = None,
+        params: dict[str, Any],
+        json: dict[str, Any] | None = None,
+        headers: dict[str, str] | None = None,
         timeout: float,
     ) -> DummyResp:
         return DummyResp(200, "ok")
@@ -122,9 +123,9 @@ def test_ipv4_retry_triggers_only_on_connection_error(monkeypatch: pytest.Monkey
         *,
         method: str,
         url: str,
-        params: Dict[str, Any],
-        json: Optional[Dict[str, Any]] = None,
-        headers: Optional[Dict[str, str]] = None,
+        params: dict[str, Any],
+        json: dict[str, Any] | None = None,
+        headers: dict[str, str] | None = None,
         timeout: float,
     ) -> DummyResp:
         call_count["n"] += 1
@@ -159,9 +160,9 @@ def test_ipv4_retry_only_once_then_raises(monkeypatch: pytest.MonkeyPatch) -> No
         *,
         method: str,
         url: str,
-        params: Dict[str, Any],
-        json: Optional[Dict[str, Any]] = None,
-        headers: Optional[Dict[str, str]] = None,
+        params: dict[str, Any],
+        json: dict[str, Any] | None = None,
+        headers: dict[str, str] | None = None,
         timeout: float,
     ) -> DummyResp:
         call_count["n"] += 1
@@ -189,9 +190,9 @@ def test_http_status_400_raises_runtimeerror(monkeypatch: pytest.MonkeyPatch) ->
         *,
         method: str,
         url: str,
-        params: Dict[str, Any],
-        json: Optional[Dict[str, Any]] = None,
-        headers: Optional[Dict[str, str]] = None,
+        params: dict[str, Any],
+        json: dict[str, Any] | None = None,
+        headers: dict[str, str] | None = None,
         timeout: float,
     ) -> DummyResp:
         return DummyResp(400, "Bad Request", "Bad Request")

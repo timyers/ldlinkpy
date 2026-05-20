@@ -8,7 +8,6 @@ context (HTTP status codes, endpoint, etc.) for debugging.
 from __future__ import annotations
 
 from dataclasses import dataclass
-from typing import Optional
 
 
 class LDlinkError(Exception):
@@ -53,9 +52,9 @@ class APIError(LDlinkError):
         endpoint: The endpoint path (e.g., "/ldproxy") if available.
     """
 
-    status_code: Optional[int] = None
+    status_code: int | None = None
     message: str = "LDlink API request failed."
-    endpoint: Optional[str] = None
+    endpoint: str | None = None
 
     def __post_init__(self) -> None:
         # Ensure Exception args are set to a meaningful string, while keeping dataclass frozen.

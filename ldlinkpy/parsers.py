@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 from io import StringIO
-from typing import Any, List, Optional, Tuple
+from typing import Any
 
 import pandas as pd
 
@@ -65,7 +65,7 @@ def _parse_tsv_matrix(text: str) -> pd.DataFrame:
     return df
 
 
-def _try_extract_matrix_text(payload: Any) -> Optional[str]:
+def _try_extract_matrix_text(payload: Any) -> str | None:
     if isinstance(payload, bytes):
         try:
             return payload.decode("utf-8", errors="replace")
@@ -96,7 +96,7 @@ def _try_extract_matrix_text(payload: Any) -> Optional[str]:
 
 def _try_extract_matrix_array(
     payload: Any,
-) -> Tuple[Optional[List[List[Any]]], Optional[List[str]], Optional[List[str]]]:
+) -> tuple[list[list[Any]] | None, list[str] | None, list[str] | None]:
     """
     Try to extract a numeric matrix and (optional) labels from JSON-like payloads.
     Returns (matrix, row_labels, col_labels) or (None, None, None).
@@ -126,12 +126,12 @@ def _try_extract_matrix_array(
 
 def _coerce_list_payload_to_matrix(
     val: list,
-) -> Tuple[Optional[List[List[Any]]], Optional[List[str]], Optional[List[str]]]:
+) -> tuple[list[list[Any]] | None, list[str] | None, list[str] | None]:
     # Must be list-of-lists
     if not all(isinstance(r, list) for r in val):
         return None, None, None
 
-    rows: List[list] = val  # type: ignore[assignment]
+    rows: list[list] = val  # type: ignore[assignment]
     if not rows:
         return None, None, None
 
@@ -140,8 +140,8 @@ def _coerce_list_payload_to_matrix(
         header = rows[0]
         # If header[0] is blank (common), labels are header[1:]
         col_labels = [str(x) for x in header[1:]]
-        matrix: List[List[Any]] = []
-        row_labels: List[str] = []
+        matrix: list[list[Any]] = []
+        row_labels: list[str] = []
 
         for r in rows[1:]:
             if not isinstance(r, list) or len(r) != len(col_labels) + 1:
@@ -169,7 +169,7 @@ def _coerce_list_payload_to_matrix(
     return rows, None, None
 
 
-def _try_extract_error_message(payload: Any) -> Optional[str]:
+def _try_extract_error_message(payload: Any) -> str | None:
     if isinstance(payload, dict):
         for key in ("error", "errors", "message", "detail", "status"):
             val = payload.get(key)

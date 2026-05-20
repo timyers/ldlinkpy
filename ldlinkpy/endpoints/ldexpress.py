@@ -2,8 +2,9 @@ from __future__ import annotations
 
 import re
 import warnings
+from collections.abc import Sequence
 from pathlib import Path
-from typing import Any, List, Sequence, Union
+from typing import Any
 
 import pandas as pd
 
@@ -55,7 +56,7 @@ _AVAIL_POP: set[str] = {
 }
 
 # GTEx v8 non-diseased tissues (LDlink /ldexpress accepted values)
-_TISSUE_NAMES: List[str] = [
+_TISSUE_NAMES: list[str] = [
     "Adipose_Subcutaneous",
     "Adipose_Visceral_Omentum",
     "Adrenal_Gland",
@@ -174,13 +175,13 @@ _RSID_RE = re.compile(r"^rs\d+$", flags=re.IGNORECASE)
 _CHR_COORD_RE = re.compile(r"^chr(\d{1,2}|x|y):(\d{1,9})$", flags=re.IGNORECASE)
 
 
-def _to_list(value: Union[str, Sequence[str]]) -> List[str]:
+def _to_list(value: str | Sequence[str]) -> list[str]:
     if isinstance(value, str):
         return [value]
     return list(value)
 
 
-def _normalize_variants(snps: Union[str, Sequence[str]]) -> List[str]:
+def _normalize_variants(snps: str | Sequence[str]) -> list[str]:
     items = [str(s).strip() for s in _to_list(snps) if str(s).strip() != ""]
     if not (1 <= len(items) <= 10):
         raise ValidationError("snps must contain between 1 and 10 variants.")
@@ -190,7 +191,7 @@ def _normalize_variants(snps: Union[str, Sequence[str]]) -> List[str]:
     return items
 
 
-def _normalize_pop(pop: Union[str, Sequence[str]]) -> str:
+def _normalize_pop(pop: str | Sequence[str]) -> str:
     items = [str(p).strip() for p in _to_list(pop) if str(p).strip() != ""]
     if not items:
         raise ValidationError("pop cannot be empty.")
@@ -199,7 +200,7 @@ def _normalize_pop(pop: Union[str, Sequence[str]]) -> str:
     return "+".join(items)
 
 
-def _normalize_tissues(tissue: Union[str, Sequence[str], None]) -> List[str]:
+def _normalize_tissues(tissue: str | Sequence[str] | None) -> list[str]:
     if tissue is None:
         raise ValidationError("tissue cannot be None. Use a valid tissue type (or 'ALL').")
 
@@ -210,7 +211,7 @@ def _normalize_tissues(tissue: Union[str, Sequence[str], None]) -> List[str]:
     if len(items) == 1 and items[0] == "ALL":
         return list(_TISSUE_NAMES)
 
-    out: List[str] = []
+    out: list[str] = []
     tissue_name_set = set(_TISSUE_NAMES)
     for t in items:
         if t in tissue_name_set:
@@ -228,7 +229,7 @@ def _normalize_tissues(tissue: Union[str, Sequence[str], None]) -> List[str]:
             )
 
     seen: set[str] = set()
-    deduped: List[str] = []
+    deduped: list[str] = []
     for t in out:
         if t not in seen:
             seen.add(t)
@@ -263,7 +264,7 @@ def _coerce_clean_output(df: pd.DataFrame, genome_build: str) -> pd.DataFrame:
     has_warning = any(re.search(r"warning", x, flags=re.IGNORECASE) for x in flattened)
 
     if has_error:
-        msgs: List[str] = []
+        msgs: list[str] = []
         first_col = df.iloc[:, 0].astype(str)
         for v in first_col:
             if re.search(r"error", v, flags=re.IGNORECASE):
@@ -281,9 +282,9 @@ def _coerce_clean_output(df: pd.DataFrame, genome_build: str) -> pd.DataFrame:
 
 
 def ldexpress(
-    snps: Union[str, Sequence[str]],
-    pop: Union[str, Sequence[str]] = "CEU",
-    tissue: Union[str, Sequence[str]] = "ALL",
+    snps: str | Sequence[str],
+    pop: str | Sequence[str] = "CEU",
+    tissue: str | Sequence[str] = "ALL",
     r2d: str = "r2",
     r2d_threshold: float = 0.1,
     p_threshold: float = 0.1,

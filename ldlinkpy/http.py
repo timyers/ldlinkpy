@@ -25,8 +25,9 @@ from __future__ import annotations
 import json
 import socket
 import threading
+from collections.abc import Iterator
 from contextlib import contextmanager
-from typing import Any, Dict, Iterator, Optional, Union
+from typing import Any
 from urllib.parse import urljoin
 
 import requests
@@ -72,7 +73,7 @@ def _force_ipv4_only() -> Iterator[None]:
         urllib3.util.connection.allowed_gai_family = original  # type: ignore[assignment]
 
 
-def _parse_body(resp: Response) -> Union[Dict[str, Any], list, str]:
+def _parse_body(resp: Response) -> dict[str, Any] | list | str:
     text = resp.text if resp.text is not None else ""
     if is_json_response(text):
         try:
@@ -96,14 +97,14 @@ def _raise_for_status(resp: Response, url: str) -> None:
 def request(
     endpoint: str,
     *,
-    params: Optional[Dict[str, Any]] = None,
-    json_body: Optional[Dict[str, Any]] = None,
-    headers: Optional[Dict[str, str]] = None,
-    token: Optional[str] = None,
+    params: dict[str, Any] | None = None,
+    json_body: dict[str, Any] | None = None,
+    headers: dict[str, str] | None = None,
+    token: str | None = None,
     api_root: str,
     method: str = "GET",
     timeout: float = 180.0,
-) -> Union[Dict[str, Any], list, str]:
+) -> dict[str, Any] | list | str:
     """
     Shared HTTP helper for LDlink REST endpoints.
 
@@ -127,9 +128,9 @@ def request(
 
     # Build query params and body depending on method
     if method_u == "GET":
-        qparams: Dict[str, Any] = dict(params or {})
+        qparams: dict[str, Any] = dict(params or {})
         qparams["token"] = tok
-        body: Optional[Dict[str, Any]] = json_body
+        body: dict[str, Any] | None = json_body
     else:
         # LDlink commonly expects token in the query string even for POST endpoints.
         qparams = {"token": tok}
@@ -139,7 +140,7 @@ def request(
             body.pop("token", None)
 
     def _do_request() -> Response:
-        kwargs: Dict[str, Any] = dict(
+        kwargs: dict[str, Any] = dict(
             method=method,
             url=url,
             params=qparams,   # query string (includes token)
