@@ -25,6 +25,7 @@ This checklist tracks the remaining work to finish, document, release, and publi
 - [x] Add tests for response parsing and returned objects
 - [x] Run the full test suite in a fresh virtual environment
 - [x] Add GitHub Actions CI
+- [ ] Add Windows/macOS CI matrix
 - [x] Add Ruff linting gradually
   - [x] Fix duplicate, unused, and unsorted imports
   - [x] Review and fix low-risk Ruff style findings
@@ -57,7 +58,6 @@ This checklist tracks the remaining work to finish, document, release, and publi
 - [ ] Test installation from built artifacts
 - [ ] Publish to TestPyPI
 - [ ] Publish to PyPI
-- [ ] Prepare a conda-forge recipe
 - [ ] Write release notes for the first public release
 
 ## 6. Project polish
@@ -66,7 +66,7 @@ This checklist tracks the remaining work to finish, document, release, and publi
 - [ ] Add a contributing guide
 - [ ] Add issue templates
 - [ ] Add a pull request template
-- [ ] Move GitHub repository from personal account to senior PI account or organization
+- [x] Move GitHub repository from personal account to senior PI account or organization
 - [x] Add `official` remote and sync `main` to both GitHub remotes
 - [ ] Tag a stable release
 
@@ -97,3 +97,4 @@ This checklist tracks the remaining work to finish, document, release, and publi
 
 - Keep this checklist in the `repo root` since this is the only planning file.
 - Move to **`docs/`** if it starts collecting multiple project notes, checklists, or publication planning files.
+- Future to-do: prepare a conda-forge recipe after the PyPI release is stable and there is user demand.
