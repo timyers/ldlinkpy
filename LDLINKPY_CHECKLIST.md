@@ -5,12 +5,8 @@ This checklist tracks the remaining work to finish, document, release, and publi
 ## 1. Finish the package
 
 - [x] Complete all planned endpoint functions
-- [ ] Make public function names and arguments consistent
-- [ ] Finalize input validation and exception messages
 - [ ] Confirm sequential-only request behavior is enforced client-wide
   - [ ] Move `ldproxy` off per-instance `LDlinkClient` locking or otherwise confirm it shares the global request lock
-- [ ] Standardize return types and output formatting
-- [ ] Remove dead code, duplication, and temporary workarounds
 - [ ] Verify package metadata and version number
 - [x] Confirm license selection and `LICENSE` file
 
@@ -93,6 +89,10 @@ This checklist tracks the remaining work to finish, document, release, and publi
 ## Future to-do
 
 - Prepare a conda-forge recipe after the PyPI release is stable and there is user demand
+- Review public function names and arguments for consistency after the first release
+- Refine input validation and exception messages after the first release
+- Standardize return types and output formatting after the first release
+- Remove dead code, duplication, and temporary workarounds after the first release
 - Add a contributing guide if outside contribution volume increases
 - Add issue templates if outside contribution volume increases
 - Add a pull request template if outside contribution volume increases
