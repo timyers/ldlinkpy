@@ -61,7 +61,7 @@ This checklist tracks the remaining work to finish, document, release, and publi
 
 ## 6. Project polish
 
-- [ ] Add `CITATION.cff`
+- [x] Add `CITATION.cff`
 - [ ] Add a contributing guide
 - [x] Move GitHub repository from personal account to senior PI account or organization
 - [x] Add `official` remote and sync `main` to both GitHub remotes

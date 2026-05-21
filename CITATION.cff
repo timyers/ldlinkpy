@@ -1,0 +1,12 @@
+cff-version: 1.2.0
+message: "If you use LDlinkPy, please cite it using the metadata from this file."
+title: "LDlinkPy: A Python interface to LDlink for reproducible linkage disequilibrium workflows"
+type: software
+authors:
+  - name: "LDlinkPy contributors"
+version: "0.4.2"
+date-released: "2026-05-21"
+license: MIT
+repository-code: "https://github.com/machiela-lab/LDlinkPy"
+url: "https://github.com/machiela-lab/LDlinkPy"
+abstract: "LDlinkPy is an official Python client for the NIH LDlink REST API."
