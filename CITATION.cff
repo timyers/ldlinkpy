@@ -4,7 +4,7 @@ title: "LDlinkPy: A Python interface to LDlink for reproducible linkage disequil
 type: software
 authors:
   - name: "LDlinkPy contributors"
-version: "0.4.2"
+version: "0.4.3"
 date-released: "2026-05-21"
 license: MIT
 repository-code: "https://github.com/machiela-lab/LDlinkPy"
