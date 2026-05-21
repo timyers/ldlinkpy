@@ -5,6 +5,7 @@ import threading
 import pytest
 import responses
 
+import ldlinkpy.http as http
 from ldlinkpy.client import LDlinkClient
 from ldlinkpy.exceptions import APIError
 
@@ -56,9 +57,12 @@ def test_api_root_and_endpoint_combine_correctly_no_double_slashes() -> None:
 @responses.activate
 def test_lock_exists_and_two_sequential_calls_recorded() -> None:
     client = LDlinkClient(token="t", api_root="https://example.org/LDlinkRest")
+    second_client = LDlinkClient(token="t", api_root="https://example.org/LDlinkRest")
 
     assert hasattr(client, "_lock")
     assert isinstance(client._lock, type(threading.Lock()))
+    assert client._lock is http._REQUEST_LOCK
+    assert second_client._lock is client._lock
 
     url = "https://example.org/LDlinkRest/ldproxy"
     responses.add(responses.GET, url, body="first", status=200)

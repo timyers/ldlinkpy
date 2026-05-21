@@ -3,13 +3,13 @@
 from __future__ import annotations
 
 import os
-import threading
 from typing import Any
 
 import requests
 
 from . import DEFAULT_API_ROOT
 from .exceptions import APIError
+from .http import _REQUEST_LOCK
 
 
 class LDlinkClient:
@@ -27,7 +27,7 @@ class LDlinkClient:
         self.timeout = timeout
 
         self.token = token or os.getenv("LDLINK_TOKEN")
-        self._lock = threading.Lock()
+        self._lock = _REQUEST_LOCK
 
     def request(
         self,
