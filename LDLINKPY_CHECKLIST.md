@@ -85,7 +85,7 @@ This checklist tracks the remaining work to finish, document, release, and publi
 ## Immediate next steps
 
 - [x] Finish remaining package functions
-- [ ] Finish tests
+- [x] Finish tests
 - [x] Write the README
 - [x] Write examples
 - [ ] Publish to PyPI
