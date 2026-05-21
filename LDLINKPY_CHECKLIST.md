@@ -62,7 +62,6 @@ This checklist tracks the remaining work to finish, document, release, and publi
 ## 6. Project polish
 
 - [x] Add `CITATION.cff`
-- [ ] Add a contributing guide
 - [x] Move GitHub repository from personal account to senior PI account or organization
 - [x] Add `official` remote and sync `main` to both GitHub remotes
 - [ ] Tag a stable release
@@ -94,6 +93,7 @@ This checklist tracks the remaining work to finish, document, release, and publi
 ## Future to-do
 
 - Prepare a conda-forge recipe after the PyPI release is stable and there is user demand
+- Add a contributing guide if outside contribution volume increases
 - Add issue templates if outside contribution volume increases
 - Add a pull request template if outside contribution volume increases
 
