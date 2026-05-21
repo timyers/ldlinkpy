@@ -75,6 +75,7 @@ This checklist tracks the remaining work to finish, document, release, and publi
 
 ## 8. Review and publication
 
+- [ ] Update the `CITATION.cff`
 - [ ] Submit the package for pyOpenSci review
 - [ ] Address reviewer comments
 - [ ] Choose a target journal for the software paper
