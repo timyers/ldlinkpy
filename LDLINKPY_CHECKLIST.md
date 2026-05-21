@@ -7,7 +7,7 @@ This checklist tracks the remaining work to finish, document, release, and publi
 - [x] Complete all planned endpoint functions
 - [x] Confirm sequential-only request behavior is enforced client-wide
   - [x] Move `ldproxy` off per-instance `LDlinkClient` locking or otherwise confirm it shares the global request lock
-- [ ] Verify package metadata and version number
+- [x] Verify package metadata and version number
 - [x] Confirm license selection and `LICENSE` file
 
 ## 2. Testing
