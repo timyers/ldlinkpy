@@ -125,6 +125,8 @@ def test_rreb1_summary_example_creates_report_from_minimal_inputs(tmp_path: Path
     assert "R2 and Dprime capture different aspects" in report
     assert "allele orientation and variant order should be confirmed" in report
     assert "rare haplotypes may not appear" in report
+    assert "## Conclusion" in report
+    assert "published RREB1 SNP-tag strategy" in report
     assert "## References" in report
     assert "- LDlinkPy workflow diagram" not in report
     assert "SNPchip output was not detected" in report

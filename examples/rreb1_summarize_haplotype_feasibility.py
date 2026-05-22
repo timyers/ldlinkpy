@@ -1107,6 +1107,10 @@ The practical feasibility table is available as `rreb1_practical_feasibility_sum
 
 The available files can support cautious SNP-based feasibility summaries for the published RREB1 SNP tags. They can describe LD, haplotype structure, population differences, and optional array coverage. They cannot establish causality or directly characterize the GGAA microsatellite allele lengths reported in the RREB1 study.
 
+## Conclusion
+
+This LDlinkPy-only workflow demonstrates that published SNP tags at the Ewing sarcoma 6p25.1/RREB1 locus can be evaluated for SNP-based feasibility across 1000 Genomes populations. The workflow generated pairwise LD, population-specific LD matrices, haplotype frequency summaries, and SNPchip coverage summaries for the lead SNP, surrogate SNP, and published 3-SNP haplotype markers. Together, these outputs support a cautious assessment of the published RREB1 SNP-tag strategy and show that LD structure, haplotype patterns, and queried array coverage may vary by population and marker. This analysis does not directly measure GGAA microsatellite length, reproduce targeted long-read sequencing, or establish causality.
+
 ## Possible downstream figures and tables
 
 - ancestry-specific LD matrices or heatmaps for the RREB1 4-SNP set

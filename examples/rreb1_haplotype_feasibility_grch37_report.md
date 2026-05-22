@@ -18,7 +18,7 @@ The key practical question is: Can the published RREB1 SNP tags be evaluated as 
 
 - Input directory: `examples/output/rreb1_haplotype_feasibility_grch37`
 - Output directory: `examples/output/rreb1_haplotype_feasibility_grch37/summary`
-- Date/time: `2026-05-20T17:46:38.734803+00:00`
+- Date/time: `2026-05-21T20:05:51.553093+00:00`
 - Script name: `examples/rreb1_summarize_haplotype_feasibility.py`
 - No LDlink API calls were made.
 - No `LDLINK_TOKEN` was required.
@@ -168,6 +168,10 @@ The practical feasibility table is available as `rreb1_practical_feasibility_sum
 | Is SNPchip coverage available for the 4-SNP set? | SNPchip output detected coverage among queried SNPchip platforms for rs7742053 (10 platforms), rs17142617 (11 platforms). No coverage was detected among the queried SNPchip platforms for rs74781311 and rs2876045. SNPchip output suggests that the lead SNP and surrogate SNP are represented among queried SNPchip platforms, while two of the three haplotype markers were not detected among those platforms. This may limit direct genotyping-array use of the full 3-SNP haplotype and suggests that imputation or sequencing may be needed for some datasets. | snpchip_rreb1_4snp.csv | Array coverage is practical feasibility information, not functional annotation. |
 
 The available files can support cautious SNP-based feasibility summaries for the published RREB1 SNP tags. They can describe LD, haplotype structure, population differences, and optional array coverage. They cannot establish causality or directly characterize the GGAA microsatellite allele lengths reported in the RREB1 study.
+
+## Conclusion
+
+This LDlinkPy-only workflow demonstrates that published SNP tags at the Ewing sarcoma 6p25.1/RREB1 locus can be evaluated for SNP-based feasibility across 1000 Genomes populations. The workflow generated pairwise LD, population-specific LD matrices, haplotype frequency summaries, and SNPchip coverage summaries for the lead SNP, surrogate SNP, and published 3-SNP haplotype markers. Together, these outputs support a cautious assessment of the published RREB1 SNP-tag strategy and show that LD structure, haplotype patterns, and queried array coverage may vary by population and marker. This analysis does not directly measure GGAA microsatellite length, reproduce targeted long-read sequencing, or establish causality.
 
 ## Possible downstream figures and tables
 
