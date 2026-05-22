@@ -25,6 +25,12 @@ dev = [
   "ruff>=0.4",
 ]
 
+[project.urls]
+Homepage = "https://github.com/machiela-lab/LDlinkPy"
+Repository = "https://github.com/machiela-lab/LDlinkPy"
+Documentation = "https://github.com/machiela-lab/LDlinkPy/tree/main/docs"
+Issues = "https://github.com/machiela-lab/LDlinkPy/issues"
+
 [tool.setuptools]
 include-package-data = true
 
