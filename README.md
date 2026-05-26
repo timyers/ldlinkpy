@@ -145,6 +145,10 @@ Most endpoint functions return pandas DataFrames by default. Some functions supp
 
 `LDlinkPy` was conceived and overseen by xxxxx xxxxx, with code and documentation assistance from ChatGPT 5.2 Thinking (OpenAI) and Codex (OpenAI). Additional authors and contributors may be added as the project develops.
 
+## AI Assistance Disclosure
+
+`LDlinkPy` was developed with assistance from AI coding tools and agents, including ChatGPT 5.2 Thinking (OpenAI) and Codex 5.5 High (OpenAI). AI tools assisted with code generation, implementation, and documentation. Package behavior is validated by comparing outputs against the [LDlink](https://ldlink.nih.gov/) web app and the `LDlinkR` R package. Human contributors conceived the project, directed development, defined validation criteria, ran validation checks, interpreted results, and made release decisions.
+
 ## Relationship To LDlinkR
 
 `LDlinkPy` is intended to provide Python access to the major LDlink workflows familiar to LDlinkR users. Function names and behavior are generally aligned where practical, while using Python conventions such as pandas DataFrames and keyword arguments.
