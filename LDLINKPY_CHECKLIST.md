@@ -52,7 +52,7 @@ This checklist tracks the remaining work to finish, document, release, and publi
 - [x] Build source and wheel distributions
 - [x] Test installation from built artifacts
 - [x] Publish to TestPyPI
-- [ ] Publish to PyPI
+- [x] Publish to PyPI
 - [x] Write release notes for the first public release
 
 ## 6. Project polish
@@ -84,7 +84,7 @@ This checklist tracks the remaining work to finish, document, release, and publi
 - [x] Finish tests
 - [x] Write the README
 - [x] Write examples
-- [ ] Publish to PyPI
+- [x] Publish to PyPI
 
 ## Future to-do
 
