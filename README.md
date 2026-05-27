@@ -11,7 +11,7 @@ Project status: Work in progress. Feedback and contributions are welcome.
 
 ## Introduction
 
-LDlink is an interactive suite of web-based tools for investigating linkage disequilibrium (LD) across ancestral population groups. LDlink uses publicly available 1000 Genomes Project reference haplotypes to calculate population-specific LD, accepts variants as RefSNP (RS) numbers or genomic positions, and references dbSNP for RS identifiers and bi-allelic variant information. Depending on the module, LDlink also incorporates data from resources such as UCSC RefSeq, RegulomeDB, genetic maps, the GTEx Portal, the GWAS Catalog, and FORGEdb.
+[LDlink](https://ldlink.nih.gov/) is an interactive suite of web-based tools for investigating linkage disequilibrium (LD) across ancestral population groups. LDlink uses publicly available 1000 Genomes Project reference haplotypes to calculate population-specific LD, accepts variants as RefSNP (RS) numbers or genomic positions, and references dbSNP for RS identifiers and bi-allelic variant information. Depending on the module, LDlink also incorporates data from resources such as UCSC RefSeq, RegulomeDB, genetic maps, the GTEx Portal, the GWAS Catalog, and FORGEdb.
 
 Internet access and a personal LDlink API token are required for API calls.
 
@@ -143,11 +143,11 @@ Most endpoint functions return pandas DataFrames by default. Some functions supp
 
 ## Authorship
 
-`LDlinkPy` was conceived and overseen by xxxxx xxxxx, with code and documentation assistance from ChatGPT 5.2 Thinking (OpenAI) and Codex (OpenAI). Additional authors and contributors may be added as the project develops.
+`LDlinkPy` was conceived and overseen by Timothy Myers, Stephen Chanock, and Mitchel Machiela, with code and documentation assistance from ChatGPT 5.2 Thinking (OpenAI) and Codex 5.5 High (OpenAI). Additional authors and contributors may be added as the project develops.
 
 ## AI Assistance Disclosure
 
-`LDlinkPy` was developed with assistance from AI coding tools and agents, including ChatGPT 5.2 Thinking (OpenAI) and Codex 5.5 High (OpenAI). AI tools assisted with code generation, implementation, and documentation. Package behavior is validated by comparing outputs against the [LDlink](https://ldlink.nih.gov/) web app and the `LDlinkR` R package. Human contributors conceived the project, directed development, defined validation criteria, ran validation checks, interpreted results, and made release decisions.
+`LDlinkPy` was developed with assistance from AI coding tools and agents, including ChatGPT 5.2 Thinking (OpenAI) and Codex 5.5 High (OpenAI). AI tools assisted with code generation, implementation, and documentation. Package behavior is validated by comparing outputs against the [LDlink](https://ldlink.nih.gov/) web app and the [`LDlinkR`](https://github.com/CBIIT/LDlinkR/tree/master) R package. Human contributors conceived the project, directed development, defined validation criteria, ran validation checks, and made release decisions.
 
 ## Relationship To LDlinkR
 
