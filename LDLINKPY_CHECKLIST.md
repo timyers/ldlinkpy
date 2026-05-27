@@ -60,7 +60,7 @@ This checklist tracks the remaining work to finish, document, release, and publi
 - [x] Add `CITATION.cff`
 - [x] Move GitHub repository from personal account to senior PI account or organization
 - [x] Add `official` remote and sync `main` to both GitHub remotes
-- [ ] Tag a stable release
+- [x] Tag a stable release
 
 ## 7. Visibility and adoption
 
