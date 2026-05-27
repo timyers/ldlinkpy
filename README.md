@@ -2,7 +2,7 @@
 
 ### A Python interface to LDlink for reproducible linkage disequilibrium workflows
 
-Project status: Work in progress. Feedback and contributions are welcome.
+Project status: First public release series. Feedback and issue reports are welcome.
 
 <p align="center">
   <a href="LICENSE.txt"><img src="https://img.shields.io/badge/License-MIT-yellow.svg" alt="MIT License"></a>
