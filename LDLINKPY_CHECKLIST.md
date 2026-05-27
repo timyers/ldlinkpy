@@ -53,7 +53,7 @@ This checklist tracks the remaining work to finish, document, release, and publi
 - [x] Test installation from built artifacts
 - [x] Publish to TestPyPI
 - [ ] Publish to PyPI
-- [ ] Write release notes for the first public release
+- [x] Write release notes for the first public release
 
 ## 6. Project polish
 
@@ -70,7 +70,7 @@ This checklist tracks the remaining work to finish, document, release, and publi
 
 ## 8. Review and publication
 
-- [ ] Update the `CITATION.cff`
+- [x] Update the `CITATION.cff`
 - [ ] Submit the package for pyOpenSci review
 - [ ] Address reviewer comments
 - [ ] Choose a target journal for the software paper

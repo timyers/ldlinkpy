@@ -3,9 +3,14 @@ message: "If you use LDlinkPy, please cite it using the metadata from this file.
 title: "LDlinkPy: A Python interface to LDlink for reproducible linkage disequilibrium workflows"
 type: software
 authors:
-  - name: "LDlinkPy contributors"
-version: "0.4.4"
-date-released: "2026-05-21"
+  - family-names: Myers
+    given-names: Timothy A.
+  - family-names: Chanock
+    given-names: Stephen J.
+  - family-names: Machiela
+    given-names: Mitchel J.
+version: "0.4.5"
+date-released: "2026-05-27"
 license: MIT
 repository-code: "https://github.com/machiela-lab/LDlinkPy"
 url: "https://github.com/machiela-lab/LDlinkPy"

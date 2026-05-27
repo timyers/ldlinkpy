@@ -4,14 +4,16 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "ldlinkpy"
-version = "0.4.4"
+version = "0.4.5"
 description = "Official Python client for the NIH LDlink REST API."
 readme = "README.md"
 requires-python = ">=3.10"
 license = "MIT"
 license-files = ["LICENSE.txt"]
 authors = [
-  { name = "ldlinkpy contributors" }
+  { name = "Timothy A. Myers" },
+  { name = "Stephen J. Chanock" },
+  { name = "Mitchel J. Machiela" },
 ]
 dependencies = [
   "requests>=2.31",

@@ -17,7 +17,7 @@ Internet access and a personal LDlink API token are required for API calls.
 
 ## Install
 
-`LDlinkPy` is currently installed from GitHub and is not on PyPI yet. Using a virtual environment is recommended.
+`LDlinkPy` is available from PyPI. Using a virtual environment is recommended.
 
 ### Requirements
 
@@ -28,7 +28,7 @@ Internet access and a personal LDlink API token are required for API calls.
 ```bash
 python3 -m venv .venv
 ./.venv/bin/python -m pip install --upgrade pip
-./.venv/bin/python -m pip install "https://github.com/timyers/ldlinkpy/archive/refs/heads/main.zip"
+./.venv/bin/python -m pip install ldlinkpy
 ```
 
 ### Windows PowerShell
@@ -36,7 +36,7 @@ python3 -m venv .venv
 ```powershell
 py -m venv .venv
 .\.venv\Scripts\python -m pip install --upgrade pip
-.\.venv\Scripts\python -m pip install "https://github.com/timyers/ldlinkpy/archive/refs/heads/main.zip"
+.\.venv\Scripts\python -m pip install ldlinkpy
 ```
 
 ## Quick Start
@@ -155,4 +155,4 @@ Most endpoint functions return pandas DataFrames by default. Some functions supp
 
 ## Development Status
 
-This package is still being prepared for broader review and release. The current focus is documentation, examples, packaging polish, and human testing before further endpoint behavior changes.
+This package is in its first public release series. Feedback from biomedical research users is welcome, especially on endpoint behavior, documentation clarity, and example workflows.
