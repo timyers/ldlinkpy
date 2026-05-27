@@ -5,6 +5,7 @@
 Project status: First public release series. Feedback and issue reports are welcome.
 
 <p align="center">
+  <a href="https://pypi.org/project/ldlinkpy/"><img src="https://img.shields.io/pypi/v/ldlinkpy.svg" alt="PyPI version"></a>
   <a href="LICENSE.txt"><img src="https://img.shields.io/badge/License-MIT-yellow.svg" alt="MIT License"></a>
   <a href="https://python.org"><img src="https://img.shields.io/badge/Python-3.10%2B-3776AB?logo=python&logoColor=white" alt="Python 3.10+"></a>
 </p>
