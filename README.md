@@ -11,7 +11,7 @@ Project status: Work in progress. Feedback and contributions are welcome.
 
 ## Introduction
 
-[LDlink](https://ldlink.nih.gov/) is an interactive suite of web-based tools for investigating linkage disequilibrium (LD) across ancestral population groups. LDlink uses publicly available 1000 Genomes Project reference haplotypes to calculate population-specific LD, accepts variants as RefSNP (RS) numbers or genomic positions, and references dbSNP for RS identifiers and bi-allelic variant information. Depending on the module, LDlink also incorporates data from resources such as UCSC RefSeq, RegulomeDB, genetic maps, the GTEx Portal, the GWAS Catalog, and FORGEdb.
+[LDlink](https://ldlink.nih.gov/) is an interactive suite of web-based tools for investigating linkage disequilibrium (LD) across ancestral population groups. `LDlink` uses publicly available 1000 Genomes Project reference haplotypes to calculate population-specific LD, accepts variants as RefSNP (RS) numbers or genomic positions, and references dbSNP for RS identifiers and bi-allelic variant information. Depending on the module, `LDlink` also incorporates data from resources such as UCSC RefSeq, RegulomeDB, genetic maps, the GTEx Portal, the GWAS Catalog, and FORGEdb.
 
 Internet access and a personal LDlink API token are required for API calls.
 
@@ -151,7 +151,7 @@ Most endpoint functions return pandas DataFrames by default. Some functions supp
 
 ## Relationship To LDlinkR
 
-`LDlinkPy` is intended to provide Python access to the major LDlink workflows familiar to LDlinkR users. Function names and behavior are generally aligned where practical, while using Python conventions such as pandas DataFrames and keyword arguments.
+`LDlinkPy` is intended to provide Python access to the major [LDlink](https://ldlink.nih.gov/) workflows familiar to [`LDlinkR`](https://github.com/CBIIT/LDlinkR/tree/master) users. Function names and behavior are generally aligned where practical, while using Python conventions such as pandas DataFrames and keyword arguments.
 
 ## Development Status
 
