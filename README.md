@@ -12,7 +12,7 @@ Project status: First public release series. Feedback and issue reports are welc
 
 ## Introduction
 
-[LDlink](https://ldlink.nih.gov/) is an interactive suite of web-based tools for investigating linkage disequilibrium (LD) across ancestral population groups. `LDlink` uses publicly available 1000 Genomes Project reference haplotypes to calculate population-specific LD, accepts variants as RefSNP (RS) numbers or genomic positions, and references dbSNP for RS identifiers and bi-allelic variant information. Depending on the module, `LDlink` also incorporates data from resources such as UCSC RefSeq, RegulomeDB, genetic maps, the GTEx Portal, the GWAS Catalog, and FORGEdb.
+[LDlink](https://ldlink.nih.gov/) is an interactive suite of web-based tools for investigating linkage disequilibrium (LD) across ancestral population groups. `LDlink` uses publicly available 1000 Genomes Project reference haplotypes to calculate human population-specific LD, accepts variants as RefSNP (RS) numbers or genomic positions, and references dbSNP for RS identifiers and bi-allelic variant information. Depending on the module, `LDlink` also incorporates data from resources such as UCSC RefSeq, RegulomeDB, genetic maps, the GTEx Portal, the GWAS Catalog, and FORGEdb.
 
 `LDlinkPy` provides a Python interface to the `LDlink` REST API, making `LDlink` analyses scriptable, reproducible, and easier to integrate into pandas-based genomic workflows. It supports the major `LDlink` modules, including LDpair, LDproxy, LDmatrix, LDtrait, LDexpress, LDhap, LDpop, SNPclip, and SNPchip.
 
