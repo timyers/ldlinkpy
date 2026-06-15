@@ -11,6 +11,7 @@ authors:
     given-names: Mitchel J.
 version: "0.4.6.dev0"
 date-released: "2026-05-27"
+doi: 10.5281/zenodo.20703860
 license: MIT
 repository-code: "https://github.com/machiela-lab/LDlinkPy"
 url: "https://github.com/machiela-lab/LDlinkPy"

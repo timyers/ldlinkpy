@@ -61,6 +61,7 @@ This checklist tracks the remaining work to finish, document, release, and publi
 - [x] Move GitHub repository from personal account to senior PI account or organization
 - [x] Add `official` remote and sync `main` to both GitHub remotes
 - [x] Tag a stable release
+- [x] Archive stable release on Zenodo
 
 ## 7. Visibility and adoption
 
